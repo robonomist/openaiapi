@@ -1,7 +1,9 @@
 
 # openaiapi
 
-openaiapi is a package that provides an interface to the OpenAI API.
+openaiapi is an R package that provides a comprehensive and faithful
+interface to the OpenAI API. It closely mirrors the API’s structure
+while offering R6 classes for convenient handling of API objects.
 
 ## Installation
 
@@ -256,3 +258,12 @@ my_vector_store <- oai_create_vector_store(name = "my-vector-store")
 ## or
 my_vector_store <- VectorStore$new(name = "my-vector-store")
 ```
+
+## Todo:
+
+- [ ] Implement streaming
+- [ ] Implement Administration API’s
+- [ ] Implement Images API
+- [ ] Implement Moderations API
+- [ ] Implement Realtime API
+- [ ] Add tests

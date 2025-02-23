@@ -4,7 +4,7 @@ Version: 0.0.1
 URL: https://github.com/robonomist/openaiapi, https://robonomist.github.io/openaiapi/
 Authors@R:
     person("Juha", "Itkonen", , "juha@robonomist.com", role = c("aut", "cre"))
-Description: An interface to the OpenAI API.
+Description: openaiapi is an R package that provides a comprehensive and faithful interface to the OpenAI API. It closely mirrors the API structure while offering R6 classes for convenient handling of API objects.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
