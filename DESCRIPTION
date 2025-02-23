@@ -1,0 +1,17 @@
+Package: openaiapi
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.1
+URL: https://github.com/robonomist/openaiapi
+Authors@R:
+    person("Juha", "Itkonen", , "juha@robonomist.com", role = c("aut", "cre"))
+Description: An interface to the OpenAI API.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+    httr2,
+    glue,
+    jsonlite,
+    R6,
+    curl

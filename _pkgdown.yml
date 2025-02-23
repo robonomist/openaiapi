@@ -1,0 +1,75 @@
+url: "https://github.com/robonomist/openaiapi"
+template:
+  bootstrap: 5
+reference:
+## Endpoints
+- title: Setup
+  contents:
+    - oai_set_api_key
+- title: Models
+  contents:
+  - oai_list_models
+  - oai_retrieve_model
+  - oai_delete_model
+- title: Fine tuning
+  contents:
+  - matches("fine_tuning")
+  - FineTuningJob
+- title: Embeddings
+  contents:
+  - oai_create_embeddings
+  - Embedding
+- title: Chat completions
+  contents:
+  - oai_create_chat_completion
+  - oai_get_chat_completion
+  - oai_get_chat_messages
+  - oai_list_chat_completions
+  - oai_update_chat_completion
+  - oai_delete_chat_completion
+  - ChatCompletion
+## Assistants
+- title: Assistants
+  desc:  Create and manage Assistants.
+  contents:
+    - matches("assistant")
+    - Assistant
+- subtitle: Threads
+  contents:
+    - oai_create_thread
+    - Thread
+- subtitle: Messages
+  contents:
+  - oai_create_message
+  - oai_attachment
+  - Message
+- subtitle: Runs
+  contents:
+  - oai_create_run
+  - Run
+- subtitle: Vector store
+  contents:
+  - matches("vector")
+  - matches("Vector")
+- title: Audio
+  contents:
+  - oai_create_speech
+  - oai_create_transcription
+  - oai_create_translation
+  - Transcription
+  - VerboseTranscription
+## Utils
+- title: Utils
+- subtitle: Files
+  contents:
+  - oai_upload_file
+  - oai_list_files
+  - oai_retrieve_file
+  - oai_delete_file
+  - oai_retrieve_file_content
+  - File
+- subtitle: Helpers
+  contents:
+  - oai_message
+  - oai_function_tool
+  - oai_tool_resource
