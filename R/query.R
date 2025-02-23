@@ -1,4 +1,8 @@
-#' Set OpenAI API
+#' Set OpenAI API key
+#'
+#' To use the OpenAI API, you need to have an API key. You can get one by signing up at [OpenAI](https://platform.openai.com/).
+#'
+#' Alternatively, you can set the `OPENAI_API_KEY` environment variable, which is read at package load time.
 #'
 #' @param api_key A character string with the OpenAI API key.
 #' @export
