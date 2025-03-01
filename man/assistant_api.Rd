@@ -38,7 +38,13 @@ oai_modify_assistant(
   .classify_response = TRUE
 )
 
-oai_list_assistants(limit = NULL, order = NULL, after = NULL, before = NULL)
+oai_list_assistants(
+  limit = NULL,
+  order = NULL,
+  after = NULL,
+  before = NULL,
+  .classify_response = TRUE
+)
 
 oai_retrieve_assistant(assistant_id, .classify_response = TRUE)
 

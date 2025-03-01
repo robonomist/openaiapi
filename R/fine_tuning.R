@@ -56,7 +56,7 @@ oai_list_fine_tuning_jobs <- function(after = NULL,
     after = after,
     limit = limit
   ) |> compact()
-  oai_query(
+  oai_query_list(
     ep = "fine_tuning/jobs",
     query = query,,
     method = "GET",
@@ -79,7 +79,7 @@ oai_list_fine_tuning_events <- function(fine_tuning_job_id,
     after = after,
     limit = limit
   ) |> compact()
-  oai_query(
+  oai_query_list(
     ep = c("fine_tuning", "jobs", fine_tuning_job_id, "events"),
     query = query,
     method = "GET",

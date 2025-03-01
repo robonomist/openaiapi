@@ -16,7 +16,13 @@ oai_upload_file(
   .classify_response = TRUE
 )
 
-oai_list_files(purpose = NULL)
+oai_list_files(
+  purpose = NULL,
+  limit = NULL,
+  order = NULL,
+  after = NULL,
+  .classify_response = TRUE
+)
 
 oai_retrieve_file(file_id, .classify_response = TRUE)
 
@@ -27,15 +33,17 @@ oai_retrieve_file_content(file_id, path)
 \arguments{
 \item{path}{Character. The path to the file to upload.}
 
-\item{purpose}{Character.
-\itemize{
-\item \code{oai_upload_file()}: The purpose of the file (e.g., "assistants", "vision", "batch", "fine-tune").
-\item \code{oai_list_files()}: Optional. The purpose of the files to list.
-}}
+\item{purpose}{Character. Optional. Only list files with the specified purpose.}
 
 \item{name}{Character. Optional. The name of the file. If not provided, the file name will be used.}
 
 \item{.classify_response}{Logical. Whether to classify the response as an R6 object.}
+
+\item{limit}{Integer. Optional. The maximum number of files to list. Defaults to 10,000.}
+
+\item{order}{Character. Optional. The order to list files. Can be "asc" or "desc".}
+
+\item{after}{Character. Optional. The ID of the file to start the list from.}
 
 \item{file_id}{Character. The ID of the file to delete.}
 }

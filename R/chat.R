@@ -88,8 +88,11 @@ oai_get_chat_completion <- function(completion_id, .classify_response = TRUE) {
 #' @return `oai_get_chat_messages()` returns a list of messages in the chat completion.
 #' @export
 #' @rdname chat_completion_api
-oai_get_chat_messages <- function(completion_id, after = NULL, limit = NULL, order = NULL) {
-  oai_query(
+oai_get_chat_messages <- function(completion_id,
+                                  after = NULL,
+                                  limit = NULL,
+                                  order = NULL) {
+  oai_query_list(
     ep = c("chat", "completions", completion_id, "messages"),
     method = "GET",
     query = list(
@@ -109,8 +112,12 @@ oai_get_chat_messages <- function(completion_id, after = NULL, limit = NULL, ord
 #' @return `oai_list_chat_completions()` returns a list of ChatCompletion objects.
 #' @export
 #' @rdname chat_completion_api
-oai_list_chat_completions <- function(model = NULL, metadata = NULL, after = NULL, limit = NULL, order = NULL) {
-  oai_query(
+oai_list_chat_completions <- function(model = NULL,
+                                      metadata = NULL,
+                                      after = NULL,
+                                      limit = NULL,
+                                      order = NULL) {
+  oai_query_list(
     ep = c("chat", "completions"),
     method = "GET",
     query = list(

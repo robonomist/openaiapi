@@ -30,7 +30,8 @@ oai_list_vector_store_files_in_a_batch(
   order = NULL,
   after = NULL,
   before = NULL,
-  filter = NULL
+  filter = NULL,
+  .classify_response = TRUE
 )
 }
 \arguments{

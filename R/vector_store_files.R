@@ -52,7 +52,7 @@ oai_list_vector_store_files <- function(vector_store_id,
     before = before,
     filter = filter
   ) |> compact()
-  oai_query(
+  oai_query_list(
     ep = c("vector_stores", vector_store_id, "files"),
     headers = openai_beta_header(),
     method = "GET",

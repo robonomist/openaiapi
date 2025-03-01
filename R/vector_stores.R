@@ -44,13 +44,15 @@ oai_create_vector_store <- function(file_ids = NULL,
 oai_list_vector_stores <- function(limit = NULL,
                                    order = NULL,
                                    after = NULL,
-                                   before = NULL) {
+                                   before = NULL,
+                                    .classify_response = TRUE) {
   query <- as.list(environment()) |> compact()
-  oai_query(
+  oai_query_list(
     ep = "vector_stores",
     headers = openai_beta_header(),
     method = "GET",
-    query = query
+    query = query,
+    .classify_response = .classify_response
   )
 }
 

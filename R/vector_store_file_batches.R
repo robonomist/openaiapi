@@ -70,7 +70,8 @@ oai_list_vector_store_files_in_a_batch <- function(vector_store_id,
                                                    order = NULL,
                                                    after = NULL,
                                                    before = NULL,
-                                                   filter = NULL) {
+                                                   filter = NULL,
+                                                    .classify_response = TRUE) {
   query <- list(
     limit = as.integer(limit),
     order = order,
@@ -78,11 +79,12 @@ oai_list_vector_store_files_in_a_batch <- function(vector_store_id,
     before = before,
     filter = filter
   ) |> compact()
-  oai_query(
+  oai_query_list(
     ep = c("vector_stores", vector_store_id, "files_batches", batch_id, "files"),
     headers = openai_beta_header(),
     method = "GET",
-    query = query
+    query = query,
+    .classify_response = .classify_response
   )
 }
 

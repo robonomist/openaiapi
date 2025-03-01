@@ -97,18 +97,20 @@ oai_modify_assistant <- function(assistant_id,
 oai_list_assistants <- function(limit = NULL,
                                 order = NULL,
                                 after = NULL,
-                                before = NULL) {
+                                before = NULL,
+                                .classify_response = TRUE) {
   query <- list(
     limit = as.integer(limit),
     order = order,
     after = after,
     before = before
   ) |> compact()
-  oai_query(
+  oai_query_list(
     "assistants",
     headers = openai_beta_header(),
     method = "GET",
-    query = query
+    query = query,
+    .classify_response = .classify_response
   )
 }
 

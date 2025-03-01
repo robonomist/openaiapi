@@ -52,15 +52,6 @@ oai_query <- function(ep,
                       .classify_response = TRUE) {
   ## Body can not a empty list
   body <- if (length(body)) body
-  ## Iterate lists if query limit is set to more than 100
-  iterate_list <-
-    if (!is.null(query$limit) && query$limit > 100) {
-      limit <- query$limit
-      query$limit <- 100
-      TRUE
-    } else {
-      FALSE
-    }
   req <-
     oai_request(ep, body, method, headers)
   if (!is.null(body) && encode == "json") {
@@ -69,24 +60,6 @@ oai_query <- function(ep,
     req <- req_body_multipart(req, !!!body)
   }
   resp <- req_perform(req, path = path)
-  if (iterate_list) {
-    resp <- resp_body_json(resp)
-    need_more <- length(resp$data) < limit && resp$has_more
-    while (need_more) {
-      next_resp <-
-        req |>
-        req_url_query(
-          after = resp$last_id,
-          limit = min(100, limit - length(resp$data))
-        ) |>
-        req_perform() |>
-        resp_body_json()
-      resp$data <- append(resp$data, next_resp$data)
-      resp$last_id <- next_resp$last_id
-      resp$has_more <- next_resp$has_more
-      need_more <- length(resp$data) < limit && next_resp$has_more
-    }
-  }
   if (is.null(.classify_response)) {
     resp
   } else if (.classify_response) {
@@ -95,6 +68,34 @@ oai_query <- function(ep,
     resp_body_json(resp)
   }
 }
+
+#' @keywords internal
+oai_query_list <- function(...) {
+  args <- list(...)
+  if (!args$.classify_response) {
+    return(oai_query(...))
+  }
+  if (!is.null(args$query$limit) && args$query$limit > 100) {
+    requested_limit <- args$query$limit
+    args$query$limit <- 100
+  } else {
+    requested_limit <- 100
+  }
+  resp <- do.call(oai_query, args)
+  n <- length(resp)
+  need_more <- n < requested_limit && attr(resp, "has_more")
+  while (need_more) {
+    args$query$after <- attr(resp, "last_id")
+    args$query$limit <- min(100, requested_limit - n)
+    next_resp <- do.call(oai_query, args)
+    resp <- append(resp, next_resp)
+    attr(resp, "last_id") <- attr(next_resp, "last_id")
+    attr(resp, "has_more") <- attr(next_resp, "has_more")
+    need_more <- length(resp) < requested_limit && attr(next_resp, "has_more")
+  }
+  resp
+}
+
 
 oai_list <- function(x) {
   structure(

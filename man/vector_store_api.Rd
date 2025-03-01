@@ -18,7 +18,13 @@ oai_create_vector_store(
   .classify_response = TRUE
 )
 
-oai_list_vector_stores(limit = NULL, order = NULL, after = NULL, before = NULL)
+oai_list_vector_stores(
+  limit = NULL,
+  order = NULL,
+  after = NULL,
+  before = NULL,
+  .classify_response = TRUE
+)
 
 oai_retrieve_vector_store(vector_store_id, .classify_response = TRUE)
 

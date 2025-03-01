@@ -36,13 +36,25 @@ oai_upload_file <- function(path,
 }
 
 #' @description * `oai_list_files()` List all files uploaded to OpenAI.
-#'
+#' @param purpose Character. Optional. Only list files with the specified purpose.
+#' @param limit Integer. Optional. The maximum number of files to list. Defaults to 10,000.
+#' @param order Character. Optional. The order to list files. Can be "asc" or "desc".
+#' @param after Character. Optional. The ID of the file to start the list from.
 #' @return File R6 object
 #' @export
 #' @rdname files_api
-oai_list_files <- function(purpose = NULL) {
-  query <- list(purpose = purpose) |> compact()
-  oai_query(
+oai_list_files <- function(purpose = NULL,
+                           limit = NULL,
+                           order = NULL,
+                           after = NULL,
+                            .classify_response = TRUE) {
+  query <- list(
+    purpose = purpose,
+    limit = limit,
+    order = order,
+    after = after
+  ) |> compact()
+  oai_query_list(
     ep = "files",
     method = "GET",
     query = query

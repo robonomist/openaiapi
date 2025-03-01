@@ -26,7 +26,8 @@ oai_list_messages(
   limit = NULL,
   order = NULL,
   after = NULL,
-  before = NULL
+  before = NULL,
+  .classify_response = TRUE
 )
 
 oai_retrieve_message(thread_id, message_id, .classify_response = TRUE)

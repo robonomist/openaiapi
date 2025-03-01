@@ -57,7 +57,8 @@ oai_list_runs(
   limit = NULL,
   order = NULL,
   after = NULL,
-  before = NULL
+  before = NULL,
+  .classify_response = TRUE
 )
 
 oai_list_run_steps(
@@ -66,7 +67,8 @@ oai_list_run_steps(
   limit = NULL,
   order = NULL,
   after = NULL,
-  before = NULL
+  before = NULL,
+  .classify_response = TRUE
 )
 
 oai_retrieve_run(thread_id, run_id, .classify_response = TRUE)
