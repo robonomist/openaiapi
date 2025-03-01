@@ -81,7 +81,13 @@ oai_retrieve_file_content() Retrieve the content of a specific file from OpenAI.
 <span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_list_files</span><span class="op">(</span>purpose <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">oai_list_files</span><span class="op">(</span></span>
+<span>  purpose <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  limit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  after <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_retrieve_file</span><span class="op">(</span><span class="va">file_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -99,9 +105,7 @@ oai_retrieve_file_content() Retrieve the content of a specific file from OpenAI.
 
 
 <dt id="arg-purpose">purpose<a class="anchor" aria-label="anchor" href="#arg-purpose"></a></dt>
-<dd><p>Character.</p><ul><li><p><code>oai_upload_file()</code>: The purpose of the file (e.g., "assistants", "vision", "batch", "fine-tune").</p></li>
-<li><p><code>oai_list_files()</code>: Optional. The purpose of the files to list.</p></li>
-</ul></dd>
+<dd><p>Character. Optional. Only list files with the specified purpose.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
@@ -110,6 +114,18 @@ oai_retrieve_file_content() Retrieve the content of a specific file from OpenAI.
 
 <dt id="arg--classify-response">.classify_response<a class="anchor" aria-label="anchor" href="#arg--classify-response"></a></dt>
 <dd><p>Logical. Whether to classify the response as an R6 object.</p></dd>
+
+
+<dt id="arg-limit">limit<a class="anchor" aria-label="anchor" href="#arg-limit"></a></dt>
+<dd><p>Integer. Optional. The maximum number of files to list. Defaults to 10,000.</p></dd>
+
+
+<dt id="arg-order">order<a class="anchor" aria-label="anchor" href="#arg-order"></a></dt>
+<dd><p>Character. Optional. The order to list files. Can be "asc" or "desc".</p></dd>
+
+
+<dt id="arg-after">after<a class="anchor" aria-label="anchor" href="#arg-after"></a></dt>
+<dd><p>Character. Optional. The ID of the file to start the list from.</p></dd>
 
 
 <dt id="arg-file-id">file_id<a class="anchor" aria-label="anchor" href="#arg-file-id"></a></dt>
