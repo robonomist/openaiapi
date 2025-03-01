@@ -60,8 +60,8 @@ oai_query <- function(ep,
     req <- req_body_multipart(req, !!!body)
   }
   resp <- req_perform(req, path = path)
-  if (is.null(.classify_response)) {
-    resp
+  if (!is.null(path)) {
+    return(invisible(path))
   } else if (.classify_response) {
     resp_body_json(resp) |> classify_response()
   } else {
@@ -72,7 +72,7 @@ oai_query <- function(ep,
 #' @keywords internal
 oai_query_list <- function(...) {
   args <- list(...)
-  if (!args$.classify_response) {
+  if (isFALSE(args$.classify_response)) {
     return(oai_query(...))
   }
   if (!is.null(args$query$limit) && args$query$limit > 100) {

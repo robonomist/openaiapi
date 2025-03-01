@@ -38,8 +38,7 @@ oai_create_speech <- function(input,
     ep = c("audio", "speech"),
     method = "POST",
     body = body,
-    path = path,
-    .classify_response = NULL
+    path = path
   )
   path
 }

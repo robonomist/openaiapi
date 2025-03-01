@@ -94,8 +94,7 @@ oai_delete_file <- function(file_id) {
 oai_retrieve_file_content <- function(file_id, path) {
   oai_query(
     ep = c("files", file_id, "content"),
-    path = path,
-    .classify_response = NULL
+    path = path
   )
 }
 
