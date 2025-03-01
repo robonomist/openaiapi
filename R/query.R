@@ -17,8 +17,11 @@ openai_beta_header <- function() {
 }
 
 #' @keywords internal
-oai_request <- function(ep, body, method, headers) {
-  request("https://api.openai.com/v1") |>
+oai_request <- function(ep, body, method, headers, encode) {
+  ## Body can not a empty list
+  body <- if (length(body)) body else NULL
+  req <-
+    request("https://api.openai.com/v1") |>
     req_url_path_append(ep) |>
     req_headers(
       Authorization = paste("Bearer", getOption("openaiapi.api_key")),
@@ -26,6 +29,12 @@ oai_request <- function(ep, body, method, headers) {
     ) |>
     req_method(method) |>
     req_error(body = oai_error_body)
+  if (!is.null(body) && encode == "json") {
+    req <- req_body_json(req, body, force = TRUE)
+  } else if (encode == "multipart") {
+    req <- req_body_multipart(req, !!!body)
+  }
+  req
 }
 
 #' @keywords internal
@@ -50,15 +59,7 @@ oai_query <- function(ep,
                       headers = NULL,
                       path = NULL,
                       .classify_response = TRUE) {
-  ## Body can not a empty list
-  body <- if (length(body)) body
-  req <-
-    oai_request(ep, body, method, headers)
-  if (!is.null(body) && encode == "json") {
-    req <- req_body_json(req, body, force = TRUE)
-  } else if (encode == "multipart") {
-    req <- req_body_multipart(req, !!!body)
-  }
+  req <- oai_request(ep, body, method, headers, encode)
   resp <- req_perform(req, path = path)
   if (!is.null(path)) {
     return(invisible(path))
