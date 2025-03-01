@@ -260,6 +260,8 @@ oai_tool_output <- function(tool_call_id, output) {
 #' @param ... Additional arguments passed to the API function.
 #' @importFrom jsonlite fromJSON
 #' @importFrom R6 R6Class
+#' @importFrom later later
+#' @importFrom promises promise
 #' @export
 Run <- R6Class(
   "Run",
@@ -437,7 +439,7 @@ Run <- R6Class(
           ## Perform the required action.
           self$do_tool_calls(env) |>
             self$submit_tool_outputs() |>
-            initialize(resp = _)
+            self$initialize(resp = _)
           Sys.sleep(getOption("openaiapi.poll_interval", 1))
         } else if (s == "completed") {
           ## Return the run object when completed.
@@ -447,32 +449,66 @@ Run <- R6Class(
         }
       }
     },
-    #' @description Perform tool calls.
+    #' @description Perform tool calls asynchronously. Returns a promise.
+    await = function(env = parent.frame()) {
+      promise(function(resolve, reject) {
+        handle_calls <- function() {
+          later(function() {
+            s <- self$retrieve_status()
+            if (s %in% c("queued", "in_progress", "cancelling")) {
+              ## Wait for the run to complete.
+              handle_calls()
+            } else if (s %in% c("failed", "cancelled", "expired")) {
+              ## Throw an error if the run failed.
+              reject("Run ended with status ", s, call. = FALSE)
+            } else if (s == "requires_action") {
+              ## Perform the required action.
+              self$do_tool_calls(env) |>
+                self$submit_tool_outputs() |>
+                self$initialize(resp = _)
+              handle_calls()
+            } else if (s == "completed") {
+              ## Return the run object when completed.
+              resolve(self)
+            } else {
+              reject("Run has unknown status ", s, call. = FALSE)
+            }
+          },
+          delay = getOption("openaiapi.poll_interval", 1)
+          )
+        }
+        handle_calls()
+      })
+    },
+    #' @description Perform tool calls. Returns a list of tool outputs.
     do_tool_calls = function(env = parent.frame()) {
       a <- self$required_action
-      if (a$type  == "submit_tool_outputs") {
-        lapply(a$submit_tool_outputs$tool_calls, function(x) {
-          if (x$type == "function") {
-            output <- do.call(
-              what = x$`function`$name,
-              args = fromJSON(x$`function`$arguments),
-              envir = env
-            )
-            if (is.character(output) && length(output) == 1) {
-              list(tool_call_id = x$id, output = output)
-            } else {
-              stop("Tool function must return a character vector of length 1!")
-            }
-          }
-        })
-      } else {
-        stop("Run required actiont not of type 'submit_tool_outputs'.",
+      if (a$type  != "submit_tool_outputs") {
+        stop("Required action not of type 'submit_tool_outputs'.",
              call. = FALSE)
       }
+      lapply(a$submit_tool_outputs$tool_calls, function(x) {
+        if (x$type == "function") {
+          output <- do.call(
+            what = x$`function`$name,
+            args = fromJSON(x$`function`$arguments),
+            envir = env
+          )
+          if (is.character(output) && length(output) == 1) {
+            list(tool_call_id = x$id, output = output)
+          } else {
+            stop("Tool function must return a character vector of length 1!")
+          }
+        }
+      })
     },
     #' @description Retrieve the thread of the run.
     thread = function() {
       oai_retrieve_thread(self$thread_id)
+    },
+    #' @description Retrieve the assistant of the run.
+    assistant = function() {
+      oai_retrieve_assistant(self$assistant_id)
     }
   )
 )
@@ -558,6 +594,15 @@ RunStep <- R6Class(
       } else {
         stop("Run step not of type 'message_creation'.", call. = FALSE)
       }
+    },
+    assistant = function() {
+      oai_retrieve_assistant(self$assistant_id)
+    },
+    thread = function() {
+      oai_retrieve_thread(self$thread_id)
+    },
+    run = function() {
+      oai_retrieve_run(self$thread_id, self$run_id)
     }
   )
 )

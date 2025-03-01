@@ -74,8 +74,10 @@ Run R6 class
 \item \href{#method-Run-cancel}{\code{Run$cancel()}}
 \item \href{#method-Run-submit_tool_outputs}{\code{Run$submit_tool_outputs()}}
 \item \href{#method-Run-wait}{\code{Run$wait()}}
+\item \href{#method-Run-await}{\code{Run$await()}}
 \item \href{#method-Run-do_tool_calls}{\code{Run$do_tool_calls()}}
 \item \href{#method-Run-thread}{\code{Run$thread()}}
+\item \href{#method-Run-assistant}{\code{Run$assistant()}}
 \item \href{#method-Run-clone}{\code{Run$clone()}}
 }
 }
@@ -206,10 +208,27 @@ Wait for the run to complete.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Run-await"></a>}}
+\if{latex}{\out{\hypertarget{method-Run-await}{}}}
+\subsection{Method \code{await()}}{
+Perform tool calls asynchronously. Returns a promise.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Run$await(env = parent.frame())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{env}}{Environment to evaluate tool calls.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Run-do_tool_calls"></a>}}
 \if{latex}{\out{\hypertarget{method-Run-do_tool_calls}{}}}
 \subsection{Method \code{do_tool_calls()}}{
-Perform tool calls.
+Perform tool calls. Returns a list of tool outputs.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Run$do_tool_calls(env = parent.frame())}\if{html}{\out{</div>}}
 }
@@ -229,6 +248,16 @@ Perform tool calls.
 Retrieve the thread of the run.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Run$thread()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Run-assistant"></a>}}
+\if{latex}{\out{\hypertarget{method-Run-assistant}{}}}
+\subsection{Method \code{assistant()}}{
+Retrieve the assistant of the run.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Run$assistant()}\if{html}{\out{</div>}}
 }
 
 }
