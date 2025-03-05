@@ -464,7 +464,7 @@ Run <- R6Class(
               handle_calls()
             } else if (s %in% c("failed", "cancelled", "expired")) {
               ## Throw an error if the run failed.
-              reject("Run ended with status ", s, call. = FALSE)
+              reject(paste("Run ended with status", s))
             } else if (s == "requires_action") {
               ## Perform the required action.
               self$do_tool_calls(env) |>
@@ -475,7 +475,7 @@ Run <- R6Class(
               ## Return the run object when completed.
               resolve(self)
             } else {
-              reject("Run has unknown status ", s, call. = FALSE)
+              reject(paste("Run has unknown status", s))
             }
           },
           delay = getOption("openaiapi.poll_interval", 1)
