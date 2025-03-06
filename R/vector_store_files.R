@@ -151,7 +151,12 @@ VectorStoreFile <- R6Class(
         ) |>
           initialize(resp = _)
       } else {
-        stop("Either provide a response object or vector_store_id and file_id")
+        cli_abort(c(
+          "You must provide one of the following:",
+          "*" = "a vector_store_file_id",
+          "*" = "a vector_store_id and a file_id",
+          "*" = "a vector_store_id and a path to a file"
+        ))
       }
     },
     id = NULL,

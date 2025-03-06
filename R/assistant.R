@@ -179,7 +179,7 @@ Assistant <- R6Class(
         top_p <<- resp$top_p
         response_format <<- resp$response_format
       } else {
-        stop("You must provide either a model or a response object.")
+        cli_abort("You must provide either `assistant_id` or assistant specifications as in `oai_create_assistant()`.")
       }
     },
     #' @field id The ID of the assistant.

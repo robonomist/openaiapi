@@ -164,7 +164,7 @@ Message <- R6Class(
         ) |>
           initialize(resp = _)
       } else {
-        stop("Either message_id or resp must be provided.")
+        cli_abort("Either `message_id` or `thread_id` must be provided.")
       }
     },
     id = NULL,

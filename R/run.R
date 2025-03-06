@@ -328,7 +328,8 @@ Run <- R6Class(
         tool_choice <<- resp$tool_choice
         response_format <<- resp$response_format
       } else {
-        stop("Must provide either 'thread_id' and 'run_id', 'thread_id' and 'assistant_id', or 'resp'!")}
+        cli_abort("Must provide either 'thread_id' and 'run_id' or 'thread_id' and 'assistant_id'!")
+      }
     },
     #' @field id Run ID.
     id = NULL,
@@ -442,13 +443,13 @@ Run <- R6Class(
           run_time <-
             as.numeric(difftime(Sys.time(), start_time, units = "secs"))
           if (run_time > getOption("openaiapi.run_timeout", 300)) {
-            stop("Run took too long to complete.")
+            cli_abort("Run took too long to complete.")
           }
           ## Wait for the run to complete.
           Sys.sleep(getOption("openaiapi.poll_interval", 1))
         } else if (s %in% c("failed", "cancelled", "expired")) {
           ## Throw an error if the run failed.
-          stop("Run ended with status ", s, call. = FALSE)
+          cli_abort("Run ended with status \"{s}\"")
         } else if (s == "requires_action") {
           ## Perform the required action.
           self$do_tool_calls(sandbox_env) |>
@@ -459,7 +460,7 @@ Run <- R6Class(
           ## Return the run object when completed.
           return(self)
         } else {
-          stop("Run has unknown status ", s, call. = FALSE)
+          cli_abort("Run has unknown status \"{s}\"")
         }
       }
     },
@@ -614,7 +615,6 @@ RunStep <- R6Class(
                 x = "Tool functions must return a character vector of length 1!"),
                 call = rlang::caller_env(2)
               )
-              ## stop("Tool function must return a character vector of length 1!")
             }
           }
         })
