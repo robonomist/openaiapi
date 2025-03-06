@@ -1,5 +1,6 @@
 #' @import httr2
 #' @importFrom cli cli_abort
+#' @importFrom rlang caller_env env_get_list
 NULL
 
 #' Common parameters

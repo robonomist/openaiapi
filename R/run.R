@@ -506,15 +506,20 @@ Run <- R6Class(
     do_tool_calls = function(env = parent.frame()) {
       a <- self$required_action
       if (a$type  != "submit_tool_outputs") {
-        cli_abort("Required action not of type 'submit_tool_outputs'.",
-             call = rlang::caller_env(2))
+        cli_abort("Required action not of type 'submit_tool_outputs'.")
       }
       lapply(a$submit_tool_outputs$tool_calls, function(x) {
         if (x$type == "function") {
-          output <- do.call(
-            what = x$`function`$name,
-            args = fromJSON(x$`function`$arguments),
-            envir = env
+          output <- tryCatch(
+            do.call(
+              what = x$`function`$name,
+              args = fromJSON(x$`function`$arguments),
+              envir = env
+            ),
+            error = function(cnd) {
+              cli_abort("Function tool call failed.", parent = cnd,
+                        call = call("self$do_tool_calls"))
+            }
           )
           if (is.character(output) && length(output) == 1) {
             list(tool_call_id = x$id, output = output)
@@ -522,9 +527,12 @@ Run <- R6Class(
             cli_abort(c(
               "Function tool `{x$`function`$name}` returned an invalid output.",
               x = "Tool functions must return a character vector of length 1!"),
-              call = rlang::caller_env(2)
+              call = call("self$do_tool_calls")
             )
           }
+        } else {
+          cli_abort("Tool call not of type 'function'.",
+                    call = call("self$do_tool_calls"))
         }
       })
     },
@@ -537,13 +545,13 @@ Run <- R6Class(
       oai_retrieve_assistant(self$assistant_id)
     }
   ),
-  private= list(
+  private = list(
     make_sanbox_env = function(env) {
       function_tool_names <- sapply(tools, function(x) x$`function`$name)
       if (length(function_tool_names) == 0) {
         emptyenv()
       } else {
-        rlang::env_get_list(
+        env_get_list(
           env = env,
           nms = function_tool_names,
           inherit = TRUE
