@@ -142,13 +142,15 @@ Create a thread and run the assistant
 \if{latex}{\out{\hypertarget{method-Assistant-thread_and_run}{}}}
 \subsection{Method \code{thread_and_run()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Assistant$thread_and_run(thread = NULL, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Assistant$thread_and_run(thread = NULL, messages = NULL, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{thread}}{An oai_thread object.}
+
+\item{\code{messages}}{Alternatively, a list of messages to create a thread.}
 
 \item{\code{...}}{Additional arguments passed to \code{oai_create_thread_and_run()}.}
 }

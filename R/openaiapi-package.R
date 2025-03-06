@@ -1,4 +1,5 @@
 #' @import httr2
+#' @importFrom cli cli_abort
 NULL
 
 #' Common parameters

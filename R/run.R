@@ -505,8 +505,8 @@ Run <- R6Class(
     do_tool_calls = function(env = parent.frame()) {
       a <- self$required_action
       if (a$type  != "submit_tool_outputs") {
-        stop("Required action not of type 'submit_tool_outputs'.",
-             call. = FALSE)
+        cli_abort("Required action not of type 'submit_tool_outputs'.",
+             call = rlang::caller_env(2))
       }
       lapply(a$submit_tool_outputs$tool_calls, function(x) {
         if (x$type == "function") {
@@ -518,7 +518,11 @@ Run <- R6Class(
           if (is.character(output) && length(output) == 1) {
             list(tool_call_id = x$id, output = output)
           } else {
-            stop("Tool function must return a character vector of length 1!")
+            cli_abort(c(
+              "Function tool `{x$`function`$name}` returned an invalid output.",
+              x = "Tool functions must return a character vector of length 1!"),
+              call = rlang::caller_env(2)
+            )
           }
         }
       })
@@ -605,12 +609,17 @@ RunStep <- R6Class(
             if (is.character(output) && length(output) == 1) {
               list(tool_call_id = x$id, output = output)
             } else {
-              stop("Tool function must return a character vector of length 1!")
+              cli_abort(c(
+                "Function tool `{x$`function`$name}` returned an invalid output.",
+                x = "Tool functions must return a character vector of length 1!"),
+                call = rlang::caller_env(2)
+              )
+              ## stop("Tool function must return a character vector of length 1!")
             }
           }
         })
       } else {
-        stop("Run step not of type 'tool_calls'.", call. = FALSE)
+        cli_abort("Run step not of type 'tool_calls'.")
       }
     },
     submit_tool_outputs = function() {
@@ -627,7 +636,7 @@ RunStep <- R6Class(
           message_id = self$step_details$message_creation$message_id
         )
       } else {
-        stop("Run step not of type 'message_creation'.", call. = FALSE)
+        cli_abort("Run step not of type 'message_creation'.")
       }
     },
     assistant = function() {
