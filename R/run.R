@@ -509,31 +509,30 @@ Run <- R6Class(
         cli_abort("Required action not of type 'submit_tool_outputs'.")
       }
       lapply(a$submit_tool_outputs$tool_calls, function(x) {
-        if (x$type == "function") {
-          output <- tryCatch(
-            do.call(
-              what = x$`function`$name,
-              args = fromJSON(x$`function`$arguments),
-              envir = env
-            ),
-            error = function(cnd) {
-              cli_abort("Function tool call failed.", parent = cnd,
-                        call = call("self$do_tool_calls"))
-            }
+        if (x$type != "function") {
+          cli_abort(
+            "Tool call not of type 'function'.",
+            call = call("self$do_tool_calls")
           )
-          if (is.character(output) && length(output) == 1) {
-            list(tool_call_id = x$id, output = output)
-          } else {
-            cli_abort(c(
-              "Function tool `{x$`function`$name}` returned an invalid output.",
-              x = "Tool functions must return a character vector of length 1!"),
-              call = call("self$do_tool_calls")
-            )
-          }
-        } else {
-          cli_abort("Tool call not of type 'function'.",
-                    call = call("self$do_tool_calls"))
         }
+        output <- tryCatch(
+          do.call(
+            what = x$`function`$name,
+            args = fromJSON(x$`function`$arguments),
+            envir = env
+          ),
+          error = function(cnd) {
+            cli_abort("Function tool call failed.", parent = cnd,
+                      call = call("self$do_tool_calls"))
+          }
+        )
+        if (!is.character(output) || length(output) != 1) {
+          cli_abort(c(
+            "Function tool `{x$`function`$name}` returned an invalid output.",
+            x = "Tool functions must return a character vector of length 1!"
+          ), call = call("self$do_tool_calls"))
+        }
+        list(tool_call_id = x$id, output = output)
       })
     },
     #' @description Retrieve the thread of the run.
