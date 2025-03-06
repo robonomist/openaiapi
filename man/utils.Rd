@@ -21,7 +21,7 @@ oai_tool_resource(code_interpreter_file_ids = NULL, vector_store_ids = NULL)
 
 \item{metadata}{List or NULL. Optional. Metadata to include with the thread.}
 
-\item{messages}{List. A list of messages to include in the thread.}
+\item{messages}{A list of oai_message objects or a character vector.}
 
 \item{tool_resources}{List. Optional. A list of tool resources to include with the thread.}
 

@@ -242,15 +242,9 @@ Assistant <- R6Class(
     #' Create a thread and run the assistant
     #'
     #' @param thread An oai_thread object.
-    #' @param messages A list of oai_message objects.
     #' @param ... Additional arguments passed to `oai_create_thread_and_run()`.
     #' @return The response from the thread creation and run.
-    thread_and_run = function(thread = NULL,
-                              messages = NULL,
-                              ...) {
-      if (!is.null(messages)) {
-        thread <- oai_thread(messages = messages)
-      }
+    thread_and_run = function(thread = NULL, ...) {
       oai_create_thread_and_run(
         assistant_id = self$id,
         thread = thread,

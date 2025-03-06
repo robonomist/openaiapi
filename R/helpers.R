@@ -49,7 +49,7 @@ oai_attachment <- function(file_id,
 
 #' A helper function for thread arguments
 #'
-#' @param messages List. A list of messages to include in the thread.
+#' @param messages A list of oai_message objects or a character vector.
 #' @param tool_resources List. Optional. A list of tool resources to include with the thread.
 #' @param metadata List or NULL. Optional. Metadata to include with the thread.
 #' @export
@@ -57,6 +57,11 @@ oai_attachment <- function(file_id,
 oai_thread <- function(messages,
                        tool_resources = NULL,
                        metadata = NULL) {
+  if (inherits(messages, "oai_message")) {
+    messages <- list(messages)
+  } else if (is.character(messages)) {
+    messages <- list(oai_message(paste(messages, collapse = "\n")))
+  }
   list(
     messages = messages,
     tool_resources = tool_resources,

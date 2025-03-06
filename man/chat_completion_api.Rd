@@ -12,7 +12,7 @@
 \usage{
 oai_create_chat_completion(
   messages,
-  model,
+  model = "gpt-4o",
   frequency_penalty = NULL,
   logit_bias = NULL,
   logprobs = NULL,
