@@ -204,13 +204,17 @@ Create a thread and run the assistant</p>
 
 <div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Assistant</span><span class="op">$</span><span class="fu">thread_and_run</span><span class="op">(</span>thread <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Assistant</span><span class="op">$</span><span class="fu">thread_and_run</span><span class="op">(</span>thread <span class="op">=</span> <span class="cn">NULL</span>, messages <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>thread</code></dt>
 <dd><p>An oai_thread object.</p></dd>
+
+
+<dt><code>messages</code></dt>
+<dd><p>Alternatively, a list of messages to create a thread.</p></dd>
 
 
 <dt><code>...</code></dt>
