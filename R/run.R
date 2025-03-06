@@ -85,6 +85,9 @@ oai_create_thread_and_run <- function(assistant_id,
                                       truncation_strategy = NULL,
                                       tool_choice = NULL,
                                       response_format = NULL) {
+  if (inherits(thread, "oai_message") || is.character(thread)) {
+    thread <- oai_thread(thread)
+  }
   body <- list(
     assistant_id = assistant_id,
     thread = thread,
@@ -431,9 +434,16 @@ Run <- R6Class(
     },
     #' @description Wait for the run to complete.
     wait = function(env = parent.frame()) {
+      start_time <- Sys.time()
+      sandbox_env <- make_sanbox_env(env)
       repeat {
         s <- self$retrieve_status()
         if (s %in% c("queued", "in_progress", "cancelling")) {
+          run_time <-
+            as.numeric(difftime(Sys.time(), start_time, units = "secs"))
+          if (run_time > getOption("openaiapi.run_timeout", 300)) {
+            stop("Run took too long to complete.")
+          }
           ## Wait for the run to complete.
           Sys.sleep(getOption("openaiapi.poll_interval", 1))
         } else if (s %in% c("failed", "cancelled", "expired")) {
@@ -441,7 +451,7 @@ Run <- R6Class(
           stop("Run ended with status ", s, call. = FALSE)
         } else if (s == "requires_action") {
           ## Perform the required action.
-          self$do_tool_calls(env) |>
+          self$do_tool_calls(sandbox_env) |>
             self$submit_tool_outputs() |>
             self$initialize(resp = _)
           Sys.sleep(getOption("openaiapi.poll_interval", 1))
@@ -455,8 +465,15 @@ Run <- R6Class(
     },
     #' @description Perform tool calls asynchronously. Returns a promise.
     await = function(env = parent.frame()) {
+      start_time <- Sys.time()
+      sandbox_env <- make_sanbox_env(env)
       promise(function(resolve, reject) {
         handle_calls <- function() {
+          run_time <-
+            as.numeric(difftime(Sys.time(), start_time, units = "secs"))
+          if (run_time > getOption("openaiapi.run_timeout", 300)) {
+            reject("Run took too long to complete.")
+          }
           later(function() {
             s <- self$retrieve_status()
             if (s %in% c("queued", "in_progress", "cancelling")) {
@@ -467,7 +484,7 @@ Run <- R6Class(
               reject(paste("Run ended with status", s))
             } else if (s == "requires_action") {
               ## Perform the required action.
-              self$do_tool_calls(env) |>
+              self$do_tool_calls(sandbox_env) |>
                 self$submit_tool_outputs() |>
                 self$initialize(resp = _)
               handle_calls()
@@ -513,6 +530,20 @@ Run <- R6Class(
     #' @description Retrieve the assistant of the run.
     assistant = function() {
       oai_retrieve_assistant(self$assistant_id)
+    }
+  ),
+  private= list(
+    make_sanbox_env = function(env) {
+      function_tool_names <- sapply(tools, function(x) x$`function`$name)
+      if (length(function_tool_names) == 0) {
+        emptyenv()
+      } else {
+        rlang::env_get_list(
+          env = env,
+          nms = function_tool_names,
+          inherit = TRUE
+        ) |> as.environment()
+      }
     }
   )
 )
