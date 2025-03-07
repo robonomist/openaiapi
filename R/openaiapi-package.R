@@ -1,6 +1,7 @@
 #' @import httr2
 #' @importFrom cli cli_abort
 #' @importFrom rlang caller_env env_get_list
+#' @importFrom promises is.promise then
 NULL
 
 #' Common parameters
@@ -11,6 +12,7 @@ NULL
 #' @param metadata List. Optional. A named list of at most 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format, and querying for objects via API or the dashboard.
 #' @param .classify_response Logical. If `TRUE` (default), the response is classified as an R6 object. If `FALSE`, the response is returned as a list.
 #' @param stream not yet implemented.
+#' @param .async Logical. If `TRUE`, the request is performed asynchronously.
 #' @name common_parameters
 #' @keywords internal
 NULL

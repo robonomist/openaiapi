@@ -6,6 +6,9 @@
 \description{
 This class provides methods to interact with the OpenAI Assistant API.
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{Assistant}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -32,6 +35,8 @@ This class provides methods to interact with the OpenAI Assistant API.
 \item{\code{top_p}}{An alternative to sampling with temperature, called nucleus sampling.}
 
 \item{\code{response_format}}{The response format of the assistant.}
+
+\item{\code{.async}}{Logical. If \code{TRUE}, requests are made asynchronously.}
 }
 \if{html}{\out{</div>}}
 }
@@ -47,13 +52,26 @@ This class provides methods to interact with the OpenAI Assistant API.
 \item \href{#method-Assistant-clone}{\code{Assistant$clone()}}
 }
 }
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Assistant-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Assistant-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes the OpenAI Assistant object. You must provide either an assistant ID or a model. If you provide an assistant ID, the assistant is retrieved from the API. If you provide a model, a new assistant is created, and \code{...} argument is used to pass additional arguments to the \code{oai_create_assistant()} function.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Assistant$new(assistant_id = NULL, model = NULL, ..., resp = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Assistant$new(
+  assistant_id = NULL,
+  model = NULL,
+  ...,
+  resp = NULL,
+  .async = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -66,6 +84,8 @@ Initializes the OpenAI Assistant object. You must provide either an assistant ID
 \item{\code{...}}{Additional arguments passed to the \verb{oai_*_assistant()} functions.}
 
 \item{\code{resp}}{List. The assistant's properties from the API response.}
+
+\item{\code{.async}}{Logical. If \code{TRUE}, requests are made asynchronously.}
 }
 \if{html}{\out{</div>}}
 }

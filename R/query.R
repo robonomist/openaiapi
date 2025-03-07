@@ -58,17 +58,50 @@ oai_query <- function(ep,
                       encode = "json",
                       headers = NULL,
                       path = NULL,
-                      .classify_response = TRUE) {
+                      .classify_response = TRUE,
+                      .async = FALSE) {
   req <- oai_request(ep, body, method, headers, encode)
-  resp <- req_perform(req, path = path)
-  if (!is.null(path)) {
-    return(invisible(path))
-  } else if (.classify_response) {
-    resp_body_json(resp) |> classify_response()
+  handle_response <- function(resp) {
+    if (!is.null(path)) {
+      invisible(path)
+    } else {
+      y <- resp_body_json(resp)
+      y$.async <- .async
+      if (.classify_response) {
+        classify_response(y)
+      } else {
+        y
+      }
+    }
+  }
+  if (.async) {
+    req_perform_promise(req, path = path) |>
+      then(handle_response) |>
+      as_oai_promise()
   } else {
-    resp_body_json(resp)
+    req_perform(req, path = path)|>
+      handle_response()
   }
 }
+
+as_oai_promise <- function(p) {
+  class(p) <- c("oai_promise", class(p))
+  p
+}
+
+#' @export
+`$.oai_promise` <- function(x, name) {
+  if (name %in% names(x)) {
+    x[[name]]
+  } else {
+    function(...) {
+      x$then(function(y) {
+        y[[name]](...)
+      }) |> as_oai_promise()
+    }
+  }
+}
+
 
 #' @keywords internal
 oai_query_list <- function(...) {

@@ -31,10 +31,15 @@ oai_create_chat_completion(
   tools_choice = NULL,
   parallel_tool_calls = NULL,
   user = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
-oai_get_chat_completion(completion_id, .classify_response = TRUE)
+oai_get_chat_completion(
+  completion_id,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 
 oai_get_chat_messages(completion_id, after = NULL, limit = NULL, order = NULL)
 
@@ -46,9 +51,14 @@ oai_list_chat_completions(
   order = NULL
 )
 
-oai_update_chat_completion(completion_id, metadata, .classify_response = TRUE)
+oai_update_chat_completion(
+  completion_id,
+  metadata,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 
-oai_delete_chat_completion(completion_id)
+oai_delete_chat_completion(completion_id, .async = FALSE)
 }
 \arguments{
 \item{messages}{A list of messages comprising the conversation so far. You can also pass a oai_message object or a character vector.}
@@ -92,6 +102,8 @@ oai_delete_chat_completion(completion_id)
 \item{user}{Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{completion_id}{The ID of the chat completion to delete.}
 

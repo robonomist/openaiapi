@@ -17,6 +17,8 @@
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
 
 \item{stream}{not yet implemented.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 }
 \description{
 Common parameters

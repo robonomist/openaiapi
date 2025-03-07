@@ -31,7 +31,8 @@ oai_create_assistant <- function(model,
                                  temperature = NULL,
                                  top_p = NULL,
                                  response_format = NULL,
-                                 .classify_response = TRUE) {
+                                 .classify_response = TRUE,
+                                 .async = FALSE) {
   body <- list(
     model = model,
     name = name,
@@ -49,7 +50,8 @@ oai_create_assistant <- function(model,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -68,7 +70,8 @@ oai_modify_assistant <- function(assistant_id,
                                  temperature = NULL,
                                  top_p = NULL,
                                  response_format = NULL,
-                                 .classify_response = TRUE) {
+                                 .classify_response = TRUE,
+                                 .async = FALSE) {
   body <- list(
     model = model,
     name = name,
@@ -86,7 +89,8 @@ oai_modify_assistant <- function(assistant_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -118,11 +122,14 @@ oai_list_assistants <- function(limit = NULL,
 #' @param assistant_id Character. The ID of the assistant to retrieve.
 #' @rdname assistant_api
 #' @export
-oai_retrieve_assistant <- function(assistant_id, .classify_response = TRUE) {
+oai_retrieve_assistant <- function(assistant_id,
+                                   .classify_response = TRUE,
+                                   .async = FALSE) {
   oai_query(
     c("assistants", assistant_id),
     headers = openai_beta_header(),
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -130,11 +137,14 @@ oai_retrieve_assistant <- function(assistant_id, .classify_response = TRUE) {
 #' @rdname assistant_api
 #' @return Function `oai_delete_assistant()` returns the deletion status.
 #' @export
-oai_delete_assistant <- function(assistant_id) {
+oai_delete_assistant <- function(assistant_id,
+                                 .async = FALSE) {
   oai_query(
     c("assistants", assistant_id),
     headers = openai_beta_header(),
-    method = "DELETE"
+    method = "DELETE",
+    .classify_response = FALSE,
+    .async = .async
   )
 }
 
@@ -145,39 +155,41 @@ oai_delete_assistant <- function(assistant_id) {
 #' @param assistant_id Character. The ID of the assistant to retrieve.
 #' @param model Character. ID of the model to use. You can use the `oai_list_models()` to see all of your available models.
 #' @param resp List. The assistant's properties from the API response.
+#' @param .async Logical. If `TRUE`, requests are made asynchronously.
 #' @param ... Additional arguments passed to the `oai_*_assistant()` functions.
 #' @importFrom R6 R6Class
 #' @export
 Assistant <- R6Class(
   "Assistant",
   portable = FALSE,
+  inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = c("id", "name", "description", "model", "instructions",
+              "tools", "tool_resources", "metadata", "temperature",
+              "top_p", "response_format"),
+      as_time = c("created_at")
+    )
+  ),
   public = list(
     #' @description Initializes the OpenAI Assistant object. You must provide either an assistant ID or a model. If you provide an assistant ID, the assistant is retrieved from the API. If you provide a model, a new assistant is created, and `...` argument is used to pass additional arguments to the `oai_create_assistant()` function.
     #' @return An instance of the OpenAI_Assistant class.
     initialize = function(assistant_id = NULL,
                           model = NULL,
                           ...,
-                          resp = NULL) {
+                          resp = NULL,
+                          .async = FALSE) {
       if (!is.null(assistant_id)) {
         id <<- assistant_id
+        self$.async <- .async
         self$retrieve()
       } else if (!is.null(model)) {
-        args <- list(model = model, ...)
-        args$.classify_response <- FALSE
-        do.call(oai_create_assistant, args) |> initialize(resp = _)
+        args <- list(
+          model = model, ..., .classify_response = FALSE, .async = .async
+        )
+        do.call(oai_create_assistant, args) |> store_response()
       } else if (!is.null(resp)) {
-        id <<- resp$id
-        created_at <<- resp$created_at |> as_time()
-        name <<- resp$name
-        description <<- resp$description
-        model <<- resp$model
-        instructions <<- resp$instructions
-        tools <<- resp$tools
-        tool_resources <<- resp$tool_resources
-        metadata <<- resp$metadata
-        temperature <<- resp$temperature
-        top_p <<- resp$top_p
-        response_format <<- resp$response_format
+        store_response(resp)
       } else {
         cli_abort("You must provide either `assistant_id` or assistant specifications as in `oai_create_assistant()`.")
       }
@@ -206,28 +218,30 @@ Assistant <- R6Class(
     top_p = NULL,
     #' @field response_format The response format of the assistant.
     response_format = NULL,
+    #' @field .async Logical. If `TRUE`, requests are made asynchronously.
+    .async = FALSE,
     #' @description Modify the assistant's properties. The `...` argument is used to pass additional arguments to the `oai_modify_assistant()` function.
     modify = function(...) {
       args <- list(...)
       args$assistant_id <- self$id
       args$.classify_response <- FALSE
-      do.call(oai_modify_assistant, args) |> initialize(resp = _)
-      self
+      args$.async <- .async
+      do.call(oai_modify_assistant, args) |> store_response()
     },
     #' @description Retrieve the assistant's properties from the API.
     #'
     #' @return The up-to-date version of OpenAI_Assistant instance.
     retrieve = function() {
       oai_retrieve_assistant(
-        assistant_id = self$id, .classify_response = FALSE
-      ) |>
-        initialize(resp = _)
-      self
+        assistant_id = self$id,
+        .classify_response = FALSE,
+        .async = .async
+      ) |> store_response()
     },
     #' Delete the assistant
     #' @return Deletion status
     delete = function() {
-      oai_delete_assistant(assistant_id = self$id)
+      oai_delete_assistant(assistant_id = self$id, .async = .async)
     },
     #' Print the assistant's details
     #'

@@ -51,7 +51,8 @@ oai_create_chat_completion <- function(messages,
                                        tools_choice = NULL,
                                        parallel_tool_calls = NULL,
                                        user = NULL,
-                                       .classify_response = TRUE
+                                       .classify_response = TRUE,
+                                       .async = FALSE
                                        ) {
   if (inherits(messages, "oai_message")) {
     messages <- list(messages)
@@ -63,7 +64,8 @@ oai_create_chat_completion <- function(messages,
     ep = c("chat", "completions"),
     method = "POST",
     body = body,
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -72,11 +74,15 @@ oai_create_chat_completion <- function(messages,
 #' @param completion_id The ID of the chat completion to retrieve.
 #' @export
 #' @rdname chat_completion_api
-oai_get_chat_completion <- function(completion_id, .classify_response = TRUE) {
+oai_get_chat_completion <- function(completion_id,
+                                    .classify_response = TRUE,
+                                    .async = FALSE
+                                    ) {
   oai_query(
     ep = c("chat", "completions", completion_id),
     method = "GET",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -134,12 +140,17 @@ oai_list_chat_completions <- function(model = NULL,
 #' @param completion_id The ID of the chat completion to update.
 #' @export
 #' @rdname chat_completion_api
-oai_update_chat_completion <- function(completion_id, metadata, .classify_response = TRUE) {
+oai_update_chat_completion <- function(completion_id,
+                                       metadata,
+                                       .classify_response = TRUE,
+                                        .async = FALSE
+                                       ) {
   oai_query(
     ep = c("chat", "completions", completion_id),
     method = "PATCH",
     body = list(metadata = metadata),
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -148,10 +159,12 @@ oai_update_chat_completion <- function(completion_id, metadata, .classify_respon
 #' @return `oai_delete_chat_completion()` returns a deletion confirmation object.
 #' @export
 #' @rdname chat_completion_api
-oai_delete_chat_completion <- function(completion_id) {
+oai_delete_chat_completion <- function(completion_id, .async = FALSE) {
   oai_query(
     ep = c("chat", "completions", completion_id),
-    method = "DELETE"
+    method = "DELETE",
+    .classify_response = FALSE,
+    .async = .async
   )
 }
 
@@ -164,25 +177,33 @@ oai_delete_chat_completion <- function(completion_id) {
 ChatCompletion <- R6Class(
   "ChatCompletion",
   portable = FALSE,
+    inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = c("id", "choices", "model", "service_tier", "system_fingerprint", "usage"),
+      as_time = c("created")
+    )
+  ),
   public = list(
     #' @description Initialize a ChatCompletion object.
     #' @param resp A response object.
-    initialize = function(completion_id = NULL, messages = NULL, ..., resp = NULL) {
+    initialize = function(completion_id = NULL,
+                          messages = NULL, ...,
+                          resp = NULL,
+                          .async = FALSE
+                          ) {
       if (!is.null(completion_id)) {
         id <<- completion_id
+        .async <<- .async
         self$get()
       } else if (!is.null(messages)) {
         args <- list(messages = messages, ...)
         args$.classify_response <- FALSE
-        do.call(oai_create_chat_completion, args)
+        args$.async <- .async
+        do.call(oai_create_chat_completion, args) |>
+          store_response()
       } else if (!is.null(resp)) {
-        id <<- resp$id
-        choices <<- resp$choices
-        created <<- resp$created |> as_time()
-        model <<- resp$model
-        service_tier <<- resp$service_tier
-        system_fingerprint <<- resp$system_fingerprint
-        usage <<- resp$usage
+        store_response(resp)
       }
     },
     #' @field id A unique identifier for the chat completion.
@@ -200,12 +221,11 @@ ChatCompletion <- R6Class(
     #' @field usage Usage statistics for the completion request.
     usage = NULL,
     #' @description Get the chat completion object.
+    .async = FALSE,
     get = function() {
       oai_get_chat_completion(
-        completion_id = self$id, .classify_response = FALSE
-      ) |>
-        initialize(resp = _)
-      self
+        completion_id = self$id, .classify_response = FALSE, .async = .async
+      ) |> store_response()
     },
     #' @description Update the chat completion object.
     #' @param metadata List of key-value pairs.
@@ -213,18 +233,17 @@ ChatCompletion <- R6Class(
       oai_update_chat_completion(
         completion_id = self$id,
         metadata = metadata,
-        .classify_response = FALSE
-      ) |>
-        initialize(resp = _)
-      self
+        .classify_response = FALSE,
+        .async = .async
+      ) |> store_response()
     },
     #' @description Delete the chat completion object.
     delete = function() {
-      oai_delete_chat_completion(completion_id = self$id)
+      oai_delete_chat_completion(completion_id = self$id, .async = .async)
     },
     #' @description Get the messages in the chat completion.
-    get_messages = function(...) {
-      oai_get_chat_messages(...)
+    get_chat_messages = function(...) {
+      oai_get_chat_messages(completion_id = self$id, ..., .async = .async)
     },
     #' @description Get the messages in the chat completion.
     content_text = function() {

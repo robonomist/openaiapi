@@ -20,7 +20,8 @@ oai_create_assistant(
   temperature = NULL,
   top_p = NULL,
   response_format = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_modify_assistant(
@@ -35,7 +36,8 @@ oai_modify_assistant(
   temperature = NULL,
   top_p = NULL,
   response_format = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_list_assistants(
@@ -46,9 +48,9 @@ oai_list_assistants(
   .classify_response = TRUE
 )
 
-oai_retrieve_assistant(assistant_id, .classify_response = TRUE)
+oai_retrieve_assistant(assistant_id, .classify_response = TRUE, .async = FALSE)
 
-oai_delete_assistant(assistant_id)
+oai_delete_assistant(assistant_id, .async = FALSE)
 }
 \arguments{
 \item{model}{Character. ID of the model to use. You can use the \code{oai_list_models()} to see all of your available models.}
@@ -72,6 +74,8 @@ oai_delete_assistant(assistant_id)
 \item{response_format}{Character or List. Optional. Specifies the format that the model must output. Compatible with GPT-4o, GPT-4 Turbo, and all GPT-3.5 Turbo models since gpt-3.5-turbo-1106. Setting to \code{list(type = "json_object")} enables JSON mode, which guarantees the message the model generates is valid JSON. Important: when using JSON mode, you must also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly "stuck" request. Also note that the message content may be partially cut off if finish_reason="length", which indicates the generation exceeded max_tokens or the conversation exceeded the max context length.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{assistant_id}{Character. The ID of the assistant to retrieve.}
 

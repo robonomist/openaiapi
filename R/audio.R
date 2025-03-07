@@ -20,7 +20,8 @@ oai_create_speech <- function(input,
                               model = c("tts-1", "tts-1-hd"),
                               voice = c("alloy", "ash", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer"),
                               response_format = c("mp3", "opus", "aac", "flac", "wav", "pcm"),
-                              speed = NULL) {
+                              speed = NULL,
+                              .async= FALSE) {
   model <- match.arg(model)
   voice <- match.arg(voice)
   if (missing(response_format)) {
@@ -38,9 +39,9 @@ oai_create_speech <- function(input,
     ep = c("audio", "speech"),
     method = "POST",
     body = body,
-    path = path
+    path = path,
+    .async = .async
   )
-  path
 }
 
 #' @description * `oai_create_transcription()`: Transcribes audio into the input language.
@@ -63,7 +64,8 @@ oai_create_transcription <- function(file,
                                      temperature = NULL,
                                      timestamp_granularities = NULL,
                                      name = NULL,
-                                     .classify_response = TRUE) {
+                                     .classify_response = TRUE,
+                                     .async = FALSE) {
   response_format <- match.arg(response_format)
   body <- list(
     file = form_file(file, name = name),
@@ -81,7 +83,8 @@ oai_create_transcription <- function(file,
     body = body,
     encode = "multipart",
     headers = list("Content-Type" = "multipart/form-data"),
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -100,7 +103,8 @@ oai_create_translation <- function(file,
                                    response_format = c("json", "text", "srt", "verbose_json", "vtt"),
                                    temperature = NULL,
                                    name = NULL,
-                                   .classify_response = TRUE
+                                   .classify_response = TRUE,
+                                    .async = FALSE
                                    ) {
   response_format <- match.arg(response_format)
   body <- list(
@@ -117,7 +121,8 @@ oai_create_translation <- function(file,
     body = body,
     encode = "multipart",
     headers = list("Content-Type" = "multipart/form-data"),
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 

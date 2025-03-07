@@ -8,6 +8,9 @@ ChatCompletion R6 class
 
 ChatCompletion R6 class
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{ChatCompletion}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -34,18 +37,31 @@ ChatCompletion R6 class
 \item \href{#method-ChatCompletion-get}{\code{ChatCompletion$get()}}
 \item \href{#method-ChatCompletion-update}{\code{ChatCompletion$update()}}
 \item \href{#method-ChatCompletion-delete}{\code{ChatCompletion$delete()}}
-\item \href{#method-ChatCompletion-get_messages}{\code{ChatCompletion$get_messages()}}
+\item \href{#method-ChatCompletion-get_chat_messages}{\code{ChatCompletion$get_chat_messages()}}
 \item \href{#method-ChatCompletion-content_text}{\code{ChatCompletion$content_text()}}
 \item \href{#method-ChatCompletion-clone}{\code{ChatCompletion$clone()}}
 }
 }
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ChatCompletion-new"></a>}}
 \if{latex}{\out{\hypertarget{method-ChatCompletion-new}{}}}
 \subsection{Method \code{new()}}{
 Initialize a ChatCompletion object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$new(completion_id = NULL, messages = NULL, ..., resp = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$new(
+  completion_id = NULL,
+  messages = NULL,
+  ...,
+  resp = NULL,
+  .async = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -100,12 +116,12 @@ Delete the chat completion object.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ChatCompletion-get_messages"></a>}}
-\if{latex}{\out{\hypertarget{method-ChatCompletion-get_messages}{}}}
-\subsection{Method \code{get_messages()}}{
+\if{html}{\out{<a id="method-ChatCompletion-get_chat_messages"></a>}}
+\if{latex}{\out{\hypertarget{method-ChatCompletion-get_chat_messages}{}}}
+\subsection{Method \code{get_chat_messages()}}{
 Get the messages in the chat completion.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$get_messages(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$get_chat_messages(...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

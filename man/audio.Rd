@@ -13,7 +13,8 @@ oai_create_speech(
   model = c("tts-1", "tts-1-hd"),
   voice = c("alloy", "ash", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer"),
   response_format = c("mp3", "opus", "aac", "flac", "wav", "pcm"),
-  speed = NULL
+  speed = NULL,
+  .async = FALSE
 )
 
 oai_create_transcription(
@@ -25,7 +26,8 @@ oai_create_transcription(
   temperature = NULL,
   timestamp_granularities = NULL,
   name = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_create_translation(
@@ -35,7 +37,8 @@ oai_create_translation(
   response_format = c("json", "text", "srt", "verbose_json", "vtt"),
   temperature = NULL,
   name = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 }
 \arguments{
@@ -50,6 +53,8 @@ oai_create_translation(
 \item{response_format}{Character. The format of the output, in one of these options: json, text, srt, verbose_json, or vtt.}
 
 \item{speed}{Numeric. The speed of the generated audio. Select a value from 0.25 to 4.0. 1.0 is the default.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{file}{Character. The audio file object (not file name) translate, in one of these formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.}
 
