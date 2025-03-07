@@ -18,7 +18,8 @@ oai_create_fine_tuning_job(
   validation_file = NULL,
   integrations = NULL,
   seed = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_list_fine_tuning_jobs(
@@ -41,9 +42,17 @@ oai_list_fine_tuning_checkpoints(
   .classify_response = TRUE
 )
 
-oai_get_fine_tuning_job(fine_tuning_job_id, .classify_response = TRUE)
+oai_get_fine_tuning_job(
+  fine_tuning_job_id,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 
-oai_cancel_fine_tuning(fine_tuning_job_id, .classify_response = TRUE)
+oai_cancel_fine_tuning(
+  fine_tuning_job_id,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 }
 \arguments{
 \item{model}{The name of the model to fine-tune. You can select one of the supported models.}
@@ -61,6 +70,8 @@ oai_cancel_fine_tuning(fine_tuning_job_id, .classify_response = TRUE)
 \item{seed}{The seed controls the reproducibility of the job. Passing in the same seed and job parameters should produce the same results, but may differ in rare cases. If a seed is not specified, one will be generated for you.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{after}{Identifier for the last checkpoint ID from the previous pagination request.}
 

@@ -174,10 +174,11 @@ oai_delete_chat_completion <- function(completion_id, .async = FALSE) {
 #' @param completion_id A unique identifier for the chat completion.
 #' @param messages A list of messages comprising the conversation so far.
 #' @param ... Additional parameters passed to API functions
+#' @param .async Logical. If TRUE, the API call will be asynchronous.
 ChatCompletion <- R6Class(
   "ChatCompletion",
   portable = FALSE,
-    inherit = Utils,
+  inherit = Utils,
   private = list(
     schema = list(
       as_is = c("id", "choices", "model", "service_tier", "system_fingerprint", "usage"),
@@ -221,7 +222,6 @@ ChatCompletion <- R6Class(
     #' @field usage Usage statistics for the completion request.
     usage = NULL,
     #' @description Get the chat completion object.
-    .async = FALSE,
     get = function() {
       oai_get_chat_completion(
         completion_id = self$id, .classify_response = FALSE, .async = .async

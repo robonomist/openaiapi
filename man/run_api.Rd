@@ -31,7 +31,8 @@ oai_create_run(
   truncation_strategy = NULL,
   tool_choice = NULL,
   response_format = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_create_thread_and_run(
@@ -49,7 +50,9 @@ oai_create_thread_and_run(
   max_completion_tokens = NULL,
   truncation_strategy = NULL,
   tool_choice = NULL,
-  response_format = NULL
+  response_format = NULL,
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_list_runs(
@@ -71,20 +74,33 @@ oai_list_run_steps(
   .classify_response = TRUE
 )
 
-oai_retrieve_run(thread_id, run_id, .classify_response = TRUE)
+oai_retrieve_run(thread_id, run_id, .classify_response = TRUE, .async = FALSE)
 
-oai_retrieve_run_step(thread_id, run_id, step_id)
+oai_retrieve_run_step(
+  thread_id,
+  run_id,
+  step_id,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 
-oai_modify_run(thread_id, run_id, metadata = NULL, .classify_response = TRUE)
+oai_modify_run(
+  thread_id,
+  run_id,
+  metadata = NULL,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 
-oai_cancel_run(thread_id, run_id, .classify_response = TRUE)
+oai_cancel_run(thread_id, run_id, .async = FALSE)
 
 oai_submit_tool_outputs(
   thread_id,
   run_id,
   tool_outputs,
   stream = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_tool_output(tool_call_id, output)
@@ -123,6 +139,8 @@ oai_tool_output(tool_call_id, output)
 \item{response_format}{Character. Specifies the format that the model must output. Compatible with GPT-4o, GPT-4 Turbo, and all GPT-3.5 Turbo models since gpt-3.5-turbo-1106.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{thread}{List. A named list of thread parameters: "messages" (List), "tool_resources" (List), "metadata" (List).}
 

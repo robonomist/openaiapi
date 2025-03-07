@@ -8,6 +8,9 @@ Run R6 class
 
 Run R6 class
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{Run}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -87,7 +90,14 @@ Run R6 class
 \subsection{Method \code{new()}}{
 Initialize a Run object. If \code{thread_id} and \code{run_id} are provided, the Run object is initialized with the corresponding run. If \code{thread_id} and \code{assistant_id} are provided, a new run is created.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Run$new(thread_id = NULL, run_id = NULL, assistant_id = NULL, ..., resp = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Run$new(
+  thread_id = NULL,
+  run_id = NULL,
+  assistant_id = NULL,
+  ...,
+  resp = NULL,
+  .async = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -102,6 +112,8 @@ Initialize a Run object. If \code{thread_id} and \code{run_id} are provided, the
 \item{\code{...}}{Additional arguments passed to the API function.}
 
 \item{\code{resp}}{Response object.}
+
+\item{\code{.async}}{Logical. If TRUE, the API call will be asynchronous.}
 }
 \if{html}{\out{</div>}}
 }

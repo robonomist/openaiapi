@@ -16,7 +16,8 @@ oai_create_message(
   role = c("user", "assistant"),
   attachments = NULL,
   metadata = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_attachment(file_id, tools = c("code_interpreter", "file_search"))
@@ -30,16 +31,22 @@ oai_list_messages(
   .classify_response = TRUE
 )
 
-oai_retrieve_message(thread_id, message_id, .classify_response = TRUE)
+oai_retrieve_message(
+  thread_id,
+  message_id,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 
 oai_modify_message(
   thread_id,
   message_id,
   metadata = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
-oai_delete_message(thread_id, message_id)
+oai_delete_message(thread_id, message_id, .async = FALSE)
 }
 \arguments{
 \item{thread_id}{Character. The ID of the thread.}
@@ -53,6 +60,8 @@ oai_delete_message(thread_id, message_id)
 \item{metadata}{List or NULL. Optional. Metadata to include with the message.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{file_id}{Character. The ID of the file.}
 

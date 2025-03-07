@@ -11,7 +11,8 @@ oai_create_embeddings(
   encoding_format = c("float", "base64"),
   dimensions = NULL,
   user = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ oai_create_embeddings(
 \item{user}{Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 }
 \value{
 A list of Embedding R6 objects.

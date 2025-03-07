@@ -13,7 +13,8 @@ oai_upload_file(
   path,
   purpose = c("assistants", "vision", "batch", "fine-tune"),
   name = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_list_files(
@@ -24,11 +25,11 @@ oai_list_files(
   .classify_response = TRUE
 )
 
-oai_retrieve_file(file_id, .classify_response = TRUE)
+oai_retrieve_file(file_id, .classify_response = TRUE, .async = FALSE)
 
-oai_delete_file(file_id)
+oai_delete_file(file_id, .async = FALSE)
 
-oai_retrieve_file_content(file_id, path)
+oai_retrieve_file_content(file_id, path, .async = FALSE)
 }
 \arguments{
 \item{path}{Character. The path to the file to upload.}
@@ -38,6 +39,8 @@ oai_retrieve_file_content(file_id, path)
 \item{name}{Character. Optional. The name of the file. If not provided, the file name will be used.}
 
 \item{.classify_response}{Logical. Whether to classify the response as an R6 object.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{limit}{Integer. Optional. The maximum number of files to list. Defaults to 10,000.}
 

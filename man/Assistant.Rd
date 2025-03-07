@@ -35,8 +35,6 @@ This class provides methods to interact with the OpenAI Assistant API.
 \item{\code{top_p}}{An alternative to sampling with temperature, called nucleus sampling.}
 
 \item{\code{response_format}}{The response format of the assistant.}
-
-\item{\code{.async}}{Logical. If \code{TRUE}, requests are made asynchronously.}
 }
 \if{html}{\out{</div>}}
 }
@@ -52,13 +50,6 @@ This class provides methods to interact with the OpenAI Assistant API.
 \item \href{#method-Assistant-clone}{\code{Assistant$clone()}}
 }
 }
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
-</ul>
-</details>
-}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Assistant-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Assistant-new}{}}}

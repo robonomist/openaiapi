@@ -3,6 +3,9 @@ Utils <- R6Class(
   "Utils",
   portable = FALSE,
   public = list(
+    .async = FALSE
+  ),
+  private = list(
     store_response = function(resp) {
       if (is.promise(resp)) {
         p <- resp$then(function(x) {
@@ -18,13 +21,15 @@ Utils <- R6Class(
       for (name in schema$as_time) {
         self[[name]] <- resp[[name]] |> as_time()
       }
+      for (name in schema$unlist) {
+        self[[name]] <- resp[[name]] |> unlist(use.names = FALSE)
+      }
       self
-    }
-  ),
-  private = list(
+    },
     schema = list(
       as_is = character(),
-      as_time = character()
+      as_time = character(),
+      unlist = character()
     )
   )
 )

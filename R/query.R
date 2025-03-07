@@ -92,11 +92,14 @@ as_oai_promise <- function(p) {
 #' @export
 `$.oai_promise` <- function(x, name) {
   if (name %in% names(x)) {
+    ## Regular promise methods: then, catch, finally
     x[[name]]
   } else {
     function(...) {
+      args <- list(...)
+      env <- caller_env()
       x$then(function(y) {
-        y[[name]](...)
+        do.call(y[[name]], args, envir = env)
       }) |> as_oai_promise()
     }
   }

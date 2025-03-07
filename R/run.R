@@ -39,7 +39,8 @@ oai_create_run <- function(thread_id,
                            truncation_strategy = NULL,
                            tool_choice = NULL,
                            response_format = NULL,
-                           .classify_response = TRUE) {
+                           .classify_response = TRUE,
+                           .async = FALSE) {
   body <- list(
     assistant_id = assistant_id,
     model = model,
@@ -61,7 +62,8 @@ oai_create_run <- function(thread_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -84,7 +86,9 @@ oai_create_thread_and_run <- function(assistant_id,
                                       max_completion_tokens = NULL,
                                       truncation_strategy = NULL,
                                       tool_choice = NULL,
-                                      response_format = NULL) {
+                                      response_format = NULL,
+                                      .classify_response = TRUE,
+                                      .async = FALSE) {
   if (inherits(thread, "oai_message") || is.character(thread)) {
     thread <- oai_thread(thread)
   }
@@ -109,7 +113,9 @@ oai_create_thread_and_run <- function(assistant_id,
     c("threads", "runs"),
     headers = openai_beta_header(),
     body = body,
-    method = "POST"
+    method = "POST",
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -149,7 +155,7 @@ oai_list_run_steps <- function(thread_id,
                                order = NULL,
                                after = NULL,
                                before = NULL,
-                                .classify_response = TRUE) {
+                               .classify_response = TRUE) {
   query <- list(
     limit = as.integer(limit),
     order = order,
@@ -168,11 +174,14 @@ oai_list_run_steps <- function(thread_id,
 #' @description * `oai_retrieve_run()`: Retrieve a run.
 #' @export
 #' @rdname run_api
-oai_retrieve_run <- function(thread_id, run_id, .classify_response = TRUE) {
+oai_retrieve_run <- function(thread_id, run_id,
+                             .classify_response = TRUE,
+                             .async = FALSE) {
   oai_query(
     c("threads", thread_id, "runs", run_id),
     headers = openai_beta_header(),
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -181,10 +190,14 @@ oai_retrieve_run <- function(thread_id, run_id, .classify_response = TRUE) {
 #' @return `oai_retrieve_run_step()` returns a `RunStep` object.
 #' @export
 #' @rdname run_api
-oai_retrieve_run_step <- function(thread_id, run_id, step_id) {
+oai_retrieve_run_step <- function(thread_id, run_id, step_id,
+                                  .classify_response = TRUE,
+                                  .async = FALSE) {
   oai_query(
     c("threads", thread_id, "runs", run_id, "steps", step_id),
-    headers = openai_beta_header()
+    headers = openai_beta_header(),
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -194,7 +207,8 @@ oai_retrieve_run_step <- function(thread_id, run_id, step_id) {
 oai_modify_run <- function(thread_id,
                            run_id,
                            metadata = NULL,
-                           .classify_response = TRUE) {
+                           .classify_response = TRUE,
+                            .async = FALSE) {
   body <- list(
     metadata = metadata
   ) |> compact()
@@ -203,7 +217,8 @@ oai_modify_run <- function(thread_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -212,12 +227,13 @@ oai_modify_run <- function(thread_id,
 #' @rdname run_api
 oai_cancel_run <- function(thread_id,
                            run_id,
-                           .classify_response = TRUE) {
+                           .async = FALSE) {
   oai_query(
     c("threads", thread_id, "runs", run_id, "cancel"),
     headers = openai_beta_header(),
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = FALSE,
+    .async = .async
   )
 }
 
@@ -229,7 +245,8 @@ oai_submit_tool_outputs <- function(thread_id,
                                     run_id,
                                     tool_outputs,
                                     stream = NULL,
-                                    .classify_response = TRUE) {
+                                    .classify_response = TRUE,
+                                    .async = FALSE) {
   body <- list(
     tool_outputs = tool_outputs
   )
@@ -238,7 +255,8 @@ oai_submit_tool_outputs <- function(thread_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -265,6 +283,7 @@ oai_tool_output <- function(tool_call_id, output) {
 #' @param env Environment to evaluate tool calls.
 #' @param tool_outputs Tool outputs.
 #' @param ... Additional arguments passed to the API function.
+#' @param .async Logical. If TRUE, the API call will be asynchronous.
 #' @importFrom jsonlite fromJSON
 #' @importFrom R6 R6Class
 #' @importFrom later later
@@ -273,20 +292,23 @@ oai_tool_output <- function(tool_call_id, output) {
 Run <- R6Class(
   "Run",
   portable = FALSE,
+  inherit = Utils,
   public = list(
     #' @description Initialize a Run object. If `thread_id` and `run_id` are provided, the Run object is initialized with the corresponding run. If `thread_id` and `assistant_id` are provided, a new run is created.
     initialize = function(thread_id = NULL,
                           run_id = NULL,
                           assistant_id = NULL,
                           ...,
-                          resp = NULL) {
+                          resp = NULL,
+                          .async = FALSE) {
       if (!is.null(thread_id) & !is.null(run_id)) {
         oai_retrieve_run(
           thread_id = tread_id,
           run_id = run_id,
-          .classify_response = FALSE
+          .classify_response = FALSE,
+          .async = .async
         ) |>
-          self$initialize(resp = _)
+          store_response()
       } else if (!is.null(thread_id) & !is.null(assistant_id)) {
         if (inherits(thread_id, "Thread")) {
           thread_id <- thread_id$id
@@ -298,35 +320,12 @@ Run <- R6Class(
           thread_id = thread_id,
           assistant_id = assistant_id,
           ...,
-          .classify_response = FALSE
+          .classify_response = FALSE,
+          .async = .async
         ) |>
-          self$initialize(resp = _)
+          store_response()
       } else if (!is.null(resp)) {
-        id <<- resp$id
-        created_at <<- resp$created_at |> as_time()
-        thread_id <<- resp$thread_id
-        assistant_id <<- resp$assistant_id
-        status <<- resp$status
-        required_action <<- resp$required_action
-        last_error <<- resp$last_error
-        expires_at <<- resp$expires_at |> as_time()
-        started_at <<- resp$started_at |> as_time()
-        cancelled_at <<- resp$cancelled_at |> as_time()
-        failed_at <<- resp$failed_at |> as_time()
-        completed_at <<- resp$completed_at |> as_time()
-        incomplete_details <- resp$incomplete_details
-        model <<- resp$model
-        instructions <<- resp$instructions
-        tools <<- resp$tools
-        metadata <<- resp$metadata
-        usage <<- resp$usage
-        temperature <<- resp$temperature
-        top_p <<- resp$top_p
-        max_prompt_tokens <<- resp$max_prompt_tokens
-        max_completion_tokens <<- resp$max_completion_tokens
-        truncation_strategy <<- resp$truncation_strategy
-        tool_choice <<- resp$tool_choice
-        response_format <<- resp$response_format
+        store_response(resp)
       } else {
         cli_abort("Must provide either 'thread_id' and 'run_id' or 'thread_id' and 'assistant_id'!")
       }
@@ -395,33 +394,38 @@ Run <- R6Class(
       oai_retrieve_run(
         thread_id = self$thread_id,
         run_id = self$id,
-        .classify_response = FALSE
-      ) |> initialize(resp = _)
-      self
+        .classify_response = FALSE,
+        .async = .async
+      ) |>
+        store_response()
     },
     #' @description Retrieve the up-to-date status of the run.
     retrieve_status = function() {
-      self$retrieve()$status
+      if (.async) {
+        retrieve() |> then(function(x) x$status)
+      } else {
+        self$retrieve()$status
+      }
     },
     #' @description Modify the metadata of the run.
     modify = function(...) {
       oai_modify_run(
         thread_id = self$thread_id,
         run_id = self$id,
-        ..., .classify_response = FALSE,
         ...,
-        .classify_response = FALSE
-      ) |> initialize(resp = _)
-      self
+        .classify_response = FALSE,
+        .async = .async
+      ) |> store_response()
     },
     #' @description Cancel the run.
     cancel = function() {
       oai_cancel_run(
         thread_id = self$thread_id,
         run_id = self$id,
-        .classify_response = FALSE
-      ) |> initialize(resp = _)
-      self
+        .classify_response = FALSE,
+        .async = .async
+      ) |>
+        store_response()
     },
     #' @description Submit tool outputs.
     submit_tool_outputs = function(tool_outputs) {
@@ -429,9 +433,10 @@ Run <- R6Class(
         thread_id = self$thread_id,
         run_id = self$id,
         tool_outputs = tool_outputs,
-        .classify_response = FALSE
-      ) |> initialize(resp = _)
-      self
+        .classify_response = FALSE,
+        .async = .async
+      ) |>
+        store_response()
     },
     #' @description Wait for the run to complete.
     wait = function(env = parent.frame()) {
@@ -466,6 +471,7 @@ Run <- R6Class(
     },
     #' @description Perform tool calls asynchronously. Returns a promise.
     await = function(env = parent.frame()) {
+      .async <<- TRUE
       start_time <- Sys.time()
       sandbox_env <- make_sanbox_env(env)
       promise(function(resolve, reject) {
@@ -476,25 +482,26 @@ Run <- R6Class(
             reject("Run took too long to complete.")
           }
           later(function() {
-            s <- self$retrieve_status()
-            if (s %in% c("queued", "in_progress", "cancelling")) {
-              ## Wait for the run to complete.
-              handle_calls()
-            } else if (s %in% c("failed", "cancelled", "expired")) {
-              ## Throw an error if the run failed.
-              reject(paste("Run ended with status", s))
-            } else if (s == "requires_action") {
-              ## Perform the required action.
-              self$do_tool_calls(sandbox_env) |>
-                self$submit_tool_outputs() |>
-                self$initialize(resp = _)
-              handle_calls()
-            } else if (s == "completed") {
-              ## Return the run object when completed.
-              resolve(self)
-            } else {
-              reject(paste("Run has unknown status", s))
-            }
+            self$retrieve_status() |> then(function(s) {
+              if (s %in% c("queued", "in_progress", "cancelling")) {
+                ## Wait for the run to complete.
+                handle_calls()
+              } else if (s %in% c("failed", "cancelled", "expired")) {
+                ## Throw an error if the run failed.
+                reject(paste("Run ended with status", s))
+              } else if (s == "requires_action") {
+                ## Perform the required action.
+                self$do_tool_calls(sandbox_env) |>
+                  self$submit_tool_outputs() |>
+                  store_response() |>
+                  then(handle_calls)
+              } else if (s == "completed") {
+                ## Return the run object when completed.
+                resolve(self)
+              } else {
+                reject(paste("Run has unknown status", s))
+              }
+            })
           },
           delay = getOption("openaiapi.poll_interval", 1)
           )
@@ -545,6 +552,19 @@ Run <- R6Class(
     }
   ),
   private = list(
+    schema = list(
+      as_is = c(
+        "id", "thread_id", "assistant_id", "status",
+        "required_action", "last_error", "incomplete_details",
+        "model", "instructions", "tools", "metadata", "usage",
+        "temperature", "top_p", "max_prompt_tokens", "max_completion_tokens",
+        "truncation_strategy", "tool_choice", "response_format"
+      ),
+      as_time = c(
+        "created_at", "expires_at", "started_at", "cancelled_at",
+        "failed_at", "completed_at"
+      )
+    ),
     make_sanbox_env = function(env) {
       function_tool_names <- sapply(tools, function(x) x$`function`$name)
       if (length(function_tool_names) == 0) {

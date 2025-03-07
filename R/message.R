@@ -21,7 +21,8 @@ oai_create_message <- function(thread_id,
                                role = c("user", "assistant"),
                                attachments = NULL,
                                metadata = NULL,
-                               .classify_response = TRUE) {
+                               .classify_response = TRUE,
+                                .async = FALSE) {
   body <- list(
     role = match.arg(role),
     content = content,
@@ -33,7 +34,8 @@ oai_create_message <- function(thread_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -71,11 +73,13 @@ oai_list_messages <- function(thread_id,
 #' @rdname message_api
 oai_retrieve_message <- function(thread_id,
                                  message_id,
-                                 .classify_response = TRUE) {
+                                 .classify_response = TRUE,
+                                 .async = FALSE) {
   oai_query(
     c("threads", thread_id, "messages", message_id),
     headers = openai_beta_header(),
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -85,7 +89,8 @@ oai_retrieve_message <- function(thread_id,
 oai_modify_message <- function(thread_id,
                                message_id,
                                metadata = NULL,
-                               .classify_response = TRUE) {
+                               .classify_response = TRUE,
+                                .async = FALSE) {
   body <- list(
     metadata = metadata
   ) |> compact()
@@ -94,7 +99,8 @@ oai_modify_message <- function(thread_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -102,11 +108,13 @@ oai_modify_message <- function(thread_id,
 #' @return `oai_delete_message()` returns the deletion status.
 #' @export
 #' @rdname message_api
-oai_delete_message <- function(thread_id, message_id) {
+oai_delete_message <- function(thread_id, message_id, .async = FALSE) {
   oai_query(
     c("threads", thread_id, "messages", message_id),
     headers = openai_beta_header(),
-    method = "DELETE"
+    method = "DELETE",
+    .classify_response = FALSE,
+    .async = .async
   )
 }
 
@@ -128,41 +136,43 @@ oai_delete_message <- function(thread_id, message_id) {
 #' @param thread_id Character. The ID of the thread.
 #' @param resp List. The response from the OpenAI API.
 #' @param ... Additional parameters passed to the API call.
+#' @param .async Logical. If TRUE, the API call will be asynchronous.
 #' @export
 #' @importFrom R6 R6Class
 Message <- R6Class(
   "Message",
   portable = FALSE,
+  inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = c("id", "thread_id", "status", "incomplete_details", "role",
+                "content", "assistant_id", "run_id", "attachments",
+                "metadata"),
+      as_time = c("created_at", "completed_at", "incomplete_at")
+    )
+  ),
   public = list(
     #' @description Initialize a Message object.
     initialize = function(message_id = NULL,
                           thread_id = NULL,
                           ...,
-                          resp = NULL) {
+                          resp = NULL,
+                          .async = FALSE) {
       if (!is.null(resp)) {
-        id <<- resp$id
-        created_at <<- resp$created_at |> as_time()
-        thread_id <<- resp$thread_id
-        status <<- resp$status
-        incomplete_details <<- resp$incomplete_details
-        completed_at <<- resp$completed_at |> as_time()
-        incomplete_at <<- resp$incomplete_at |> as_time()
-        role <<- resp$role
-        content <<- resp$content
-        assistant_id <<- resp$assistant_id
-        run_id <<- resp$run_id
-        attachments <<- resp$attachments
-        metadata <<- resp$metadata
+        store_response(resp)
       } else if (!is.null(message_id)) {
         oai_retrieve_message(
-          message_id, .classify_response = FALSE, ...
+          message_id, .classify_response = FALSE, ...,
+          .async = .async
         ) |>
-          initialize(resp = _)
+          store_response()
       } else if (!is.null(thread_id)) {
         oai_create_message(
-          thread_id, ..., .classify_response = FALSE
+          thread_id, ...,
+          .classify_response = FALSE,
+          .async = .async
         ) |>
-          initialize(resp = _)
+          store_response()
       } else {
         cli_abort("Either `message_id` or `thread_id` must be provided.")
       }
@@ -185,9 +195,10 @@ Message <- R6Class(
       oai_retrieve_message(
         thread_id = self$thread_id,
         message_id = self$id,
-        .classify_response = FALSE) |>
-        initialize(resp = _)
-      self
+        .classify_response = FALSE,
+        .async = .async
+      ) |>
+        store_response()
     },
     #' @description Modify the message metadata.
     modify = function(...) {
@@ -195,15 +206,17 @@ Message <- R6Class(
         thread_id = self$thread_id,
         message_id = self$message_id,
         ...,
-        .classify_response = FALSE) |>
-        initialize(resp = _)
-      self
+        .classify_response = FALSE,
+        .async = .async
+      ) |>
+        store_response()
     },
     #' @description Delete the message.
     delete = function() {
       oai_delete_message(
         thread_id = self$thread_id,
-        message_id = self$id
+        message_id = self$id,
+        .async = .async
       )
     },
     #' @description Get the text content of the message.
@@ -215,12 +228,13 @@ Message <- R6Class(
     },
     #' @description Get the thread this message belongs to.
     thread = function() {
-      oai_retrieve_thread(thread_id = self$thread_id)
+      oai_retrieve_thread(thread_id = self$thread_id, .async = .async)
     },
     #' @description Get the assistant if applicable.
     assistant = function() {
       if (!is.null(self$assistant_id)) {
-        oai_retrieve_assistant(assistant_id = self$assistant_id)
+        oai_retrieve_assistant(assistant_id = self$assistant_id,
+                               .async = .async)
       }
     }
   )

@@ -11,6 +11,9 @@ OpenAI File Interface
 \details{
 This class provides methods to interact with files in the OpenAI API.
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{File}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -43,7 +46,7 @@ Retrieve the file's properties from the API}
 \subsection{Method \code{new()}}{
 Initializes the File object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{File$new(file_id = NULL, path = NULL, ..., resp = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{File$new(file_id = NULL, path = NULL, ..., resp = NULL, .async = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -56,6 +59,8 @@ Initializes the File object
 \item{\code{...}}{Additional arguments passed to the API functions.}
 
 \item{\code{resp}}{A list containing the file properties from the API response.}
+
+\item{\code{.async}}{Logical. If TRUE, the function will return a promise.}
 }
 \if{html}{\out{</div>}}
 }

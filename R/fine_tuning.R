@@ -25,7 +25,8 @@ oai_create_fine_tuning_job <- function(model,
                                        validation_file = NULL,
                                        integrations = NULL,
                                        seed = NULL,
-                                       .classify_response = TRUE) {
+                                       .classify_response = TRUE,
+                                        .async = FALSE) {
   body <- list(
     model = model,
     training_file = training_file,
@@ -39,7 +40,8 @@ oai_create_fine_tuning_job <- function(model,
     ep = c("fine_tuning", "jobs"),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -114,11 +116,13 @@ oai_list_fine_tuning_checkpoints <- function(fine_tuning_job_id,
 #' @export
 #' @rdname fine_tuning_api
 oai_get_fine_tuning_job <- function(fine_tuning_job_id,
-                                    .classify_response = TRUE) {
+                                    .classify_response = TRUE,
+                                    .async = FALSE) {
   oai_query(
     ep = c("fine_tuning", "jobs", fine_tuning_job_id),
     method = "GET",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -126,11 +130,13 @@ oai_get_fine_tuning_job <- function(fine_tuning_job_id,
 #' @export
 #' @rdname fine_tuning_api
 oai_cancel_fine_tuning <- function(fine_tuning_job_id,
-                                  .classify_response = TRUE) {
+                                   .classify_response = TRUE,
+                                    .async = FALSE) {
   oai_query(
     ep = c("fine_tuning", "jobs", fine_tuning_job_id, "cancel"),
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -140,6 +146,7 @@ oai_cancel_fine_tuning <- function(fine_tuning_job_id,
 #' @param training_file The ID of an uploaded file that contains training data.
 #' @param resp The response from the API.
 #' @param ... Additional parameters passed to the API functions.
+#' @param .async Logical. If TRUE, the function will return a promise.
 #' @field id The ID of the fine-tuning job.
 #' @field created_at The time the fine-tuning job was created.
 #' @field error The error message, if any.
@@ -162,36 +169,29 @@ oai_cancel_fine_tuning <- function(fine_tuning_job_id,
 FineTuningJob <- R6Class(
   "FineTuningJob",
   portable = FALSE,
+  inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = c("id", "error", "fine_tuned_model", "hyperparameters", "model", "object", "organization_id", "result_files", "status", "trained_tokens", "training_file", "validation_file", "integrations", "seed", "estimated_finish"),
+      as_time = c("created_at", "finished_at", "estimated_finish")
+    )
+  ),
   public = list(
     #' @description Initialize a FineTuningJob object.
     initialize = function(model = NULL,
                           training_file = NULL, ...,
-                          resp = NULL) {
+                          resp = NULL,
+                          .async = FALSE) {
       if (!is.null(resp)) {
-        id <<- resp$id
-        created_at <<- resp$created_at |> as_time()
-        error <<- resp$error
-        fine_tuned_model <<- resp$fine_tuned_model
-        finished_at <<- resp$finished_at |> as_time()
-        hyperparameters <<- resp$hyperparameters
-        model <<- resp$model
-        object <<- resp$object
-        organization_id <<- resp$organization_id
-        result_files <<- resp$result_files
-        status <<- resp$status
-        trained_tokens <<- resp$trained_tokens
-        training_file <<- resp$training_file
-        validation_file <<- resp$validation_file
-        integrations <<- resp$integrations
-        seed <<- resp$seed
-        estimated_finish <<- resp$estimated_finish |> as_time()
+        store_response(resp)
       } else if (!is.null(model) & is.null(training_file)) {
         oai_create_fine_tuning_job(
           model = model,
           training_file = training_file,
           ...,
-          .classify_response = FALSE
-        ) |> initialize(resp = _)
+          .classify_response = FALSE,
+          .async = .async
+        ) |> store_response()
       }
     },
     #' @description List fine-tuning events.
@@ -204,11 +204,13 @@ FineTuningJob <- R6Class(
     },
     #' @description Retrieve the fine-tuning job.
     retrieve = function() {
-      oai_get_fine_tuning_job(fine_tuning_job_id = self$id)
+      oai_get_fine_tuning_job(fine_tuning_job_id = self$id,
+                              .async = .async) |>
+        store_response()
     },
     #' @description Cancel the fine-tuning job.
     cancel = function() {
-      oa_cancel_fine_tuning(fine_tuning_job_id = self$id)
+      oa_cancel_fine_tuning(fine_tuning_job_id = self$id, .async = .async)
     },
     id = NULL,
     created_at = NULL,

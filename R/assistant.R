@@ -218,8 +218,6 @@ Assistant <- R6Class(
     top_p = NULL,
     #' @field response_format The response format of the assistant.
     response_format = NULL,
-    #' @field .async Logical. If `TRUE`, requests are made asynchronously.
-    .async = FALSE,
     #' @description Modify the assistant's properties. The `...` argument is used to pass additional arguments to the `oai_modify_assistant()` function.
     modify = function(...) {
       args <- list(...)
@@ -267,7 +265,8 @@ Assistant <- R6Class(
       oai_create_thread_and_run(
         assistant_id = self$id,
         thread = thread,
-        ...
+        ...,
+        .async = .async
       )
     }
   )

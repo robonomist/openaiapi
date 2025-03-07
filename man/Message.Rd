@@ -8,6 +8,9 @@ Message R6 class
 
 Message R6 class
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{Message}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -58,7 +61,13 @@ Message R6 class
 \subsection{Method \code{new()}}{
 Initialize a Message object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Message$new(message_id = NULL, thread_id = NULL, ..., resp = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Message$new(
+  message_id = NULL,
+  thread_id = NULL,
+  ...,
+  resp = NULL,
+  .async = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -71,6 +80,8 @@ Initialize a Message object.
 \item{\code{...}}{Additional parameters passed to the API call.}
 
 \item{\code{resp}}{List. The response from the OpenAI API.}
+
+\item{\code{.async}}{Logical. If TRUE, the API call will be asynchronous.}
 }
 \if{html}{\out{</div>}}
 }

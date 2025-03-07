@@ -8,6 +8,9 @@ FineTuningJob R6 class
 
 FineTuningJob R6 class
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{FineTuningJob}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -64,7 +67,13 @@ FineTuningJob R6 class
 \subsection{Method \code{new()}}{
 Initialize a FineTuningJob object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FineTuningJob$new(model = NULL, training_file = NULL, ..., resp = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{FineTuningJob$new(
+  model = NULL,
+  training_file = NULL,
+  ...,
+  resp = NULL,
+  .async = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -77,6 +86,8 @@ Initialize a FineTuningJob object.
 \item{\code{...}}{Additional parameters passed to the API functions.}
 
 \item{\code{resp}}{The response from the API.}
+
+\item{\code{.async}}{Logical. If TRUE, the function will return a promise.}
 }
 \if{html}{\out{</div>}}
 }

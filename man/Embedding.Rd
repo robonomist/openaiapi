@@ -8,6 +8,9 @@ R6 class representing an Embedding in the OpenAI API
 
 R6 class representing an Embedding in the OpenAI API
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{Embedding}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -31,7 +34,7 @@ R6 class representing an Embedding in the OpenAI API
 \subsection{Method \code{new()}}{
 Initialize an Embedding object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Embedding$new(input, model, ..., resp = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Embedding$new(input, model, ..., resp = NULL, .async = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -44,6 +47,8 @@ Initialize an Embedding object
 \item{\code{...}}{Additional arguments to be passed to the API functions.}
 
 \item{\code{resp}}{A list. The response object from the OpenAI API containing details of the embedding.}
+
+\item{\code{.async}}{Logical. If TRUE, the function will return a promise.}
 }
 \if{html}{\out{</div>}}
 }

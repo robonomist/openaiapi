@@ -12,6 +12,7 @@ NULL
 #' @param encoding_format Character. Defaults to "float". The format to return the embeddings in. Can be either "float" or "base64".
 #' @param dimensions Integer. The number of dimensions the resulting output embeddings should have. Only supported in text-embedding-3 and later models.
 #' @param user Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
+#' @inheritParams common_parameters
 #' @export
 #' @rdname embeddings_api
 oai_create_embeddings <- function(input,
@@ -19,7 +20,9 @@ oai_create_embeddings <- function(input,
                                   encoding_format = c("float", "base64"),
                                   dimensions = NULL,
                                   user = NULL,
-                                  .classify_response = TRUE) {
+                                  .classify_response = TRUE,
+                                  .async = FALSE
+                                  ) {
   body <- list(
     input = input,
     model = model,
@@ -31,7 +34,8 @@ oai_create_embeddings <- function(input,
     ep = "embeddings",
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -40,20 +44,31 @@ oai_create_embeddings <- function(input,
 Embedding <- R6Class(
   "Embedding",
   portable = FALSE,
+  inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = "index",
+      unlist = "embedding"
+    )
+  ),
   public = list(
     #' @description Initialize an Embedding object
     #' @param input Character. Input text to embed.
     #' @param model Character. ID of the model used to generate the embedding.
     #' @param resp A list. The response object from the OpenAI API containing details of the embedding.
     #' @param ... Additional arguments to be passed to the API functions.
+    #' @param .async Logical. If TRUE, the function will return a promise.
     #' @return A new instance of an Embedding object.
-    initialize = function(input, model, ..., resp = NULL) {
+    initialize = function(input, model, ...,
+                          resp = NULL,
+                          .async = FALSE) {
       if (!is.null(resp)) {
-        embedding <<- unlist(resp$embedding, use.names = FALSE)
-        index <<- resp$index
+        store_response(resp)
       } else {
-        oai_create_embeddings(input, model, ..., .classify_response = FALSE) |>
-          initialize(resp = _)
+        oai_create_embeddings(input, model, ...,
+                              .classify_response = FALSE,
+                              .async = .async) |>
+          store_response()
       }
     },
     #' @field embedding The embedding vector.

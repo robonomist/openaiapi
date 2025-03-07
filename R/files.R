@@ -9,6 +9,7 @@
 #' @param name Character. Optional. The name of the file. If not provided, the file name will be used.
 #' @param .classify_response Logical. Whether to classify the response as an R6 object.
 #' @return A File R6 object
+#' @inheritParams common_parameters
 #' @importFrom curl form_file
 #' @name files_api
 NULL
@@ -20,7 +21,8 @@ NULL
 oai_upload_file <- function(path,
                             purpose = c("assistants", "vision", "batch", "fine-tune"),
                             name = NULL,
-                            .classify_response = TRUE) {
+                            .classify_response = TRUE,
+                            .async = FALSE) {
   body <- list(
     file = form_file(path, name = name),
     purpose = match.arg(purpose)
@@ -31,7 +33,8 @@ oai_upload_file <- function(path,
     body = body,
     encode = "multipart",
     headers = list("Content-Type" = "multipart/form-data"),
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -47,7 +50,7 @@ oai_list_files <- function(purpose = NULL,
                            limit = NULL,
                            order = NULL,
                            after = NULL,
-                            .classify_response = TRUE) {
+                           .classify_response = TRUE) {
   query <- list(
     purpose = purpose,
     limit = limit,
@@ -67,10 +70,13 @@ oai_list_files <- function(purpose = NULL,
 #' @return  File R6 object
 #' @export
 #' @rdname files_api
-oai_retrieve_file <- function(file_id, .classify_response = TRUE) {
+oai_retrieve_file <- function(file_id,
+                              .classify_response = TRUE,
+                              .async = FALSE) {
   oai_query(
     ep = c("files", file_id),
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -78,11 +84,12 @@ oai_retrieve_file <- function(file_id, .classify_response = TRUE) {
 #' @return Deletion status
 #' @export
 #' @rdname files_api
-oai_delete_file <- function(file_id) {
+oai_delete_file <- function(file_id, .async = FALSE) {
   oai_query(
     ep = c("files", file_id),
     method = "DELETE",
-    .classify_response = FALSE
+    .classify_response = FALSE,
+    .async = .async
   )
 }
 
@@ -91,10 +98,11 @@ oai_delete_file <- function(file_id) {
 #' @return The response from the API.
 #' @export
 #' @rdname files_api
-oai_retrieve_file_content <- function(file_id, path) {
+oai_retrieve_file_content <- function(file_id, path, .async = FALSE) {
   oai_query(
     ep = c("files", file_id, "content"),
-    path = path
+    path = path,
+    .async = .async
   )
 }
 
@@ -106,31 +114,39 @@ oai_retrieve_file_content <- function(file_id, path) {
 #' @param path The path to the file to upload.
 #' @param ... Additional arguments passed to the API functions.
 #' @param resp A list containing the file properties from the API response.
+#' @param .async Logical. If TRUE, the function will return a promise.
 #' @importFrom R6 R6Class
 #' @export
 File <- R6Class(
   "File",
   portable = FALSE,
+  inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = c("id", "bytes", "filename", "purpose"),
+      as_time = "created_at"
+    )
+  ),
+
   public = list(
     #' @description Initializes the File object
     #'
     #' @return An instance of the File class.
-    initialize = function(file_id = NULL, path = NULL, ..., resp = NULL) {
+    initialize = function(file_id = NULL, path = NULL, ...,
+                          resp = NULL, .async = FALSE) {
       if (!is.null(resp)) {
-        id <<- resp$id
-        bytes <<- resp$bytes
-        created_at <<- resp$created_at |> as_time()
-        filename <<- resp$filename
-        purpose <<- resp$purpose
+        store_response(resp)
       } else if (!is.null(file_id)) {
         oai_retrieve_file(file_id = file_id,
-                          .classify_response = FALSE) |>
-          initialize(resp = _)
+                          .classify_response = FALSE,
+                          .async = .async) |>
+          store_response()
       } else if (!is.null(path)) {
         oai_upload_file(path = path,
                         ...,
-                        .classify_response = FALSE) |>
-          initialize(resp = _)
+                        .classify_response = FALSE,
+                        .async = .async) |>
+          store_response()
       }
     },
     #' @field id The ID of the file.
@@ -148,9 +164,9 @@ File <- R6Class(
     #' @return The up-to-date File instance.
     retrieve = function() {
       oai_retrieve_file(file_id = self$id,
-                        .classify_response = FALSE) |>
-        initialize(resp = _)
-      self
+                        .classify_response = FALSE,
+                        .async = .async) |>
+        store_response()
     },
     #' Delete the file
     #'
