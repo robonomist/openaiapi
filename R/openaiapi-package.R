@@ -1,5 +1,5 @@
 #' @import httr2
-#' @importFrom cli cli_abort
+#' @import cli
 #' @importFrom rlang caller_env env_get_list
 #' @importFrom promises is.promise then
 NULL

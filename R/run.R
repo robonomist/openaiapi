@@ -447,11 +447,11 @@ Run <- R6Class(
         if (s %in% c("queued", "in_progress", "cancelling")) {
           run_time <-
             as.numeric(difftime(Sys.time(), start_time, units = "secs"))
-          if (run_time > getOption("openaiapi.run_timeout", 300)) {
+          if (run_time > getOption("openaiapi.run_timeout")) {
             cli_abort("Run took too long to complete.")
           }
           ## Wait for the run to complete.
-          Sys.sleep(getOption("openaiapi.poll_interval", 1))
+          Sys.sleep(getOption("openaiapi.run_poll_interval"))
         } else if (s %in% c("failed", "cancelled", "expired")) {
           ## Throw an error if the run failed.
           cli_abort("Run ended with status \"{s}\"")
@@ -460,7 +460,7 @@ Run <- R6Class(
           self$do_tool_calls(sandbox_env) |>
             self$submit_tool_outputs() |>
             self$initialize(resp = _)
-          Sys.sleep(getOption("openaiapi.poll_interval", 1))
+          Sys.sleep(getOption("openaiapi.run_poll_interval"))
         } else if (s == "completed") {
           ## Return the run object when completed.
           return(self)
@@ -478,7 +478,7 @@ Run <- R6Class(
         handle_calls <- function() {
           run_time <-
             as.numeric(difftime(Sys.time(), start_time, units = "secs"))
-          if (run_time > getOption("openaiapi.run_timeout", 300)) {
+          if (run_time > getOption("openaiapi.run_timeout")) {
             reject("Run took too long to complete.")
           }
           later(function() {
@@ -503,7 +503,7 @@ Run <- R6Class(
               }
             })
           },
-          delay = getOption("openaiapi.poll_interval", 1)
+          delay = getOption("openaiapi.run_poll_interval")
           )
         }
         handle_calls()
