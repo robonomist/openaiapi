@@ -251,13 +251,13 @@ VectorStore <- R6Class(
     #' Print the VectorStore object
     #' @param ... Unused.
     print = function(...) {
-      cat("Vector store:\n")
-      cat("id: ", self$id, "\n")
-      cat("name: ", self$name, "\n")
-      cat("created_at:", format(self$created_at), "\n")
-      cat("usage_bytes:", self$usage_bytes, "\n")
-      cat("status:", self$status, "\n")
-      invisible(self)
+      .print(
+        "id" = self$id,
+        "name" = self$name,
+        "created_at" = format(self$created_at),
+        "usage_bytes" = self$usage_bytes,
+        "status" = self$status
+      )
     }
   )
 )

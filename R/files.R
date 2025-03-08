@@ -179,11 +179,11 @@ File <- R6Class(
     #' @param ... Additional arguments (unused).
     #' @return The File instance.
     print = function(...) {
-      cat("File:\n")
-      cat("id:", self$id, "\n")
-      cat("filename:", self$filename, "\n")
-      cat("created_at:", format(self$created_at), "\n")
-      invisible(self)
+      .print(
+        id = self$id,
+        filename = self$filename,
+        created_at = format(self$created_at)
+      )
     }
   )
 )

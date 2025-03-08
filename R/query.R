@@ -12,7 +12,7 @@ oai_set_api_key <- function(api_key) {
 
 #' @keywords internal
 openai_beta_header <- function() {
-  version <- getOption("openaiapi.assistants.version", "v2")
+  version <- getOption("openaiapi.assistants_version")
   list(`OpenAI-Beta` = paste0("assistants=", version))
 }
 

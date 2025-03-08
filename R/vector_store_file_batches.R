@@ -187,11 +187,13 @@ VectorStoreFilesBatch <- R6Class(
     },
     #' @description Print the file batch.
     print = function(...) {
-      cat("Vector store file batch:\n")
-      cat("id: ", self$id, "\n")
-      cat("vector_store_id: ", self$vector_store_id, "\n")
-      cat("status: ", self$status, "\n")
-      invisible(self)
+      .print(
+        "id" = self$id,
+        "created_at" = format(self$created_at),
+        "vector_store_id" = self$vector_store_id,
+        "status" = self$status,
+        "file_counts" = self$file_counts
+      )
     }
   )
 )

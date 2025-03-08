@@ -78,10 +78,7 @@ Embedding <- R6Class(
     #' @description Print the Embedding object
     #' @param ... Unused.
     print = function(...) {
-      cat("Embedding:\n")
-      cat("index: ", self$index, "\n")
-      ## cat("embedding: ", self$embedding, "\n")
-      invisible(self)
+      .print("index" = self$index)
     }
   )
 )

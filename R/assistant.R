@@ -246,10 +246,11 @@ Assistant <- R6Class(
     #' @param ... Additional arguments (unused).
     #' @return The OpenAI_Assistant instance.
     print = function(...) {
-      cat("Assistant:\n")
-      cat("id: ", self$id, "\n")
-      cat("name: ", self$name, "\n")
-      invisible(self)
+      .print(
+        "id" = self$id,
+        "name" = self$name,
+        "created_at" = format(self$created_at, "%Y-%m-%d %H:%M:%S")
+      )
     },
     #' Create a thread and run the assistant
     #'

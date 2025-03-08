@@ -248,6 +248,13 @@ ChatCompletion <- R6Class(
     #' @description Get the messages in the chat completion.
     content_text = function() {
       self$choices[[1]]$message$content
+    },
+    #' @description Print the chat completion details.
+    print = function(...) {
+      .print(
+        id = self$id,
+        created = format(self$created)
+      )
     }
   )
 )

@@ -39,6 +39,7 @@ ChatCompletion R6 class
 \item \href{#method-ChatCompletion-delete}{\code{ChatCompletion$delete()}}
 \item \href{#method-ChatCompletion-get_chat_messages}{\code{ChatCompletion$get_chat_messages()}}
 \item \href{#method-ChatCompletion-content_text}{\code{ChatCompletion$content_text()}}
+\item \href{#method-ChatCompletion-print}{\code{ChatCompletion$print()}}
 \item \href{#method-ChatCompletion-clone}{\code{ChatCompletion$clone()}}
 }
 }
@@ -136,6 +137,23 @@ Get the messages in the chat completion.
 \if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$content_text()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ChatCompletion-print"></a>}}
+\if{latex}{\out{\hypertarget{method-ChatCompletion-print}{}}}
+\subsection{Method \code{print()}}{
+Print the chat completion details.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$print(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Additional parameters passed to API functions}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ChatCompletion-clone"></a>}}

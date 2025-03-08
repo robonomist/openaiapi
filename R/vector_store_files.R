@@ -184,13 +184,13 @@ VectorStoreFile <- R6Class(
     },
     #' @description Print the vector store file.
     print = function(...) {
-      cat("Vector store file:\n")
-      cat("id:", self$id, "\n")
-      cat("vector_store_id:", self$vector_store_id, "\n")
-      cat("created_at:", format(self$created_at), "\n")
-      cat("usage_bytes:", self$usage_bytes, "\n")
-      cat("status:", self$status, "\n")
-      invisible(self)
+      .print(
+        "id" = self$id,
+        "vector_store_id" = self$vector_store_id,
+        "created_at" = format(self$created_at),
+        "usage_bytes" = self$usage_bytes,
+        "status" = self$status
+      )
     }
   )
 )

@@ -6,6 +6,11 @@ Utils <- R6Class(
     .async = FALSE
   ),
   private = list(
+    .print = function(...) {
+      cli_h1(class(self)[1])
+      cli_dl(c(...))
+      invisible(self)
+    },
     store_response = function(resp) {
       if (is.promise(resp)) {
         p <- resp$then(function(x) {
