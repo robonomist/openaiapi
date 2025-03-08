@@ -422,7 +422,6 @@ Run <- R6Class(
       oai_cancel_run(
         thread_id = self$thread_id,
         run_id = self$id,
-        .classify_response = FALSE,
         .async = .async
       ) |>
         store_response()

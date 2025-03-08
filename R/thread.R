@@ -53,12 +53,15 @@ oai_modify_thread <- function(thread_id,
 #' @description * `oai_retrieve_thread()`: Retrieve a thread.
 #' @rdname thread_api
 #' @export
-oai_retrieve_thread <- function(thread_id, .classify_response = TRUE) {
+oai_retrieve_thread <- function(thread_id,
+                                .classify_response = TRUE,
+                                .async = FALSE) {
   oai_query(
     c("threads", thread_id),
     headers = openai_beta_header(),
     method = "GET",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 

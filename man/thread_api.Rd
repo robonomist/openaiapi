@@ -22,7 +22,7 @@ oai_modify_thread(
   .classify_response = TRUE
 )
 
-oai_retrieve_thread(thread_id, .classify_response = TRUE)
+oai_retrieve_thread(thread_id, .classify_response = TRUE, .async = FALSE)
 
 oai_delete_thread(thread_id)
 }
@@ -36,6 +36,8 @@ oai_delete_thread(thread_id)
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
 
 \item{thread_id}{The ID of the thread.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 }
 \description{
 Manage threads that assistants can interact with.
