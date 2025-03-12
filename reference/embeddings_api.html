@@ -53,7 +53,8 @@ oai_create_embeddings(): Creates an embedding vector representing the input text
 <span>  encoding_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"float"</span>, <span class="st">"base64"</span><span class="op">)</span>,</span>
 <span>  dimensions <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,6 +84,10 @@ oai_create_embeddings(): Creates an embedding vector representing the input text
 
 <dt id="arg--classify-response">.classify_response<a class="anchor" aria-label="anchor" href="#arg--classify-response"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), the response is classified as an R6 object. If <code>FALSE</code>, the response is returned as a list.</p></dd>
+
+
+<dt id="arg--async">.async<a class="anchor" aria-label="anchor" href="#arg--async"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the request is performed asynchronously.</p></dd>
 
 </dl></div>
     <div class="section level2">

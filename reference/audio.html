@@ -71,7 +71,8 @@ oai_create_translation(): Translates audio into English.
 <span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tts-1"</span>, <span class="st">"tts-1-hd"</span><span class="op">)</span>,</span>
 <span>  voice <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alloy"</span>, <span class="st">"ash"</span>, <span class="st">"coral"</span>, <span class="st">"echo"</span>, <span class="st">"fable"</span>, <span class="st">"onyx"</span>, <span class="st">"nova"</span>, <span class="st">"sage"</span>, <span class="st">"shimmer"</span><span class="op">)</span>,</span>
 <span>  response_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mp3"</span>, <span class="st">"opus"</span>, <span class="st">"aac"</span>, <span class="st">"flac"</span>, <span class="st">"wav"</span>, <span class="st">"pcm"</span><span class="op">)</span>,</span>
-<span>  speed <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  speed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_create_transcription</span><span class="op">(</span></span>
@@ -83,7 +84,8 @@ oai_create_translation(): Translates audio into English.
 <span>  temperature <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  timestamp_granularities <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_create_translation</span><span class="op">(</span></span>
@@ -93,7 +95,8 @@ oai_create_translation(): Translates audio into English.
 <span>  response_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"json"</span>, <span class="st">"text"</span>, <span class="st">"srt"</span>, <span class="st">"verbose_json"</span>, <span class="st">"vtt"</span><span class="op">)</span>,</span>
 <span>  temperature <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -123,6 +126,10 @@ oai_create_translation(): Translates audio into English.
 
 <dt id="arg-speed">speed<a class="anchor" aria-label="anchor" href="#arg-speed"></a></dt>
 <dd><p>Numeric. The speed of the generated audio. Select a value from 0.25 to 4.0. 1.0 is the default.</p></dd>
+
+
+<dt id="arg--async">.async<a class="anchor" aria-label="anchor" href="#arg--async"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the request is performed asynchronously.</p></dd>
 
 
 <dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>

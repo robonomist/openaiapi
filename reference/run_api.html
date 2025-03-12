@@ -145,7 +145,8 @@ oai_tool_output(): A helper function to format a tool output.
 <span>  truncation_strategy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tool_choice <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  response_format <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_create_thread_and_run</span><span class="op">(</span></span>
@@ -163,7 +164,9 @@ oai_tool_output(): A helper function to format a tool output.
 <span>  max_completion_tokens <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  truncation_strategy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tool_choice <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  response_format <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  response_format <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_list_runs</span><span class="op">(</span></span>
@@ -185,20 +188,33 @@ oai_tool_output(): A helper function to format a tool output.
 <span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_retrieve_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">oai_retrieve_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_retrieve_run_step</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, <span class="va">step_id</span><span class="op">)</span></span>
+<span><span class="fu">oai_retrieve_run_step</span><span class="op">(</span></span>
+<span>  <span class="va">thread_id</span>,</span>
+<span>  <span class="va">run_id</span>,</span>
+<span>  <span class="va">step_id</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_modify_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, metadata <span class="op">=</span> <span class="cn">NULL</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">oai_modify_run</span><span class="op">(</span></span>
+<span>  <span class="va">thread_id</span>,</span>
+<span>  <span class="va">run_id</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_cancel_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">oai_cancel_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_submit_tool_outputs</span><span class="op">(</span></span>
 <span>  <span class="va">thread_id</span>,</span>
 <span>  <span class="va">run_id</span>,</span>
 <span>  <span class="va">tool_outputs</span>,</span>
 <span>  stream <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_tool_output</span><span class="op">(</span><span class="va">tool_call_id</span>, <span class="va">output</span><span class="op">)</span></span></code></pre></div>
@@ -274,6 +290,10 @@ oai_tool_output(): A helper function to format a tool output.
 
 <dt id="arg--classify-response">.classify_response<a class="anchor" aria-label="anchor" href="#arg--classify-response"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), the response is classified as an R6 object. If <code>FALSE</code>, the response is returned as a list.</p></dd>
+
+
+<dt id="arg--async">.async<a class="anchor" aria-label="anchor" href="#arg--async"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the request is performed asynchronously.</p></dd>
 
 
 <dt id="arg-thread">thread<a class="anchor" aria-label="anchor" href="#arg-thread"></a></dt>

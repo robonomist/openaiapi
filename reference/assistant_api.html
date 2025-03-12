@@ -94,7 +94,8 @@ oai_delete_assistant(): Delete an assistant.
 <span>  temperature <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  response_format <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_modify_assistant</span><span class="op">(</span></span>
@@ -109,7 +110,8 @@ oai_delete_assistant(): Delete an assistant.
 <span>  temperature <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  response_format <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_list_assistants</span><span class="op">(</span></span>
@@ -120,9 +122,9 @@ oai_delete_assistant(): Delete an assistant.
 <span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_retrieve_assistant</span><span class="op">(</span><span class="va">assistant_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">oai_retrieve_assistant</span><span class="op">(</span><span class="va">assistant_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_delete_assistant</span><span class="op">(</span><span class="va">assistant_id</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">oai_delete_assistant</span><span class="op">(</span><span class="va">assistant_id</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -171,6 +173,10 @@ oai_delete_assistant(): Delete an assistant.
 
 <dt id="arg--classify-response">.classify_response<a class="anchor" aria-label="anchor" href="#arg--classify-response"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), the response is classified as an R6 object. If <code>FALSE</code>, the response is returned as a list.</p></dd>
+
+
+<dt id="arg--async">.async<a class="anchor" aria-label="anchor" href="#arg--async"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the request is performed asynchronously.</p></dd>
 
 
 <dt id="arg-assistant-id">assistant_id<a class="anchor" aria-label="anchor" href="#arg-assistant-id"></a></dt>
