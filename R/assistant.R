@@ -259,7 +259,9 @@ Assistant <- R6Class(
     #' @param ... Additional arguments passed to `oai_create_thread_and_run()`.
     #' @return The response from the thread creation and run.
     thread_and_run = function(thread = NULL,
-                              messages = NULL, ...) {
+                              messages = NULL,
+                              ...,
+                              .async = NULL) {
       if (!is.null(messages)) {
         thread <- oai_thread(messages)
       }
@@ -267,7 +269,7 @@ Assistant <- R6Class(
         assistant_id = self$id,
         thread = thread,
         ...,
-        .async = .async
+        .async = .async %||% self$.async
       )
     }
   )

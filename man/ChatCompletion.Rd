@@ -134,7 +134,7 @@ Get the messages in the chat completion.
 \subsection{Method \code{content_text()}}{
 Get the messages in the chat completion.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$content_text()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$content_text(choice = 1)}\if{html}{\out{</div>}}
 }
 
 }

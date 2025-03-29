@@ -25,12 +25,14 @@ oai_create_chat_completion(
   service_tier = NULL,
   stop = NULL,
   stream = NULL,
+  stream_options = NULL,
   temperature = NULL,
   top_p = NULL,
   tools = NULL,
   tools_choice = NULL,
   parallel_tool_calls = NULL,
   user = NULL,
+  web_search_options = NULL,
   .classify_response = TRUE,
   .async = FALSE
 )
@@ -100,6 +102,8 @@ oai_delete_chat_completion(completion_id, .async = FALSE)
 \item{parallel_tool_calls}{Logical. Whether to enable parallel function calling during tool use.}
 
 \item{user}{Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.}
+
+\item{web_search_options}{List. This tool searches the web for relevant results to use in a response.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
 

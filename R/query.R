@@ -50,6 +50,11 @@ oai_error_body <- function(resp) {
   )
 }
 
+stamp <- function(x = "") {
+  ## High precision timestamp
+  cat(x, format(Sys.time(), "%Y-%m-%d %H:%M:%OS3"), "\n")
+}
+
 #' @keywords internal
 oai_query <- function(ep,
                       body = NULL,
@@ -59,18 +64,39 @@ oai_query <- function(ep,
                       headers = NULL,
                       path = NULL,
                       .classify_response = TRUE,
-                      .async = FALSE) {
+                      .async = FALSE,
+                      .stream = NULL
+                      ) {
   req <- oai_request(ep, body, method, headers, encode)
+  if (!is.null(.stream)) {
+    if (.async) {
+      p <- promise(function(resolve, reject) {
+        later(function() {
+          s <- Stream$new(req, .async = .async)
+          resolve(classify_stream(s, class = .stream))
+        })
+      }) |>
+        as_oai_promise()
+      stamp("after promise")
+      return(p)
+    } else {
+      s <- Stream$new(req, .async = .async)
+      if (.classify_response) {
+        s <- classify_stream(s, class = .stream)
+      }
+      return(s)
+    }
+  }
   handle_response <- function(resp) {
     if (!is.null(path)) {
       invisible(path)
     } else {
-      y <- resp_body_json(resp)
-      y$.async <- .async
+      b <- resp_body_json(resp)
+      b$.async <- .async
       if (.classify_response) {
-        classify_response(y)
+        classify_response(b)
       } else {
-        y
+        b
       }
     }
   }
@@ -161,3 +187,46 @@ classify_response <- function(x) {
     x
   )
 }
+
+classify_stream <- function(x, class) {
+  switch(
+    class,
+    "ChatCompletion" = ChatCompletionStream$new(x),
+    x
+  )
+}
+
+#' importFrom jsonlite fromJSON
+Stream <- R6Class(
+  "Stream",
+  portable = FALSE,
+  public = list(
+    initialize = function(req, .async = FALSE) {
+      async <<- .async
+      ## TODO: This should be a promise
+      con <<- req_perform_connection(req, blocking = !.async)
+      stamp("after req_perform_connection")
+    },
+    read = function() {
+      event <- resp_stream_sse(con)
+      if (is.null(event)) return(NULL)
+      data <- event$data
+      if (data == "[DONE]") {
+        close(private$con)
+        "[DONE]"
+      } else {
+        fromJSON(data, simplifyVector = FALSE)
+      }
+    },
+    is_complete = function() {
+      resp_stream_is_complete(con)
+    },
+    async = FALSE
+  ),
+  private = list(
+    finalizer = function() {
+      close(con)
+    },
+    con = NULL
+  )
+)

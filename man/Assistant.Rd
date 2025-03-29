@@ -153,7 +153,7 @@ Create a thread and run the assistant
 \if{latex}{\out{\hypertarget{method-Assistant-thread_and_run}{}}}
 \subsection{Method \code{thread_and_run()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Assistant$thread_and_run(thread = NULL, messages = NULL, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Assistant$thread_and_run(thread = NULL, messages = NULL, ..., .async = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -164,6 +164,8 @@ Create a thread and run the assistant
 \item{\code{messages}}{Alternatively, a list of messages to create a thread.}
 
 \item{\code{...}}{Additional arguments passed to \code{oai_create_thread_and_run()}.}
+
+\item{\code{.async}}{Logical. If \code{TRUE}, requests are made asynchronously.}
 }
 \if{html}{\out{</div>}}
 }

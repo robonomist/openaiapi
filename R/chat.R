@@ -21,6 +21,7 @@
 #' @param tools_choice Character. Controls which (if any) tool is called by the model. "none" means the model will not call any tool and instead generates a message. "auto" means the model can pick between generating a message or calling one or more tools. "required" means the model must call one or more tools. Specifying a particular tool via `list(type = "function", function = list(name = "my_function"))` forces the model to call that tool. "none" is the default when no tools are present. "auto" is the default if tools are present.
 #' @param parallel_tool_calls Logical. Whether to enable parallel function calling during tool use.
 #' @param user Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
+#' @param web_search_options List. This tool searches the web for relevant results to use in a response.
 #' @inheritParams common_parameters
 #' @return A ChatCompletion R6 object.
 #' @details Only chat completions that have been created with the store parameter set to true will be returned.
@@ -44,13 +45,14 @@ oai_create_chat_completion <- function(messages,
                                        service_tier = NULL,
                                        stop = NULL,
                                        stream = NULL,
-                                       ## stream_options = NULL,
+                                       stream_options = NULL,
                                        temperature = NULL,
                                        top_p = NULL,
                                        tools = NULL,
                                        tools_choice = NULL,
                                        parallel_tool_calls = NULL,
                                        user = NULL,
+                                        web_search_options = NULL,
                                        .classify_response = TRUE,
                                        .async = FALSE
                                        ) {
@@ -65,7 +67,8 @@ oai_create_chat_completion <- function(messages,
     method = "POST",
     body = body,
     .classify_response = .classify_response,
-    .async = .async
+    .async = .async,
+    .stream = if (isTRUE(stream)) "ChatCompletion"
   )
 }
 
@@ -246,8 +249,8 @@ ChatCompletion <- R6Class(
       oai_get_chat_messages(completion_id = self$id, ..., .async = .async)
     },
     #' @description Get the messages in the chat completion.
-    content_text = function() {
-      self$choices[[1]]$message$content
+    content_text = function(choice = 1) {
+      self$choices[[choice]]$message$content
     },
     #' @description Print the chat completion details.
     print = function(...) {
@@ -259,3 +262,74 @@ ChatCompletion <- R6Class(
   )
 )
 
+ChatCompletionStream <- R6Class(
+  "ChatCompletionStream",
+  inherit = ChatCompletion,
+  portable = FALSE,
+  public = list(
+    schema = list(
+      as_is = c("id", "model", "service_tier", "system_fingerprint", "usage"),
+      as_time = c("created")
+    ),
+    initialize = function(stream) {
+      stream <<- stream
+    },
+    stream_async = function(callback) {
+      promise(function(resolve, reject) {
+        handle_stream <- function() {
+          r <- stream$read()
+          if (identical(r, "[DONE]")) {
+            resolve(self)
+          } else if (is.null(r)) {
+            ## No event, wait and try again
+            later(handle_stream, delay = 0.1)
+          } else {
+            ## Store chat completion on first message
+            if (is.null(id)) {
+              store_response(r)
+            }
+            store_choices(r$choices)
+            if (is_complete()) {
+              reject("Stream is complete before DONE event")
+            } else {
+              callback(choices)
+              later(handle_stream)
+            }
+          }
+        }
+        tryCatch(handle_stream(), error = function(e) reject(e))
+      })
+    },
+    is_complete = function() {
+      stream$is_complete()
+    }
+  ),
+  private = list(
+    stream = NULL,
+    store_choices = function(choices) {
+      for (choice in choices) {
+        i <- choice$index + 1L
+        d <- choice$delta
+        d$content <- paste0(
+          self$choices[[i]]$message$content %||% "",
+          d$content
+        )
+        if (!is.null(d$tool_calls)) {
+          for (tool_call in d$tool_calls) {
+            id <- tool_call$id
+            j <- tool_call$index + 1L
+            d$tool_calls[[j]]$`function`$arguments <- paste0(
+              self$choices[[i]]$message$tool_calls[[j]]$`function`$arguments %||% "",
+              tool_call$`function`$arguments
+            )
+          }
+        }
+        choice$message <- d
+        self$choices[[i]] <- modifyList(
+          self$choices[[i]] %||% list(),
+          choice
+        )
+      }
+    }
+  )
+)
