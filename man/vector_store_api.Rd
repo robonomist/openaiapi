@@ -15,7 +15,8 @@ oai_create_vector_store(
   expires_after = NULL,
   chunking_strategy = NULL,
   metadata = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_list_vector_stores(
@@ -23,7 +24,8 @@ oai_list_vector_stores(
   order = NULL,
   after = NULL,
   before = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_retrieve_vector_store(vector_store_id, .classify_response = TRUE)
@@ -33,10 +35,11 @@ oai_modify_vector_store(
   name = NULL,
   expires_after = NULL,
   metadata = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
-oai_delete_vector_store(vector_store_id)
+oai_delete_vector_store(vector_store_id, .async = FALSE)
 }
 \arguments{
 \item{file_ids}{Character. Optional. A vector of file IDs to include in the vector store.}
@@ -50,6 +53,8 @@ oai_delete_vector_store(vector_store_id)
 \item{metadata}{List. Optional. Set of 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format. Keys can be a maximum of 64 characters long and values can be a maximum of 512 characters long.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{limit}{Integer. Optional. A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.}
 

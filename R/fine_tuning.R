@@ -26,7 +26,7 @@ oai_create_fine_tuning_job <- function(model,
                                        integrations = NULL,
                                        seed = NULL,
                                        .classify_response = TRUE,
-                                        .async = FALSE) {
+                                       .async = FALSE) {
   body <- list(
     model = model,
     training_file = training_file,
@@ -53,7 +53,8 @@ oai_create_fine_tuning_job <- function(model,
 #' @rdname fine_tuning_api
 oai_list_fine_tuning_jobs <- function(after = NULL,
                                       limit = NULL,
-                                      .classify_response = TRUE) {
+                                      .classify_response = TRUE,
+                                      .async = FALSE) {
   query <- list(
     after = after,
     limit = limit
@@ -62,7 +63,8 @@ oai_list_fine_tuning_jobs <- function(after = NULL,
     ep = "fine_tuning/jobs",
     query = query,,
     method = "GET",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -76,7 +78,8 @@ oai_list_fine_tuning_jobs <- function(after = NULL,
 oai_list_fine_tuning_events <- function(fine_tuning_job_id,
                                         after = NULL,
                                         limit = NULL,
-                                        .classify_response = TRUE) {
+                                        .classify_response = TRUE,
+                                        .async = FALSE) {
   query <- list(
     after = after,
     limit = limit
@@ -85,7 +88,8 @@ oai_list_fine_tuning_events <- function(fine_tuning_job_id,
     ep = c("fine_tuning", "jobs", fine_tuning_job_id, "events"),
     query = query,
     method = "GET",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -99,7 +103,8 @@ oai_list_fine_tuning_events <- function(fine_tuning_job_id,
 oai_list_fine_tuning_checkpoints <- function(fine_tuning_job_id,
                                              after = NULL,
                                              limit = NULL,
-                                             .classify_response = TRUE) {
+                                             .classify_response = TRUE,
+                                             .async = FALSE) {
   query <- list(
     after = after,
     limit = limit
@@ -108,7 +113,8 @@ oai_list_fine_tuning_checkpoints <- function(fine_tuning_job_id,
     ep = c("fine_tuning", "jobs", fine_tuning_job_id, "checkpoints"),
     query = query,
     method = "GET",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -131,7 +137,7 @@ oai_get_fine_tuning_job <- function(fine_tuning_job_id,
 #' @rdname fine_tuning_api
 oai_cancel_fine_tuning <- function(fine_tuning_job_id,
                                    .classify_response = TRUE,
-                                    .async = FALSE) {
+                                   .async = FALSE) {
   oai_query(
     ep = c("fine_tuning", "jobs", fine_tuning_job_id, "cancel"),
     method = "POST",

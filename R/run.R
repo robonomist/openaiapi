@@ -128,7 +128,8 @@ oai_list_runs <- function(thread_id,
                           order = NULL,
                           after = NULL,
                           before = NULL,
-                          .classify_response = TRUE) {
+                          .classify_response = TRUE,
+                          .async = FALSE) {
   query <- list(
     limit = as.integer(limit),
     order = order,
@@ -140,7 +141,8 @@ oai_list_runs <- function(thread_id,
     headers = openai_beta_header(),
     method = "GET",
     query = query,
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -155,7 +157,8 @@ oai_list_run_steps <- function(thread_id,
                                order = NULL,
                                after = NULL,
                                before = NULL,
-                               .classify_response = TRUE) {
+                               .classify_response = TRUE,
+                               .async = FALSE) {
   query <- list(
     limit = as.integer(limit),
     order = order,
@@ -167,7 +170,8 @@ oai_list_run_steps <- function(thread_id,
     headers = openai_beta_header(),
     method = "GET",
     query = query,
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 

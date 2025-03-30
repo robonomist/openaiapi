@@ -28,7 +28,8 @@ oai_list_messages(
   order = NULL,
   after = NULL,
   before = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_retrieve_message(

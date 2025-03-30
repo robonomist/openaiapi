@@ -22,7 +22,8 @@ oai_list_vector_store_files(
   after = NULL,
   before = NULL,
   filter = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_retrieve_vector_store_file(vector_store_id, file_id)
@@ -47,6 +48,8 @@ oai_delete_vector_store_file(vector_store_id, file_id)
 \item{before}{Character. Optional. A cursor for use in pagination. before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include \code{before = "obj_foo"} in order to fetch the previous page of the list.}
 
 \item{filter}{Character. Optional. Filter by file status. One of "in_progress", "completed", "failed", "cancelled".}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 }
 \value{
 VectorStoreFile R6 object.

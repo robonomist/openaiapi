@@ -22,7 +22,7 @@ oai_create_message <- function(thread_id,
                                attachments = NULL,
                                metadata = NULL,
                                .classify_response = TRUE,
-                                .async = FALSE) {
+                               .async = FALSE) {
   body <- list(
     role = match.arg(role),
     content = content,
@@ -49,7 +49,8 @@ oai_list_messages <- function(thread_id,
                               order = NULL,
                               after = NULL,
                               before = NULL,
-                              .classify_response = TRUE) {
+                              .classify_response = TRUE,
+                              .async = FALSE) {
   query <- list(
     limit = as.integer(limit),
     order = order,
@@ -61,7 +62,8 @@ oai_list_messages <- function(thread_id,
     headers = openai_beta_header(),
     method = "GET",
     query = query,
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -90,7 +92,7 @@ oai_modify_message <- function(thread_id,
                                message_id,
                                metadata = NULL,
                                .classify_response = TRUE,
-                                .async = FALSE) {
+                               .async = FALSE) {
   body <- list(
     metadata = metadata
   ) |> compact()

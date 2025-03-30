@@ -146,27 +146,56 @@ oai_query_list <- function(...) {
   if (isFALSE(args$.classify_response)) {
     return(oai_query(...))
   }
+
   if (!is.null(args$query$limit) && args$query$limit > 100) {
     requested_limit <- args$query$limit
     args$query$limit <- 100
   } else {
     requested_limit <- 100
   }
-  resp <- do.call(oai_query, args)
-  n <- length(resp)
-  need_more <- n < requested_limit && attr(resp, "has_more")
-  while (need_more) {
-    args$query$after <- attr(resp, "last_id")
-    args$query$limit <- min(100, requested_limit - n)
-    next_resp <- do.call(oai_query, args)
-    resp <- append(resp, next_resp)
-    attr(resp, "last_id") <- attr(next_resp, "last_id")
-    attr(resp, "has_more") <- attr(next_resp, "has_more")
-    need_more <- length(resp) < requested_limit && attr(next_resp, "has_more")
-  }
-  resp
-}
 
+  initial_resp <- do.call(oai_query, args)
+
+  if (isTRUE(args$.async)) {
+    fetch_recursive_async <- function(accumulated_resp, n) {
+      if (n >= requested_limit || !attr(accumulated_resp, "has_more")) {
+        return(accumulated_resp)
+      }
+      args$query$after <- attr(accumulated_resp, "last_id")
+      args$query$limit <- min(100, requested_limit - n)
+      do.call(oai_query, args) |> then(function(next_resp) {
+        combined <- append(accumulated_resp, next_resp)
+        attr(combined, "last_id") <- attr(next_resp, "last_id")
+        attr(combined, "has_more") <- attr(next_resp, "has_more")
+        fetch_recursive_async(combined, length(combined))
+      })
+    }
+
+    initial_resp |> then(function(resp) {
+      n <- length(resp)
+      fetch_recursive_async(resp, n)
+    })
+  } else {
+    # Inner recursive function
+    fetch_recursive <- function(accumulated_resp, n) {
+      if (n >= requested_limit || !attr(accumulated_resp, "has_more")) {
+        return(accumulated_resp)
+      }
+
+      args$query$after <- attr(accumulated_resp, "last_id")
+      args$query$limit <- min(100, requested_limit - n)
+      next_resp <- do.call(oai_query, args)
+      combined <- append(accumulated_resp, next_resp)
+      attr(combined, "last_id") <- attr(next_resp, "last_id")
+      attr(combined, "has_more") <- attr(next_resp, "has_more")
+      fetch_recursive(combined, length(combined))
+    }
+
+    initial_resp <- do.call(oai_query, args)
+    n <- length(initial_resp)
+    fetch_recursive(initial_resp, n)
+  }
+}
 
 oai_list <- function(x) {
   structure(
@@ -226,7 +255,7 @@ Stream <- R6Class(
         fromJSON(data, simplifyVector = FALSE)
       }
     },
-    stream_async = function(callback, store_event) {
+    stream_async = function(handle_event) {
       promise(function(resolve, reject) {
         handle_stream <- function(...) {
           event <- read()
@@ -240,13 +269,11 @@ Stream <- R6Class(
               timeout = getOption("openaiapi.stream_timeout", 60)
             )
           } else {
-            store_event(event)
             if (is_complete()) {
               reject("Stream is complete before [DONE] event")
-            } else {
-              callback()
-              later(handle_stream)
             }
+            handle_event(event)
+            later(handle_stream)
           }
         }
         tryCatch(handle_stream(), error = function(e) reject(e))

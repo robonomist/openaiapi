@@ -43,7 +43,13 @@ oai_get_chat_completion(
   .async = FALSE
 )
 
-oai_get_chat_messages(completion_id, after = NULL, limit = NULL, order = NULL)
+oai_get_chat_messages(
+  completion_id,
+  after = NULL,
+  limit = NULL,
+  order = NULL,
+  .async = FALSE
+)
 
 oai_list_chat_completions(
   model = NULL,

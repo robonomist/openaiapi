@@ -19,7 +19,8 @@ oai_create_vector_store <- function(file_ids = NULL,
                                     expires_after = NULL,
                                     chunking_strategy = NULL,
                                     metadata = NULL,
-                                    .classify_response = TRUE) {
+                                    .classify_response = TRUE,
+                                    .async = FALSE) {
   body <- list(
     file_ids = as.list(file_ids),
     name = name,
@@ -32,7 +33,8 @@ oai_create_vector_store <- function(file_ids = NULL,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -45,14 +47,16 @@ oai_list_vector_stores <- function(limit = NULL,
                                    order = NULL,
                                    after = NULL,
                                    before = NULL,
-                                    .classify_response = TRUE) {
+                                   .classify_response = TRUE,
+                                   .async = FALSE) {
   query <- as.list(environment()) |> compact()
   oai_query_list(
     ep = "vector_stores",
     headers = openai_beta_header(),
     method = "GET",
     query = query,
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -77,7 +81,8 @@ oai_modify_vector_store <- function(vector_store_id,
                                     name = NULL,
                                     expires_after = NULL,
                                     metadata = NULL,
-                                    .classify_response = TRUE) {
+                                    .classify_response = TRUE,
+                                    .async = FALSE) {
   body <- list(
     name = name,
     expires_after = expires_after,
@@ -88,7 +93,8 @@ oai_modify_vector_store <- function(vector_store_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -97,11 +103,13 @@ oai_modify_vector_store <- function(vector_store_id,
 #' @return Deletion status.
 #' @rdname vector_store_api
 #' @export
-oai_delete_vector_store <- function(vector_store_id) {
+oai_delete_vector_store <- function(vector_store_id,
+                                    .async = FALSE) {
   oai_query(
     c("vector_stores", vector_store_id),
     headers = openai_beta_header(),
-    method = "DELETE"
+    method = "DELETE",
+    .async = .async
   )
 }
 

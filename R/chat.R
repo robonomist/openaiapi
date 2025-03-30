@@ -100,7 +100,8 @@ oai_get_chat_completion <- function(completion_id,
 oai_get_chat_messages <- function(completion_id,
                                   after = NULL,
                                   limit = NULL,
-                                  order = NULL) {
+                                  order = NULL,
+                                  .async = FALSE) {
   oai_query_list(
     ep = c("chat", "completions", completion_id, "messages"),
     method = "GET",
@@ -108,7 +109,8 @@ oai_get_chat_messages <- function(completion_id,
       after = after,
       limit = limit,
       order = order
-    ) |> compact()
+    ) |> compact(),
+    .async = .async
   )
 }
 
@@ -278,11 +280,12 @@ ChatCompletionStream <- R6Class(
     },
     stream_async = function(callback) {
       stream$stream_async(
-        callback = function() callback(choices),
-        store_event = store_event) |>
-        then(function(...) {
-          self
-        })
+        handle_event = function(event) {
+          store_event(event)
+          callback(choices)
+        }
+      ) |>
+        then(function(...) { self })
     },
     is_complete = function() {
       stream$is_complete()
@@ -292,7 +295,7 @@ ChatCompletionStream <- R6Class(
     stream = NULL,
     store_event = function(event) {
       if (is.null(id)) {
-        ## Store chat completion on first message
+        ## Store chat completion only on first message
         store_response(event)
       }
       for (choice in event$choices) {
@@ -321,6 +324,12 @@ ChatCompletionStream <- R6Class(
           self$choices[[i]] %||% list(),
           choice
         )
+        if (identical(choice$finish_reason, "tool_calls")) {
+
+        }
+        if (!is.null(choice$finish_reason)) {
+          browser()
+        }
       }
     }
   )

@@ -25,21 +25,24 @@ oai_create_fine_tuning_job(
 oai_list_fine_tuning_jobs(
   after = NULL,
   limit = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_list_fine_tuning_events(
   fine_tuning_job_id,
   after = NULL,
   limit = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_list_fine_tuning_checkpoints(
   fine_tuning_job_id,
   after = NULL,
   limit = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_get_fine_tuning_job(

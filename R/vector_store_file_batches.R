@@ -71,7 +71,8 @@ oai_list_vector_store_files_in_a_batch <- function(vector_store_id,
                                                    after = NULL,
                                                    before = NULL,
                                                    filter = NULL,
-                                                    .classify_response = TRUE) {
+                                                   .classify_response = TRUE,
+                                                   .async = FALSE) {
   query <- list(
     limit = as.integer(limit),
     order = order,
@@ -84,7 +85,8 @@ oai_list_vector_store_files_in_a_batch <- function(vector_store_id,
     headers = openai_beta_header(),
     method = "GET",
     query = query,
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
