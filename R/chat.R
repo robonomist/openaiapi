@@ -277,30 +277,12 @@ ChatCompletionStream <- R6Class(
       stream <<- stream
     },
     stream_async = function(callback) {
-      promise(function(resolve, reject) {
-        handle_stream <- function(...) {
-          event <- stream$read()
-          if (identical(event, "[DONE]")) {
-            resolve(self)
-          } else if (is.null(event)) {
-            ## No event, wait and try again
-            later_fd(
-              handle_stream,
-              readfds = stream$fd()$reads,
-              timeout = getOption("openaiapi.stream_timeout", 60)
-            )
-          } else {
-            store_event(event)
-            if (is_complete()) {
-              reject("Stream is complete before DONE event")
-            } else {
-              callback(choices)
-              later(handle_stream)
-            }
-          }
-        }
-        tryCatch(handle_stream(), error = function(e) reject(e))
-      })
+      stream$stream_async(
+        callback = function() callback(choices),
+        store_event = store_event) |>
+        then(function(...) {
+          self
+        })
     },
     is_complete = function() {
       stream$is_complete()

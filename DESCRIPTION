@@ -19,3 +19,7 @@ Imports:
     curl,
     later (>= 1.4.0),
     promises
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
