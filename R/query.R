@@ -65,48 +65,56 @@ oai_query <- function(ep,
                       path = NULL,
                       .classify_response = TRUE,
                       .async = FALSE,
-                      .stream = NULL
-                      ) {
+                      .stream = NULL) {
   req <- oai_request(ep, body, method, headers, encode)
+
   if (!is.null(.stream)) {
     if (.async) {
+      ## Handle async streaming case
       p <- promise(function(resolve, reject) {
         later(function() {
-          s <- Stream$new(req, .async = .async)
+          ## TODO: This should be made a promise that resolves when the connection is established
+          con <- req_perform_connection(req, blocking = !.async)
+          s <- Stream$new(con, .async = .async)
           resolve(classify_stream(s, class = .stream))
         })
       }) |>
         as_oai_promise()
-      stamp("after promise")
       return(p)
     } else {
-      s <- Stream$new(req, .async = .async)
+      ## Handle sync streaming case
+      con <- req_perform_connection(req, blocking = !.async)
+      s <- Stream$new(con, .async = .async)
       if (.classify_response) {
         s <- classify_stream(s, class = .stream)
       }
       return(s)
     }
-  }
-  handle_response <- function(resp) {
-    if (!is.null(path)) {
-      invisible(path)
-    } else {
-      b <- resp_body_json(resp)
-      b$.async <- .async
-      if (.classify_response) {
-        classify_response(b)
+  } else {
+    ## Handle non-streaming case
+    handle_response <- function(resp) {
+      if (!is.null(path)) {
+        invisible(path)
       } else {
-        b
+        b <- resp_body_json(resp)
+        b$.async <- .async
+        if (.classify_response) {
+          classify_response(b)
+        } else {
+          b
+        }
       }
     }
-  }
-  if (.async) {
-    req_perform_promise(req, path = path) |>
-      then(handle_response) |>
-      as_oai_promise()
-  } else {
-    req_perform(req, path = path)|>
-      handle_response()
+    if (.async) {
+      ## Handle async non-streaming case
+      req_perform_promise(req, path = path) |>
+        then(handle_response) |>
+        as_oai_promise()
+    } else {
+      ## Handle sync non-streaming case
+      req_perform(req, path = path)|>
+        handle_response()
+    }
   }
 }
 
@@ -196,16 +204,16 @@ classify_stream <- function(x, class) {
   )
 }
 
-#' importFrom jsonlite fromJSON
+#' @importFrom jsonlite fromJSON
+#' @importFrom curl multi_fdset
+#' @keywords internal
 Stream <- R6Class(
   "Stream",
   portable = FALSE,
   public = list(
-    initialize = function(req, .async = FALSE) {
+    initialize = function(con, .async = FALSE) {
       async <<- .async
-      ## TODO: This should be a promise
-      con <<- req_perform_connection(req, blocking = !.async)
-      stamp("after req_perform_connection")
+      con <<- con
     },
     read = function() {
       event <- resp_stream_sse(con)
@@ -220,6 +228,9 @@ Stream <- R6Class(
     },
     is_complete = function() {
       resp_stream_is_complete(con)
+    },
+    fd = function() {
+      multi_fdset(con$body)
     },
     async = FALSE
   ),

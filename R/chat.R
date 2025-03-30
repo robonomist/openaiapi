@@ -249,6 +249,7 @@ ChatCompletion <- R6Class(
       oai_get_chat_messages(completion_id = self$id, ..., .async = .async)
     },
     #' @description Get the messages in the chat completion.
+    #' @param choice Integer. The choice number to get the message from.
     content_text = function(choice = 1) {
       self$choices[[choice]]$message$content
     },
@@ -262,6 +263,7 @@ ChatCompletion <- R6Class(
   )
 )
 
+#' @importFrom later later later_fd
 ChatCompletionStream <- R6Class(
   "ChatCompletionStream",
   inherit = ChatCompletion,
@@ -276,19 +278,19 @@ ChatCompletionStream <- R6Class(
     },
     stream_async = function(callback) {
       promise(function(resolve, reject) {
-        handle_stream <- function() {
-          r <- stream$read()
-          if (identical(r, "[DONE]")) {
+        handle_stream <- function(...) {
+          event <- stream$read()
+          if (identical(event, "[DONE]")) {
             resolve(self)
-          } else if (is.null(r)) {
+          } else if (is.null(event)) {
             ## No event, wait and try again
-            later(handle_stream, delay = 0.1)
+            later_fd(
+              handle_stream,
+              readfds = stream$fd()$reads,
+              timeout = getOption("openaiapi.stream_timeout", 60)
+            )
           } else {
-            ## Store chat completion on first message
-            if (is.null(id)) {
-              store_response(r)
-            }
-            store_choices(r$choices)
+            store_event(event)
             if (is_complete()) {
               reject("Stream is complete before DONE event")
             } else {
@@ -306,10 +308,18 @@ ChatCompletionStream <- R6Class(
   ),
   private = list(
     stream = NULL,
-    store_choices = function(choices) {
-      for (choice in choices) {
+    store_event = function(event) {
+      if (is.null(id)) {
+        ## Store chat completion on first message
+        store_response(event)
+      }
+      for (choice in event$choices) {
         i <- choice$index + 1L
         d <- choice$delta
+        if (length(d) == 0L) {
+          ## Last event's content is `list()`
+          d <- choice$delta <- list(content = "")
+        }
         d$content <- paste0(
           self$choices[[i]]$message$content %||% "",
           d$content

@@ -17,5 +17,5 @@ Imports:
     jsonlite,
     R6,
     curl,
-    later,
+    later (>= 1.4.0),
     promises

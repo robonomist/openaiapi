@@ -137,6 +137,13 @@ Get the messages in the chat completion.
 \if{html}{\out{<div class="r">}}\preformatted{ChatCompletion$content_text(choice = 1)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{choice}}{Integer. The choice number to get the message from.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ChatCompletion-print"></a>}}
