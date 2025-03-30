@@ -1,0 +1,82 @@
+---
+title: "Example with shiny"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{shiny}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This is an example of a Shiny app that uses `openaiapi` to stream a completion asynchonously. The completion is then rendered as markdown.
+
+To the stream is non-blocking, the app displays a timer that updates every 100 milliseconds while the completion is being generated.
+
+``` r
+library(openaiapi)
+library(shiny)
+library(bslib)
+
+my_prompt <- "This is a test. Can you produce a long text that takes at least 10 seconds to generate and uses markdown notation?"
+
+ui <- fixedPage(
+  input_task_button("prompt", "Prompt"),
+  uiOutput("timer"),
+  uiOutput("answer")
+)
+
+server <- function(input, output, session) {
+
+  content <- reactiveVal()
+  start_time <- NULL
+
+  task <- ExtendedTask$new(function(prompt) {
+    oai_create_chat_completion(
+      prompt,
+      stream = TRUE,
+      .async = TRUE
+    )$stream_async(
+      callback = function(choices) {
+        content(choices[[1]]$message$content)
+      }
+    )
+  }) |>
+    bind_task_button("prompt")
+
+  observeEvent(input$prompt, {
+    start_time <<- Sys.time()
+    task$invoke(my_prompt)
+  })
+
+  output$timer <- renderUI({
+      if (task$status() == "running") {
+        invalidateLater(100)
+      } else if (task$status() %in% c("initial", "error")) {
+        req(FALSE)
+      }
+      time <-
+        as.numeric(difftime(Sys.time(), start_time, units = "secs")) |>
+        format(digits = 1, nsmall = 2)
+      p(paste("Time elapsed:", time,"seconds"))
+  })
+
+  output$answer <- renderUI({
+    tryCatch(
+      markdown(content()),
+      error = function(e) {
+        req(FALSE, cancelOutput = TRUE)
+      }
+    )
+  })
+}
+shinyApp(ui, server)
+```
+
+### TODO:
+- [ ] Currently there seems to be no way to open the stream concurrently with `httr2::req_perform_connection(req, blocking = FALSE)`. Therefore, at the beginning of the stream, there is a 0.5-1 second delay during which R is blocked.

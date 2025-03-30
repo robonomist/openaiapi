@@ -278,14 +278,29 @@ ChatCompletionStream <- R6Class(
     initialize = function(stream) {
       stream <<- stream
     },
-    stream_async = function(callback) {
+    stream_async = function(callback, env = parent.frame()) {
       stream$stream_async(
         handle_event = function(event) {
           store_event(event)
           callback(choices)
         }
       ) |>
-        then(function(...) { self })
+        then(function(...) {
+          for (choice in choices) {
+            if (identical(choice$finish_reason, "tool_calls")) {
+              tool_messages <- lapply(choice$message$tool_calls, function(tool_call) {
+                args <- fromJSON(tool_call$`function`$arguments)
+                output <- do.call(tool_call$`function`$name, args, envir = env)
+                oai_message(output, role = "tool", tool_call_id = tool_call$id)
+              })
+              get_chat_messages() |> c(tool_messages)
+              ## TODO: Implement tool calls
+            }
+          }
+          ## if (identical(choice$finish_reason, "tool_calls")) {
+          ## }
+          self
+        })
     },
     is_complete = function() {
       stream$is_complete()
@@ -294,10 +309,12 @@ ChatCompletionStream <- R6Class(
   private = list(
     stream = NULL,
     store_event = function(event) {
+
       if (is.null(id)) {
         ## Store chat completion only on first message
         store_response(event)
       }
+
       for (choice in event$choices) {
         i <- choice$index + 1L
         d <- choice$delta
@@ -313,23 +330,24 @@ ChatCompletionStream <- R6Class(
           for (tool_call in d$tool_calls) {
             id <- tool_call$id
             j <- tool_call$index + 1L
-            d$tool_calls[[j]]$`function`$arguments <- paste0(
+            ## d$tool_calls[[j]]$`function`$arguments <-
+            tool_call$`function`$arguments <- paste0(
               self$choices[[i]]$message$tool_calls[[j]]$`function`$arguments %||% "",
               tool_call$`function`$arguments
             )
+            self$choices[[i]]$message$tool_calls[[j]] <- modifyList(
+              self$choices[[i]]$message$tool_calls[[j]] %||% list(),
+              tool_call
+            )
           }
+          ## self$choices[[i]]$message$tool_calls <- d$tool_calls
         }
         choice$message <- d
         self$choices[[i]] <- modifyList(
           self$choices[[i]] %||% list(),
           choice
         )
-        if (identical(choice$finish_reason, "tool_calls")) {
 
-        }
-        if (!is.null(choice$finish_reason)) {
-          browser()
-        }
       }
     }
   )

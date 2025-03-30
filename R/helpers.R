@@ -4,13 +4,15 @@
 #' @param role Character. The role of the sender (default is "user").
 #' @param attachments List or NULL. Optional. Attachments to include with the message.
 #' @param metadata List or NULL. Optional. Metadata to include with the message.
+#' @param ... Additional values to pass to the API.
 #' @return A structured list representing the message.
 #' @rdname utils
 #' @export
 oai_message <- function(content,
                         role = "user",
                         attachments = NULL,
-                        metadata = NULL) {
+                        metadata = NULL,
+                        ...) {
   stopifnot(length(content) == 1L)
   if (inherits(attachments, "oai_attachment")) {
     attachments <- list(attachments)
@@ -19,7 +21,8 @@ oai_message <- function(content,
     role = role,
     content = content,
     attachments = attachments,
-    metadata = metadata
+    metadata = metadata,
+    ...
   ) |>
     compact() |>
     structure(class = "oai_message")
