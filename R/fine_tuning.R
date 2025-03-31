@@ -58,7 +58,7 @@ oai_list_fine_tuning_jobs <- function(after = NULL,
   query <- list(
     after = after,
     limit = limit
-  ) |> compact()
+  )
   oai_query_list(
     ep = "fine_tuning/jobs",
     query = query,,
@@ -83,7 +83,7 @@ oai_list_fine_tuning_events <- function(fine_tuning_job_id,
   query <- list(
     after = after,
     limit = limit
-  ) |> compact()
+  )
   oai_query_list(
     ep = c("fine_tuning", "jobs", fine_tuning_job_id, "events"),
     query = query,
@@ -108,7 +108,7 @@ oai_list_fine_tuning_checkpoints <- function(fine_tuning_job_id,
   query <- list(
     after = after,
     limit = limit
-  ) |> compact()
+  )
   oai_query(
     ep = c("fine_tuning", "jobs", fine_tuning_job_id, "checkpoints"),
     query = query,

@@ -56,7 +56,7 @@ oai_list_files <- function(purpose = NULL,
     limit = limit,
     order = order,
     after = after
-  ) |> compact()
+  )
   oai_query_list(
     ep = "files",
     method = "GET",

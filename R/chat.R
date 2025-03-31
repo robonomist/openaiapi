@@ -61,7 +61,7 @@ oai_create_chat_completion <- function(messages,
   } else if (is.character(messages)) {
     messages <- list(oai_message(messages))
   }
-  body <- as.list(environment()) |> compact()
+  body <- as.list(environment())
   oai_query(
     ep = c("chat", "completions"),
     method = "POST",
@@ -109,7 +109,7 @@ oai_get_chat_messages <- function(completion_id,
       after = after,
       limit = limit,
       order = order
-    ) |> compact(),
+    ),
     .async = .async
   )
 }
@@ -137,7 +137,7 @@ oai_list_chat_completions <- function(model = NULL,
       after = after,
       limit = limit,
       order = order
-    ) |> compact()
+    )
   )
 }
 
@@ -286,21 +286,19 @@ ChatCompletionStream <- R6Class(
         }
       ) |>
         then(function(...) {
-          for (choice in choices) {
-            if (identical(choice$finish_reason, "tool_calls")) {
-              tool_messages <- lapply(choice$message$tool_calls, function(tool_call) {
-                args <- fromJSON(tool_call$`function`$arguments)
-                output <- do.call(tool_call$`function`$name, args, envir = env)
-                oai_message(output, role = "tool", tool_call_id = tool_call$id)
-              })
-              get_chat_messages() |> c(tool_messages)
-              ## TODO: Implement tool calls
-            }
-          }
-          ## if (identical(choice$finish_reason, "tool_calls")) {
-          ## }
           self
         })
+    },
+    do_tool_calls = function(env = parent.env()) {
+      lapply(choices, function(choice) {
+        if (identical(choice$finish_reason, "tool_calls")) {
+          lapply(choice$message$tool_calls, function(tool_call) {
+            args <- fromJSON(tool_call$`function`$arguments)
+            output <- do.call(tool_call$`function`$name, args, envir = env)
+            oai_message(output, role = "tool", tool_call_id = tool_call$id)
+          })
+        }
+      })
     },
     is_complete = function() {
       stream$is_complete()

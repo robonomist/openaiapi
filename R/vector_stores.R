@@ -27,7 +27,7 @@ oai_create_vector_store <- function(file_ids = NULL,
     expires_after = expires_after,
     chunking_strategy = chunking_strategy,
     metadata = metadata
-  ) |> compact()
+  )
   oai_query(
     ep = "vector_stores",
     headers = openai_beta_header(),
@@ -49,7 +49,7 @@ oai_list_vector_stores <- function(limit = NULL,
                                    before = NULL,
                                    .classify_response = TRUE,
                                    .async = FALSE) {
-  query <- as.list(environment()) |> compact()
+  query <- as.list(environment())
   oai_query_list(
     ep = "vector_stores",
     headers = openai_beta_header(),
@@ -87,7 +87,7 @@ oai_modify_vector_store <- function(vector_store_id,
     name = name,
     expires_after = expires_after,
     metadata = metadata
-  ) |> compact()
+  )
   oai_query(
     c("vector_stores", vector_store_id),
     headers = openai_beta_header(),

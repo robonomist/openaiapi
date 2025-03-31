@@ -28,7 +28,7 @@ oai_create_message <- function(thread_id,
     content = content,
     attachments = attachments,
     metadata = metadata
-  ) |> compact()
+  )
   oai_query(
     c("threads", thread_id, "messages"),
     headers = openai_beta_header(),
@@ -56,7 +56,7 @@ oai_list_messages <- function(thread_id,
     order = order,
     after = after,
     before = before
-  ) |> compact()
+  )
   oai_query_list(
     c("threads", thread_id, "messages"),
     headers = openai_beta_header(),
@@ -95,7 +95,7 @@ oai_modify_message <- function(thread_id,
                                .async = FALSE) {
   body <- list(
     metadata = metadata
-  ) |> compact()
+  )
   oai_query(
     c("threads", thread_id, "messages", message_id),
     headers = openai_beta_header(),

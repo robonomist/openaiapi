@@ -19,7 +19,7 @@ oai_create_thread <- function(messages = NULL,
     messages = messages,
     tool_resources = tool_resources,
     metadata = metadata
-  ) |> compact()
+  )
   oai_query(
     "threads",
     headers = openai_beta_header(),
@@ -40,7 +40,7 @@ oai_modify_thread <- function(thread_id,
   body <- list(
     tool_resources = tool_resources,
     metadata = metadata
-  ) |> compact()
+  )
   oai_query(
     c("threads", thread_id),
     headers = openai_beta_header(),

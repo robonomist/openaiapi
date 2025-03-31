@@ -19,7 +19,7 @@ oai_create_vector_store_file_batch <- function(vector_store_id,
   body <- list(
     file_ids = as.list(file_ids),
     chunking_strategy = chunking_strategy
-  ) |> compact()
+  )
   oai_query(
     ep = c("vector_stores", vector_store_id, "file_batches"),
     headers = openai_beta_header(),
@@ -79,7 +79,7 @@ oai_list_vector_store_files_in_a_batch <- function(vector_store_id,
     after = after,
     before = before,
     filter = filter
-  ) |> compact()
+  )
   oai_query_list(
     ep = c("vector_stores", vector_store_id, "files_batches", batch_id, "files"),
     headers = openai_beta_header(),

@@ -66,6 +66,8 @@ oai_query <- function(ep,
                       .classify_response = TRUE,
                       .async = FALSE,
                       .stream = NULL) {
+  body <- compact(body)
+  query <- compact(query)
   req <- oai_request(ep, body, method, headers, encode)
 
   if (!is.null(.stream)) {

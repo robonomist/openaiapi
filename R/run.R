@@ -56,7 +56,7 @@ oai_create_run <- function(thread_id,
     truncation_strategy = truncation_strategy,
     tool_choice = tool_choice,
     response_format = response_format
-  ) |> compact()
+  )
   oai_query(
     c("threads", thread_id, "runs"),
     headers = openai_beta_header(),
@@ -108,7 +108,7 @@ oai_create_thread_and_run <- function(assistant_id,
     truncation_strategy = truncation_strategy,
     tool_choice = tool_choice,
     response_format = response_format
-  ) |> compact()
+  )
   oai_query(
     c("threads", "runs"),
     headers = openai_beta_header(),
@@ -135,7 +135,7 @@ oai_list_runs <- function(thread_id,
     order = order,
     after = after,
     before = before
-  ) |> compact()
+  )
   oai_query_list(
     c("threads", thread_id, "runs"),
     headers = openai_beta_header(),
@@ -164,7 +164,7 @@ oai_list_run_steps <- function(thread_id,
     order = order,
     after = after,
     before = before
-  ) |> compact()
+  )
   oai_query_list(
     c("threads", thread_id, "runs", run_id, "steps"),
     headers = openai_beta_header(),
@@ -215,7 +215,7 @@ oai_modify_run <- function(thread_id,
                             .async = FALSE) {
   body <- list(
     metadata = metadata
-  ) |> compact()
+  )
   oai_query(
     c("threads", thread_id, "runs", run_id),
     headers = openai_beta_header(),

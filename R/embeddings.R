@@ -29,7 +29,7 @@ oai_create_embeddings <- function(input,
     encoding_format = match.arg(encoding_format),
     dimensions = dimensions,
     user = user
-  ) |> compact()
+  )
   oai_query(
     ep = "embeddings",
     body = body,

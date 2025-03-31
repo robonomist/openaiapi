@@ -44,7 +44,7 @@ oai_create_assistant <- function(model,
     temperature = temperature,
     top_p = top_p,
     response_format = response_format
-  ) |> compact()
+  )
   oai_query(
     ep = "assistants",
     headers = openai_beta_header(),
@@ -83,7 +83,7 @@ oai_modify_assistant <- function(assistant_id,
     temperature = temperature,
     top_p = top_p,
     response_format = response_format
-  ) |> compact()
+  )
   oai_query(
     c("assistants", assistant_id),
     headers = openai_beta_header(),
@@ -108,7 +108,7 @@ oai_list_assistants <- function(limit = NULL,
     order = order,
     after = after,
     before = before
-  ) |> compact()
+  )
   oai_query_list(
     "assistants",
     headers = openai_beta_header(),
