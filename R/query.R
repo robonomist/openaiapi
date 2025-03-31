@@ -71,26 +71,26 @@ oai_query <- function(ep,
   req <- oai_request(ep, body, method, headers, encode)
 
   if (!is.null(.stream)) {
-    if (.async) {
-      ## Handle async streaming case
-      p <- promise(function(resolve, reject) {
-        later(function() {
-          ## TODO: This should be made a promise that resolves when the connection is established
-          con <- req_perform_connection(req, blocking = !.async)
-          s <- Stream$new(con, .async = .async)
-          resolve(classify_stream(s, class = .stream))
-        })
-      }) |>
-        as_oai_promise()
-      return(p)
-    } else {
-      ## Handle sync streaming case
+    handle_stream <- function(resp) {
       con <- req_perform_connection(req, blocking = !.async)
       s <- Stream$new(con, .async = .async)
       if (.classify_response) {
         s <- classify_stream(s, class = .stream)
       }
-      return(s)
+      s
+    }
+    if (.async) {
+      ## Handle async streaming case
+      p <- promise(function(resolve, reject) {
+        later(function() {
+          ## TODO: This should be made a promise that resolves when the connection is established
+          resolve(handle_stream())
+        })
+      }) |>
+        as_oai_promise()
+      return(p)
+    } else {
+      return(handle_stream())
     }
   } else {
     ## Handle non-streaming case
