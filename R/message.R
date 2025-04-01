@@ -238,6 +238,48 @@ Message <- R6Class(
         oai_retrieve_assistant(assistant_id = self$assistant_id,
                                .async = .async)
       }
+    },
+    #' @description Add message delta
+    add_delta = function(delta) {
+      if (!is.null(delta$role)) {
+        role <- delta$role
+      }
+      ## Process content
+      for (item in delta$content) {
+        i <- item$index + 1L
+        if (length(self$content) < i) {
+          ## New item
+          self$content[[i]] <- item
+        } else {
+          if (item$type == "text") {
+            ## Concatenate text
+            item$text$value <- paste0(
+              self$content[[i]]$text$value %||% "",
+              item$text$value
+            )
+            ## Process annotations
+            for (a in item$text$annotations) {
+              j <- a$index + 1L
+              if (length(self$content[[i]]$text$annotations) < j) {
+                ## New annotation
+                self$content[[i]]$text$annotations[[j]] <- a
+              } else {
+                ## Concatenate annotation text
+                a$text <- paste0(
+                  self$content[[i]]$text$annotations[[j]]$text %||% "",
+                  a$text
+                )
+                item$text$annotations[[j]] <- modifyList(
+                  self$content[[i]]$text$annotations[[j]], a
+                )
+              }
+            }
+            self$content[[i]] <- modifyList(self$content[[i]], item)
+          }
+        }
+      }
+      NULL
+      ## self$content <- c(self$content, delta)
     }
   )
 )

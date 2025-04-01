@@ -64,18 +64,17 @@ oai_query <- function(ep,
                       headers = NULL,
                       path = NULL,
                       .classify_response = TRUE,
-                      .async = FALSE,
-                      .stream = NULL) {
+                      .async = FALSE) {
   body <- compact(body)
   query <- compact(query)
   req <- oai_request(ep, body, method, headers, encode)
 
-  if (!is.null(.stream)) {
-    handle_stream <- function(resp) {
+  if (isTRUE(body$stream)) {
+    handle_stream <- function() {
       con <- req_perform_connection(req, blocking = !.async)
       s <- Stream$new(con, .async = .async)
       if (.classify_response) {
-        s <- classify_stream(s, class = .stream)
+        s <- classify_stream(s, ep)
       }
       s
     }
@@ -84,12 +83,13 @@ oai_query <- function(ep,
       p <- promise(function(resolve, reject) {
         later(function() {
           ## TODO: This should be made a promise that resolves when the connection is established
-          resolve(handle_stream())
+          tryCatch(resolve(handle_stream()), error = function(e) reject(e))
         })
       }) |>
         as_oai_promise()
       return(p)
     } else {
+      ## Handle sync streaming case
       return(handle_stream())
     }
   } else {
@@ -227,72 +227,14 @@ classify_response <- function(x) {
   )
 }
 
-classify_stream <- function(x, class) {
-  switch(
-    class,
-    "ChatCompletion" = ChatCompletionStream$new(x),
+classify_stream <- function(x, ep) {
+  ep <- paste0(ep, collapse = "/")
+  if (ep == "chat/completion") {
+    ChatCompletionStream$new(x)
+  } else if (grepl("threads/[^/]+/runs", ep)) {
+    RunStream$new(x)
+  } else {
     x
-  )
+  }
 }
 
-#' @importFrom jsonlite fromJSON
-#' @importFrom curl multi_fdset
-#' @keywords internal
-Stream <- R6Class(
-  "Stream",
-  portable = FALSE,
-  public = list(
-    initialize = function(con, .async = FALSE) {
-      async <<- .async
-      con <<- con
-    },
-    read = function() {
-      event <- resp_stream_sse(con)
-      if (is.null(event)) return(NULL)
-      data <- event$data
-      if (data == "[DONE]") {
-        close(private$con)
-        "[DONE]"
-      } else {
-        fromJSON(data, simplifyVector = FALSE)
-      }
-    },
-    stream_async = function(handle_event) {
-      promise(function(resolve, reject) {
-        handle_stream <- function(...) {
-          event <- read()
-          if (identical(event, "[DONE]")) {
-            resolve(NULL)
-          } else if (is.null(event)) {
-            ## No event, wait and try again
-            later_fd(
-              handle_stream,
-              readfds = fd()$reads,
-              timeout = getOption("openaiapi.stream_timeout", 60)
-            )
-          } else {
-            if (is_complete()) {
-              reject("Stream is complete before [DONE] event")
-            }
-            handle_event(event)
-            later(handle_stream)
-          }
-        }
-        tryCatch(handle_stream(), error = function(e) reject(e))
-      })
-    },
-    is_complete = function() {
-      resp_stream_is_complete(con)
-    },
-    fd = function() {
-      multi_fdset(con$body)
-    },
-    async = FALSE
-  ),
-  private = list(
-    finalizer = function() {
-      close(con)
-    },
-    con = NULL
-  )
-)

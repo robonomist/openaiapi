@@ -1,7 +1,7 @@
 #' @import httr2
 #' @import cli
 #' @importFrom rlang caller_env env_get_list
-#' @importFrom promises is.promise then
+#' @importFrom promises is.promise then catch
 NULL
 
 #' Common parameters

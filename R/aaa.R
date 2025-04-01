@@ -3,14 +3,7 @@ Utils <- R6Class(
   "Utils",
   portable = FALSE,
   public = list(
-    .async = FALSE
-  ),
-  private = list(
-    .print = function(...) {
-      cli_h1(class(self)[1])
-      cli_dl(c(...))
-      invisible(self)
-    },
+    .async = FALSE,
     store_response = function(resp) {
       if (is.promise(resp)) {
         p <- resp$then(function(x) {
@@ -19,7 +12,8 @@ Utils <- R6Class(
           as_oai_promise()
         return(p)
       }
-      self[[".async"]] <- resp[[".async"]]
+      self[[".async"]] <- resp[[".async"]] %||% self[[".async"]]
+      resp <- compact(resp)
       for (name in schema$as_is) {
         self[[name]] <- resp[[name]]
       }
@@ -30,6 +24,13 @@ Utils <- R6Class(
         self[[name]] <- resp[[name]] |> unlist(use.names = FALSE)
       }
       self
+    }
+  ),
+  private = list(
+    .print = function(...) {
+      cli_h1(class(self)[1])
+      cli_dl(c(...))
+      invisible(self)
     },
     schema = list(
       as_is = character(),

@@ -6,7 +6,7 @@
 \alias{oai_tool_resource}
 \title{A helper function for message arguments}
 \usage{
-oai_message(content, role = "user", attachments = NULL, metadata = NULL)
+oai_message(content, role = "user", attachments = NULL, metadata = NULL, ...)
 
 oai_thread(messages, tool_resources = NULL, metadata = NULL)
 
@@ -20,6 +20,8 @@ oai_tool_resource(code_interpreter_file_ids = NULL, vector_store_ids = NULL)
 \item{attachments}{List or NULL. Optional. Attachments to include with the message.}
 
 \item{metadata}{List or NULL. Optional. Metadata to include with the thread.}
+
+\item{...}{Additional values to pass to the API.}
 
 \item{messages}{A list of oai_message objects or a character vector.}
 

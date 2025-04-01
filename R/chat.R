@@ -67,8 +67,7 @@ oai_create_chat_completion <- function(messages,
     method = "POST",
     body = body,
     .classify_response = .classify_response,
-    .async = .async,
-    .stream = if (isTRUE(stream)) "ChatCompletion"
+    .async = .async
   )
 }
 
@@ -271,17 +270,13 @@ ChatCompletionStream <- R6Class(
   inherit = ChatCompletion,
   portable = FALSE,
   public = list(
-    schema = list(
-      as_is = c("id", "model", "service_tier", "system_fingerprint", "usage"),
-      as_time = c("created")
-    ),
     initialize = function(stream) {
       stream <<- stream
     },
-    stream_async = function(callback, env = parent.frame()) {
+    stream_async = function(callback) {
       stream$stream_async(
         handle_event = function(event) {
-          store_event(event)
+          store_data(event$data)
           callback(choices)
         }
       ) |>
@@ -305,19 +300,23 @@ ChatCompletionStream <- R6Class(
     }
   ),
   private = list(
+    schema = list(
+      as_is = c("id", "model", "service_tier", "system_fingerprint", "usage"),
+      as_time = c("created")
+    ),
     stream = NULL,
-    store_event = function(event) {
+    store_data = function(data) {
 
       if (is.null(id)) {
         ## Store chat completion only on first message
-        store_response(event)
+        store_response(data)
       }
 
-      for (choice in event$choices) {
+      for (choice in data$choices) {
         i <- choice$index + 1L
         d <- choice$delta
         if (length(d) == 0L) {
-          ## Last event's content is `list()`
+          ## Last data's content is `list()`
           d <- choice$delta <- list(content = "")
         }
         d$content <- paste0(

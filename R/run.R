@@ -41,6 +41,12 @@ oai_create_run <- function(thread_id,
                            response_format = NULL,
                            .classify_response = TRUE,
                            .async = FALSE) {
+  if (inherits(thread_id, "Thread")) {
+    thread_id <- thread_id$id
+  }
+  if (inherits(assistant_id, "Assistant")) {
+    assistant_id <- assistant_id$id
+  }
   body <- list(
     assistant_id = assistant_id,
     model = model,
@@ -51,6 +57,7 @@ oai_create_run <- function(thread_id,
     metadata = metadata,
     temperature = temperature,
     top_p = top_p,
+    stream = stream,
     max_prompt_tokens = max_prompt_tokens,
     max_completion_tokens = max_completion_tokens,
     truncation_strategy = truncation_strategy,
@@ -206,6 +213,7 @@ oai_retrieve_run_step <- function(thread_id, run_id, step_id,
 }
 
 #' @description * `oai_modify_run()`: Modify a run.
+#' @return `oai_modify_run()` returns a `Run` object.
 #' @export
 #' @rdname run_api
 oai_modify_run <- function(thread_id,
@@ -227,22 +235,25 @@ oai_modify_run <- function(thread_id,
 }
 
 #' @description * `oai_cancel_run()`: Cancel a run.
+#' @return `oai_cancel_run()` returns a `Run` object.
 #' @export
 #' @rdname run_api
 oai_cancel_run <- function(thread_id,
                            run_id,
+                            .classify_response = TRUE,
                            .async = FALSE) {
   oai_query(
     c("threads", thread_id, "runs", run_id, "cancel"),
     headers = openai_beta_header(),
     method = "POST",
-    .classify_response = FALSE,
+    .classify_response = .classify_response,
     .async = .async
   )
 }
 
 #' @description * `oai_submit_tool_outputs()`: Submit tool outputs.
 #' @param tool_outputs List of tool outputs.
+#' @return `oai_submit_tool_outputs()` returns a `Run` object.
 #' @export
 #' @rdname run_api
 oai_submit_tool_outputs <- function(thread_id,
@@ -252,7 +263,8 @@ oai_submit_tool_outputs <- function(thread_id,
                                     .classify_response = TRUE,
                                     .async = FALSE) {
   body <- list(
-    tool_outputs = tool_outputs
+    tool_outputs = tool_outputs,
+    stream = stream
   )
   oai_query(
     c("threads", thread_id, "runs", run_id, "submit_tool_outputs"),
@@ -431,20 +443,24 @@ Run <- R6Class(
         store_response()
     },
     #' @description Submit tool outputs.
-    submit_tool_outputs = function(tool_outputs) {
-      oai_submit_tool_outputs(
+    submit_tool_outputs = function(tool_outputs, stream = NULL) {
+      r <- oai_submit_tool_outputs(
         thread_id = self$thread_id,
         run_id = self$id,
         tool_outputs = tool_outputs,
+        stream = stream,
         .classify_response = FALSE,
         .async = .async
-      ) |>
-        store_response()
+      )
+      if (isTRUE(stream)) {
+        r
+      } else {
+        store_response(r)
+      }
     },
     #' @description Wait for the run to complete.
     wait = function(env = parent.frame()) {
       start_time <- Sys.time()
-      sandbox_env <- make_sanbox_env(env)
       repeat {
         s <- self$retrieve_status()
         if (s %in% c("queued", "in_progress", "cancelling")) {
@@ -460,9 +476,9 @@ Run <- R6Class(
           cli_abort("Run ended with status \"{s}\"")
         } else if (s == "requires_action") {
           ## Perform the required action.
-          self$do_tool_calls(sandbox_env) |>
+          self$do_tool_calls(env) |>
             self$submit_tool_outputs() |>
-            self$initialize(resp = _)
+            store_response()
           Sys.sleep(getOption("openaiapi.run_poll_interval"))
         } else if (s == "completed") {
           ## Return the run object when completed.
@@ -476,7 +492,6 @@ Run <- R6Class(
     await = function(env = parent.frame()) {
       .async <<- TRUE
       start_time <- Sys.time()
-      sandbox_env <- make_sanbox_env(env)
       promise(function(resolve, reject) {
         handle_calls <- function() {
           run_time <-
@@ -494,7 +509,7 @@ Run <- R6Class(
                 reject(paste("Run ended with status", s))
               } else if (s == "requires_action") {
                 ## Perform the required action.
-                self$do_tool_calls(sandbox_env) |>
+                self$do_tool_calls(env) |>
                   self$submit_tool_outputs() |>
                   store_response() |>
                   then(handle_calls)
@@ -518,6 +533,7 @@ Run <- R6Class(
       if (a$type  != "submit_tool_outputs") {
         cli_abort("Required action not of type 'submit_tool_outputs'.")
       }
+      sandbox_env <- make_sanbox_env(env)
       lapply(a$submit_tool_outputs$tool_calls, function(x) {
         if (x$type != "function") {
           cli_abort(
@@ -529,7 +545,7 @@ Run <- R6Class(
           do.call(
             what = x$`function`$name,
             args = fromJSON(x$`function`$arguments),
-            envir = env
+            envir = sandbox_env
           ),
           error = function(cnd) {
             cli_abort("Function tool call failed.", parent = cnd,
@@ -586,24 +602,29 @@ Run <- R6Class(
 #' @importFrom R6 R6Class
 RunStep <- R6Class(
   "RunStep",
+  inherit = Utils,
   portable = FALSE,
   public = list(
-    initialize = function(resp) {
-      id <<- resp$id
-      created_at <<- resp$created_at |> as_time()
-      assistant_id <<- resp$assistant_id
-      thread_id <<- resp$thread_id
-      run_id <<- resp$run_id
-      type <<- resp$type
-      status <<- resp$status
-      step_details <<- resp$step_details
-      last_error <<- resp$last_error
-      expired_at <<- resp$expires_at |> as_time()
-      cancelled_at <<- resp$cancelled_at |> as_time()
-      failed_at <<- resp$failed_at |> as_time()
-      completed_at <<- resp$completed_at |> as_time()
-      metadata <<- resp$metadata
-      usage <<- resp$usage
+    initialize = function(thread_id = NULL,
+                          run_id = NULL,
+                          step_id = NULL,
+                          ...,
+                          resp,
+                          .async = FALSE) {
+      if (!is.null(resp)) {
+        store_response(resp)
+      } else if (!is.null(thread_id) & !is.null(run_id) & !is.null(run_step_id)) {
+        oai_retrieve_run_step(
+          thread_id = thread_id,
+          run_id = run_id,
+          step_id = step_id,
+          .classify_response = FALSE,
+          .async = .async
+        ) |>
+          store_response()
+      } else {
+        cli_abort("Must provide 'thread_id', 'run_id', and 'step_id'!")
+      }
     },
     id = NULL,
     created_at = NULL,
@@ -624,14 +645,16 @@ RunStep <- R6Class(
       oai_retrieve_run_step(
         thread_id = self$thread_id,
         run_id = self$run_id,
-        step_id = self$id
-      ) |> initialize()
-      self
+        step_id = self$id,
+        .classify_response = FALSE,
+        .async = .async
+      ) |> store_response()
     },
     do_tool_calls = function(env = parent.frame()) {
       if (self$step_details$type != "tool_calls") {
         cli_abort("Run step not of type 'tool_calls'.")
       }
+      sandbox_env <- make_sanbox_env(env)
       lapply(self$step_details$tool_calls, function(x) {
         if (x$type != "function") {
           cli_abort("Tool call not of type 'function'.",
@@ -641,7 +664,7 @@ RunStep <- R6Class(
           do.call(
             what = x$`function`$name,
             args = fromJSON(x$`function`$arguments),
-            envir = env
+            envir = sandbox_env
           ),
           error = function(cnd) {
             cli_abort("Function tool call failed.", parent = cnd,
@@ -675,13 +698,146 @@ RunStep <- R6Class(
       }
     },
     assistant = function() {
-      oai_retrieve_assistant(self$assistant_id)
+      oai_retrieve_assistant(self$assistant_id, .async = .async)
     },
     thread = function() {
-      oai_retrieve_thread(self$thread_id)
+      oai_retrieve_thread(self$thread_id, .async = .async)
     },
     run = function() {
-      oai_retrieve_run(self$thread_id, self$run_id)
+      oai_retrieve_run(self$thread_id, self$run_id, .async = .async)
+    },
+    add_delta = function(delta) {
+      if (is.null(step_details$tool_calls)) {
+        step_details <<- delta$step_details
+      } else {
+        for (tool_call in delta$step_details$tool_calls) {
+          i <- tool_call$index + 1L
+          tool_call$`function`$arguments <- paste0(
+            step_details$tool_calls[[i]]$`function`$arguments %||% "",
+            tool_call$`function`$arguments
+          )
+          step_details$tool_calls[[i]] <<- modifyList(
+            step_details$tool_calls[[i]], tool_call
+          )
+        }
+        step_details <<- modifyList(step_details, delta$step_details)
+      }
+      self
     }
+  ),
+  private = list(
+    schema = list(
+      as_is = c(
+        "id", "assistant_id", "thread_id", "run_id", "type", "status",
+        "step_details", "last_error", "metadata", "usage"
+      ),
+      as_time = c(
+        "created_at", "expired_at", "cancelled_at", "failed_at", "completed_at"
+      )
+    )
   )
 )
+
+RunStream <- R6Class(
+  "RunStream",
+  inherit = Run,
+  portable = FALSE,
+  public = list(
+    event_data = list(),
+    initialize = function(stream) {
+      stream <<- stream
+      .async <<- stream$async
+    },
+    stream_async = function(on_message_delta = function(data) {},
+                            on_run_step_delta = function(data) {},
+                            on_message = function(msg) {},
+                            on_run_step = function(step) {},
+                            env = parent.frame()) {
+      stream$stream_async(
+        handle_event = function(event) {
+          id <- event$data$id
+          ## message(event$type)
+          event$type |> switch(
+            ## THREAD----------------
+            "thread.created" = {
+              event_data$thread <<- Thread$new(resp = event$data)
+            },
+            ## MESSAGE----------------
+            "thread.message.created" = ,
+            "thread.message.in_progress" = ,
+            "thread.message.completed" = ,
+            "thread.message.incomplete" = {
+              if (is.null(event_data$messages[[id]])) {
+                event_data$messages[[id]] <<- Message$new(resp = event$data)
+              } else {
+                event_data$messages[[id]]$store_response(event$data)
+              }
+              on_message(event_data$messages[[id]])
+            },
+            "thread.message.delta" = {
+              on_message_delta(event$data)
+              event_data$messages[[id]]$add_delta(event$data$delta)
+              on_message(event_data$messages[[id]])
+            },
+            ## RUN --------------------
+            "thread.run.created" = ,
+            "thread.run.cancelled" = ,
+            "thread.run.cancelling" = ,
+            "thread.run.completed" = ,
+            "thread.run.expired" = ,
+            "thread.run.failed" = ,
+            "thread.run.in_progress" = ,
+            "thread.run.incomplete" = ,
+            "thread.run.queued" = ,
+            "thread.run.requires_action" = store_response(event$data),
+            ## RUN STEP ----------------
+            "thread.run.step.cancelled" = ,
+            "thread.run.step.completed" = ,
+            "thread.run.step.created" = ,
+            "thread.run.step.expired" = ,
+            "thread.run.step.failed" = ,
+            "thread.run.step.in_progress" = {
+              if (is.null(event_data$run_steps[[id]])) {
+                event_data$run_steps[[id]] <<- RunStep$new(resp = event$data)
+              } else {
+                event_data$run_steps[[id]]$store_response(event$data)
+              }
+              on_run_step(event_data$run_steps[[id]])
+            },
+            "thread.run.step.delta" = {
+              on_run_step_delta(event$data)
+              event_data$run_steps[[id]]$add_delta(event$data$delta)
+              on_run_step(event_data$run_steps[[id]])
+            },
+            NULL
+          )
+        }
+      ) |>
+        then(function(...) {
+          if (identical(required_action$type, "submit_tool_outputs")) {
+            do_tool_calls(env) |>
+              submit_tool_outputs(stream = TRUE) |>
+              then(function(new_stream) {
+                stream <<- new_stream
+                stream_async(
+                  on_message_delta = on_message_delta,
+                  on_run_step_delta = on_run_step_delta,
+                  on_message = on_message,
+                  on_run_step = on_run_step,
+                  env = env
+                )
+              })
+          } else {
+            self
+          }
+        })
+    },
+    is_complete = function() {
+      stream$is_complete()
+    }
+  ),
+  private = list(
+    stream = NULL
+  )
+)
+

@@ -94,7 +94,7 @@ oai_modify_run(
   .async = FALSE
 )
 
-oai_cancel_run(thread_id, run_id, .async = FALSE)
+oai_cancel_run(thread_id, run_id, .classify_response = TRUE, .async = FALSE)
 
 oai_submit_tool_outputs(
   thread_id,
@@ -174,6 +174,12 @@ A Run R6 object.
 \code{oai_list_run_steps()} returns a list of \code{RunStep} objects.
 
 \code{oai_retrieve_run_step()} returns a \code{RunStep} object.
+
+\code{oai_modify_run()} returns a \code{Run} object.
+
+\code{oai_cancel_run()} returns a \code{Run} object.
+
+\code{oai_submit_tool_outputs()} returns a \code{Run} object.
 }
 \description{
 Runs represents executions run on a thread.
