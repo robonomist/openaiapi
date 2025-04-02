@@ -230,7 +230,7 @@ classify_response <- function(x) {
 
 classify_stream <- function(x, ep) {
   ep <- paste0(ep, collapse = "/")
-  if (ep == "chat/completion") {
+  if (ep == "chat/completions") {
     ChatCompletionStream$new(x)
   } else if (grepl("threads/[^/]+/runs", ep)) {
     RunStream$new(x)

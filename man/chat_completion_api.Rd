@@ -95,7 +95,9 @@ oai_delete_chat_completion(completion_id, .async = FALSE)
 
 \item{stop}{Character. Up to 4 sequences where the API will stop generating further tokens.}
 
-\item{stream}{not yet implemented.}
+\item{stream}{Logical. If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a data.}
+
+\item{stream_options}{List. Options for streaming response. Only set this when you set \code{stream = TRUE}.}
 
 \item{temperature}{Numeric. What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.}
 

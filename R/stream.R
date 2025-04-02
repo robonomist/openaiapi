@@ -1,5 +1,6 @@
 #' @importFrom jsonlite fromJSON
 #' @importFrom curl multi_fdset
+#' @importFrom later later later_fd
 #' @keywords internal
 StreamReader <- R6Class(
   "StreamReader",

@@ -13,8 +13,8 @@
 #' @param seed Integer. If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same seed and parameters should return the same result. Determinism is not guaranteed, and you should refer to the system_fingerprint response parameter to monitor changes in the backend.
 #' @param service_tier Character. Specifies the latency tier to use for processing the request. This parameter is relevant for customers subscribed to the scale tier service.
 #' @param stop Character. Up to 4 sequences where the API will stop generating further tokens.
-## @param stream Logical. If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a data.
-## @param stream_options List. Options for streaming response. Only set this when you set stream: true.
+#' @param stream Logical. If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a data.
+#' @param stream_options List. Options for streaming response. Only set this when you set `stream = TRUE`.
 #' @param temperature Numeric. What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
 #' @param top_p Numeric. An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
 #' @param tools List. A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for. A max of 128 functions are supported.
@@ -264,17 +264,16 @@ ChatCompletion <- R6Class(
   )
 )
 
-#' @importFrom later later later_fd
 ChatCompletionStream <- R6Class(
   "ChatCompletionStream",
   inherit = ChatCompletion,
   portable = FALSE,
   public = list(
-    initialize = function(stream) {
-      stream <<- stream
+    initialize = function(stream_reader) {
+      stream_reader <<- stream_reader
     },
     stream_async = function(callback) {
-      stream$stream_async(
+      stream_reader$stream_async(
         handle_event = function(event) {
           store_data(event$data)
           callback(choices)
@@ -287,16 +286,17 @@ ChatCompletionStream <- R6Class(
     do_tool_calls = function(env = parent.env()) {
       lapply(choices, function(choice) {
         if (identical(choice$finish_reason, "tool_calls")) {
-          lapply(choice$message$tool_calls, function(tool_call) {
-            args <- fromJSON(tool_call$`function`$arguments)
-            output <- do.call(tool_call$`function`$name, args, envir = env)
-            oai_message(output, role = "tool", tool_call_id = tool_call$id)
-          })
+          .do_tool_calls(choice$message$tool_calls, env, self$tools) |>
+            lapply(function(x) {
+              list(content = x$output, role = "tool", tool_call_id = x$tool_call_id)
+            })
+          ## lapply(choice$message$tool_calls, function(tool_call) {
+          ##   args <- fromJSON(tool_call$`function`$arguments)
+          ##   output <- do.call(tool_call$`function`$name, args, envir = env)
+          ##   oai_message(output, role = "tool", tool_call_id = tool_call$id)
+          ## })
         }
       })
-    },
-    is_complete = function() {
-      stream$is_complete()
     }
   ),
   private = list(
@@ -304,7 +304,7 @@ ChatCompletionStream <- R6Class(
       as_is = c("id", "model", "service_tier", "system_fingerprint", "usage"),
       as_time = c("created")
     ),
-    stream = NULL,
+    stream_reader = NULL,
     store_data = function(data) {
 
       if (is.null(id)) {

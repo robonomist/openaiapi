@@ -520,33 +520,27 @@ Run <- R6Class(
       if (a$type  != "submit_tool_outputs") {
         cli_abort("Required action not of type 'submit_tool_outputs'.")
       }
-      sandbox_env <- make_sanbox_env(env)
-      lapply(a$submit_tool_outputs$tool_calls, function(x) {
-        if (x$type != "function") {
-          cli_abort(
-            "Tool call not of type 'function'.",
-            call = call("self$do_tool_calls")
-          )
-        }
-        output <- tryCatch(
-          do.call(
-            what = x$`function`$name,
-            args = fromJSON(x$`function`$arguments),
-            envir = sandbox_env
-          ),
-          error = function(cnd) {
-            cli_abort("Function tool call failed.", parent = cnd,
-                      call = call("self$do_tool_calls"))
-          }
-        )
-        if (!is.character(output) || length(output) != 1) {
-          cli_abort(c(
-            "Function tool `{x$`function`$name}` returned an invalid output.",
-            x = "Tool functions must return a character vector of length 1!"
-          ), call = call("self$do_tool_calls"))
-        }
-        list(tool_call_id = x$id, output = output)
-      })
+      ## Note that this still relies on the object's tools field,
+      ## which is retrieved from the API. This is a potential security risk.
+      .do_tool_calls(a$submit_tool_outputs$tool_calls, env, self$tools)
+      ## lapply(a$submit_tool_outputs$tool_calls, function(x) {
+      ##   if (x$type != "function") {
+      ##     cli_abort(
+      ##       "Tool call not of type 'function'.",
+      ##       call = call("self$do_tool_calls")
+      ##     )
+      ##   }
+      ##   output <- tryCatch(
+      ##     ## Note that this function still relies on the object's tools field,
+      ##     ## which is retrieved from the API. This is a potential security risk.
+      ##     do_call_sandbox(x$`function`, env, self$tools),
+      ##     error = function(cnd) {
+      ##       cli_abort("Function tool call failed.", parent = cnd,
+      ##                 call = call("self$do_tool_calls"))
+      ##     }
+      ##   )
+      ##   list(tool_call_id = x$id, output = output)
+      ## })
     },
     #' @description Retrieve the thread of the run.
     thread = function() {
@@ -570,19 +564,20 @@ Run <- R6Class(
         "created_at", "expires_at", "started_at", "cancelled_at",
         "failed_at", "completed_at"
       )
-    ),
-    make_sanbox_env = function(env) {
-      function_tool_names <- sapply(tools, function(x) x$`function`$name)
-      if (length(function_tool_names) == 0) {
-        emptyenv()
-      } else {
-        env_get_list(
-          env = env,
-          nms = function_tool_names,
-          inherit = TRUE
-        ) |> as.environment()
-      }
-    }
+    )## ,
+    ## make_sanbox_env = function(env) {
+    ##   ## TODO: Use a wrapper on do.call instead, check arguments against the function signature.
+    ##   function_tool_names <- sapply(tools, function(x) x$`function`$name)
+    ##   if (length(function_tool_names) == 0) {
+    ##     emptyenv()
+    ##   } else {
+    ##     env_get_list(
+    ##       env = env,
+    ##       nms = function_tool_names,
+    ##       inherit = TRUE
+    ##     ) |> as.environment()
+    ##   }
+    ## }
   )
 )
 
