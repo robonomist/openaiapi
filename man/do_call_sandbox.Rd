@@ -4,7 +4,7 @@
 \alias{do_call_sandbox}
 \title{Validate and call a tool function}
 \usage{
-do_call_sandbox(tool_call_function, env, tools)
+do_call_sandbox(tool_call_function, env)
 }
 \description{
 Validate and call a tool function

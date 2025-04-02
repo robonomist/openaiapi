@@ -286,7 +286,7 @@ ChatCompletionStream <- R6Class(
     do_tool_calls = function(env = parent.env()) {
       lapply(choices, function(choice) {
         if (identical(choice$finish_reason, "tool_calls")) {
-          .do_tool_calls(choice$message$tool_calls, env, self$tools) |>
+          .do_tool_calls(choice$message$tool_calls, env) |>
             lapply(function(x) {
               list(content = x$output, role = "tool", tool_call_id = x$tool_call_id)
             })

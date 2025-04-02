@@ -522,7 +522,7 @@ Run <- R6Class(
       }
       ## Note that this still relies on the object's tools field,
       ## which is retrieved from the API. This is a potential security risk.
-      .do_tool_calls(a$submit_tool_outputs$tool_calls, env, self$tools)
+      .do_tool_calls(a$submit_tool_outputs$tool_calls, env)
       ## lapply(a$submit_tool_outputs$tool_calls, function(x) {
       ##   if (x$type != "function") {
       ##     cli_abort(
@@ -673,7 +673,7 @@ RunStream <- R6Class(
         then(function(...) {
           if (identical(required_action$type, "submit_tool_outputs")) {
             ## Perform tool calls, submit tool outputs, and continue streaming.
-            do_tool_calls(env) |>
+            self$do_tool_calls(env) |>
               submit_tool_outputs(stream = TRUE) |> # returns StreamReader obj
               then(function(new_stream_reader) {
                 stream_reader <<- new_stream_reader

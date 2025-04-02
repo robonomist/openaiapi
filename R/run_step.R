@@ -66,11 +66,11 @@ RunStep <- R6Class(
         .async = .async
       ) |> store_response()
     },
-    do_tool_calls = function(env = parent.frame(), tools) {
+    do_tool_calls = function(env = parent.frame()) {
       if (self$step_details$type != "tool_calls") {
         cli_abort("Run step not of type 'tool_calls'.")
       }
-      .do_tool_calls(self$step_details$tool_calls, env, tools)
+      .do_tool_calls(self$step_details$tool_calls, env)
       ## lapply(self$step_details$tool_calls, function(x) {
       ##   if (x$type != "function") {
       ##     cli_abort("Tool call not of type 'function'.",
