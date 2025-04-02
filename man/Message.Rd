@@ -52,9 +52,17 @@ Message R6 class
 \item \href{#method-Message-content_text}{\code{Message$content_text()}}
 \item \href{#method-Message-thread}{\code{Message$thread()}}
 \item \href{#method-Message-assistant}{\code{Message$assistant()}}
+\item \href{#method-Message-add_delta}{\code{Message$add_delta()}}
 \item \href{#method-Message-clone}{\code{Message$clone()}}
 }
 }
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Message-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Message-new}{}}}
@@ -152,6 +160,23 @@ Get the assistant if applicable.
 \if{html}{\out{<div class="r">}}\preformatted{Message$assistant()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Message-add_delta"></a>}}
+\if{latex}{\out{\hypertarget{method-Message-add_delta}{}}}
+\subsection{Method \code{add_delta()}}{
+Add message delta
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Message$add_delta(delta)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{delta}}{List. Data from the \code{thread.message.delta} event.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Message-clone"></a>}}

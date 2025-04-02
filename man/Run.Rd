@@ -2,11 +2,16 @@
 % Please edit documentation in R/run.R
 \name{Run}
 \alias{Run}
+\alias{RunStream}
 \title{Run R6 class}
 \description{
 Run R6 class
 
 Run R6 class
+
+RunStream R6 class
+
+RunStream R6 class
 }
 \section{Super class}{
 \code{openaiapi::Utils} -> \code{Run}
@@ -84,6 +89,13 @@ Run R6 class
 \item \href{#method-Run-clone}{\code{Run$clone()}}
 }
 }
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Run-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Run-new}{}}}
@@ -191,13 +203,15 @@ Cancel the run.
 \subsection{Method \code{submit_tool_outputs()}}{
 Submit tool outputs.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Run$submit_tool_outputs(tool_outputs)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Run$submit_tool_outputs(tool_outputs, stream = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{tool_outputs}}{Tool outputs.}
+
+\item{\code{stream}}{Logical. If TRUE, the function will return a RunStream object.}
 }
 \if{html}{\out{</div>}}
 }
@@ -280,6 +294,116 @@ Retrieve the assistant of the run.
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Run$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}
+\section{Super classes}{
+\code{openaiapi::Utils} -> \code{\link[openaiapi:Run]{openaiapi::Run}} -> \code{RunStream}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{event_data}}{Data accumulated from the event stream.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-RunStream-new}{\code{RunStream$new()}}
+\item \href{#method-RunStream-stream_async}{\code{RunStream$stream_async()}}
+\item \href{#method-RunStream-clone}{\code{RunStream$clone()}}
+}
+}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="assistant"><a href='../../openaiapi/html/Run.html#method-Run-assistant'><code>openaiapi::Run$assistant()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="await"><a href='../../openaiapi/html/Run.html#method-Run-await'><code>openaiapi::Run$await()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="cancel"><a href='../../openaiapi/html/Run.html#method-Run-cancel'><code>openaiapi::Run$cancel()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="do_tool_calls"><a href='../../openaiapi/html/Run.html#method-Run-do_tool_calls'><code>openaiapi::Run$do_tool_calls()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="list_steps"><a href='../../openaiapi/html/Run.html#method-Run-list_steps'><code>openaiapi::Run$list_steps()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="modify"><a href='../../openaiapi/html/Run.html#method-Run-modify'><code>openaiapi::Run$modify()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="retrieve"><a href='../../openaiapi/html/Run.html#method-Run-retrieve'><code>openaiapi::Run$retrieve()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="retrieve_status"><a href='../../openaiapi/html/Run.html#method-Run-retrieve_status'><code>openaiapi::Run$retrieve_status()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="submit_tool_outputs"><a href='../../openaiapi/html/Run.html#method-Run-submit_tool_outputs'><code>openaiapi::Run$submit_tool_outputs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="thread"><a href='../../openaiapi/html/Run.html#method-Run-thread'><code>openaiapi::Run$thread()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="wait"><a href='../../openaiapi/html/Run.html#method-Run-wait'><code>openaiapi::Run$wait()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-RunStream-new"></a>}}
+\if{latex}{\out{\hypertarget{method-RunStream-new}{}}}
+\subsection{Method \code{new()}}{
+Initialize a RunStream object.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{RunStream$new(stream_reader)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{stream_reader}}{StreamReader object.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-RunStream-stream_async"></a>}}
+\if{latex}{\out{\hypertarget{method-RunStream-stream_async}{}}}
+\subsection{Method \code{stream_async()}}{
+Stream the run asynchronously.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{RunStream$stream_async(
+  on_message_delta = function(data) {
+ },
+  on_message = function(msg) {
+ },
+  on_run_step_delta = function(data) {
+ },
+  on_run_step = function(step) {
+ },
+  on_event = function(event) {
+ },
+  env = parent.frame()
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{on_message_delta}}{A callback function to handle message delta events.}
+
+\item{\code{on_message}}{A callback function to handle all message events.}
+
+\item{\code{on_run_step_delta}}{A callback function to handle run step delta events.}
+
+\item{\code{on_run_step}}{A callback function to handle all run step events.}
+
+\item{\code{on_event}}{A callback function to handle all events.}
+
+\item{\code{env}}{Environment to evaluate tool calls.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-RunStream-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-RunStream-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{RunStream$clone(deep = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

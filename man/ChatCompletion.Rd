@@ -43,6 +43,13 @@ ChatCompletion R6 class
 \item \href{#method-ChatCompletion-clone}{\code{ChatCompletion$clone()}}
 }
 }
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ChatCompletion-new"></a>}}
 \if{latex}{\out{\hypertarget{method-ChatCompletion-new}{}}}

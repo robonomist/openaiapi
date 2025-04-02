@@ -240,6 +240,7 @@ Message <- R6Class(
       }
     },
     #' @description Add message delta
+    #' @param delta List. Data from the `thread.message.delta` event.
     add_delta = function(delta) {
       if (!is.null(delta$role)) {
         role <- delta$role

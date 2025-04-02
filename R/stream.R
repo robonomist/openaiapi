@@ -1,8 +1,8 @@
 #' @importFrom jsonlite fromJSON
 #' @importFrom curl multi_fdset
 #' @keywords internal
-Stream <- R6Class(
-  "Stream",
+StreamReader <- R6Class(
+  "StreamReader",
   portable = FALSE,
   public = list(
     initialize = function(con, .async = FALSE) {
@@ -12,26 +12,31 @@ Stream <- R6Class(
     stream_async = function(handle_event) {
       promise(function(resolve, reject) {
         read_stream <- function(...) {
-          event <- resp_stream_sse(con)
-          if (is.null(event)) {
-            ## No event, wait and try again
-            later_fd(
-              read_stream,
-              readfds = fd()$reads,
-              timeout = getOption("openaiapi.stream_timeout", 60)
-            )
-          } else if (event$data == "[DONE]") {
-            close(con)
-            resolve("[DONE]")
-          } else if (is_complete()) {
-              reject("Stream is complete before [DONE] event")
-          } else {
-            event$data <- fromJSON(event$data, simplifyVector = FALSE)
-            handle_event(event)
-            later(read_stream)
-          }
+          tryCatch(
+            {
+              event <- resp_stream_sse(con)
+              if (is.null(event)) {
+                ## No event, wait and try again
+                later_fd(
+                  read_stream,
+                  readfds = fd()$reads,
+                  timeout = getOption("openaiapi.stream_timeout", 60)
+                )
+              } else if (event$data == "[DONE]") {
+                close(con)
+                resolve("[DONE]")
+              } else if (is_complete()) {
+                reject("StreamReader is complete before [DONE] event")
+              } else {
+                event$data <- fromJSON(event$data, simplifyVector = FALSE)
+                handle_event(event)
+                later(read_stream)
+              }
+            },
+            error = function(e) reject(e)
+          )
         }
-        tryCatch(read_stream(), error = function(e) reject(e))
+        read_stream()
       })
     },
     is_complete = function() {

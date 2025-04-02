@@ -239,7 +239,7 @@ my_vector_store <- VectorStore$new(name = "my-vector-store")
 
 ## Todo:
 
-- [ ] Implement streaming
+- [x] Implement streaming
 - [ ] Implement Administration API's
 - [ ] Implement Images API
 - [ ] Implement Moderations API

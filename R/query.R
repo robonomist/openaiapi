@@ -70,9 +70,10 @@ oai_query <- function(ep,
   req <- oai_request(ep, body, method, headers, encode)
 
   if (isTRUE(body$stream)) {
+    ## STREAMING -------------------------------------------------
     handle_stream <- function() {
       con <- req_perform_connection(req, blocking = !.async)
-      s <- Stream$new(con, .async = .async)
+      s <- StreamReader$new(con, .async = .async)
       if (.classify_response) {
         s <- classify_stream(s, ep)
       }
@@ -93,7 +94,7 @@ oai_query <- function(ep,
       return(handle_stream())
     }
   } else {
-    ## Handle non-streaming case
+    ## NON-STREAMING ----------------------------------------------
     handle_response <- function(resp) {
       if (!is.null(path)) {
         invisible(path)
@@ -114,7 +115,7 @@ oai_query <- function(ep,
         as_oai_promise()
     } else {
       ## Handle sync non-streaming case
-      req_perform(req, path = path)|>
+      req_perform(req, path = path) |>
         handle_response()
     }
   }
