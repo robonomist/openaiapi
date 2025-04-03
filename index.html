@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,13 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/assistants.html">Using the Assistants API</a></li>
+    <li><a class="dropdown-item" href="articles/shiny.html">Example with shiny</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -86,172 +93,28 @@
 <span>  model <span class="op">=</span> <span class="st">"gpt-4o"</span></span>
 <span><span class="op">)</span><span class="op">$</span><span class="fu">content_text</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="assistants">Assistants<a class="anchor" aria-label="anchor" href="#assistants"></a>
-</h3>
-<p>The Assistants API allows you build AI assistants for your applications. Please refer to the <a href="https://platform.openai.com/docs/assistants/overview" class="external-link">OpenAI documentation</a> for more information.</p>
-<p>You can create a new assistant with the <code>oai_create_assistant</code> function:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/assistant_api.html">oai_create_assistant</a></span><span class="op">(</span>model <span class="op">=</span> <span class="st">"gpt-4o"</span>, name <span class="op">=</span> <span class="st">"my-assistant"</span><span class="op">)</span></span></code></pre></div>
-<p>This will return a R6 Assistant object that you can use to interact with the assistant.</p>
-<p>To retrieve the an existing assistant, you can use the <code>oai_retrieve_assistant</code> function:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/assistant_api.html">oai_retrieve_assistant</a></span><span class="op">(</span>assistant_id <span class="op">=</span> <span class="st">"your-assistant-id"</span><span class="op">)</span></span></code></pre></div>
-<p>Alternatively you can use Assistant class constructor directly:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Create a new assistant</span></span>
-<span><span class="va"><a href="reference/Assistant.html">Assistant</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="st">"gpt-4o"</span>, name <span class="op">=</span> <span class="st">"my-assistant"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Retrieve an existing assistant</span></span>
-<span><span class="va"><a href="reference/Assistant.html">Assistant</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>assistant_id <span class="op">=</span> <span class="st">"your-assistant-id"</span><span class="op">)</span></span></code></pre></div>
-<p>To modify the assistant, you can use the <code>oai_modify_assistant</code> function ore the <code>modify</code> method of the Assistant object:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">oai_modify_assistant</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">assistant_id =</span> <span class="st">"your-assistant-id"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">instructions =</span>  <span class="ot">=</span> <span class="st">"new-instructions"</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>)</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="do">## or</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>my_assistant <span class="ot">&lt;-</span> Assistant<span class="sc">$</span><span class="fu">new</span>(<span class="at">assistant_id =</span> <span class="st">"your-assistant-id"</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>my_assistant<span class="sc">$</span><span class="fu">modify</span>(<span class="at">instructions =</span> <span class="st">"new-instructions"</span>)</span></code></pre></div>
-<p>To delete the assistant, you can use the <code>oai_delete_assistant</code> function or the <code>delete</code> method of the Assistant object.</p>
-</div>
-<div class="section level3">
-<h3 id="threads">Threads<a class="anchor" aria-label="anchor" href="#threads"></a>
-</h3>
-<p>A Thread represents a conversation between a user and an assistant. You can create a new thread with the <code>oai_create_thread</code> function or via the Thread R6 class constructor:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">my_thread</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/thread_api.html">oai_create_thread</a></span><span class="op">(</span>messages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="reference/utils.html">oai_message</a></span><span class="op">(</span><span class="st">"Juha has entered the chat!"</span>, role <span class="op">=</span> <span class="st">"assistant"</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="reference/utils.html">oai_message</a></span><span class="op">(</span><span class="st">"Hello!"</span>, role <span class="op">=</span> <span class="st">"user"</span><span class="op">)</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>To run the thread, you can use the <code>run</code> method of the Thread object:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">run</span> <span class="op">&lt;-</span> <span class="va">thread</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>assistant <span class="op">=</span> <span class="st">"your-assistant-id"</span><span class="op">)</span></span>
-<span><span class="co">## or</span></span>
-<span><span class="va">run</span> <span class="op">&lt;-</span> <span class="va">thread</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span>assistant <span class="op">=</span> <span class="va">my_assistant</span><span class="op">)</span></span></code></pre></div>
-<p>You can also create a thread and run it in one go:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">run</span> <span class="op">&lt;-</span> <span class="va">my_assistant</span><span class="op">$</span><span class="fu">thread_and_run</span><span class="op">(</span>messages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="reference/utils.html">oai_message</a></span><span class="op">(</span><span class="st">"Juha has entered the chat!"</span>, role <span class="op">=</span> <span class="st">"assistant"</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="reference/utils.html">oai_message</a></span><span class="op">(</span><span class="st">"Hello!"</span>, role <span class="op">=</span> <span class="st">"user"</span><span class="op">)</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="runs">Runs<a class="anchor" aria-label="anchor" href="#runs"></a>
-</h3>
-<p>Runs represent an execution on an assistant on a specific thread. You can retrieve a run with the <code><a href="reference/run_api.html">oai_create_run()</a></code> function or via the Run R6 class constructor:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">run</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_api.html">oai_create_run</a></span><span class="op">(</span></span>
-<span>  thread_id <span class="op">=</span> <span class="st">"your-thread-id"</span>,</span>
-<span>  assistant_id <span class="op">=</span> <span class="st">"your-assistant-id"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">run</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Run.html">Run</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>thread <span class="op">=</span> <span class="st">"your-thread-id"</span>, assistant <span class="op">=</span> <span class="st">"your-assistant-id"</span><span class="op">)</span></span>
-<span><span class="co">## or</span></span>
-<span><span class="va">run</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Run.html">Run</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>thread <span class="op">=</span> <span class="va">my_thread</span>, assistant <span class="op">=</span> <span class="va">my_assistant</span><span class="op">)</span></span></code></pre></div>
-<p>You can retrieve the status of the run from the API with the <code>retrieve_status()</code> method:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">run</span><span class="op">$</span><span class="fu">retrieve_status</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>You can wait for the run to complete with the <code>wait()</code> method:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">run</span><span class="op">$</span><span class="fu">wait</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">## or directly wait for the messages</span></span>
-<span><span class="va">run</span><span class="op">$</span><span class="fu">wait</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">thread</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">list_messages</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Let’s put it all together:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">my_assistant</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Assistant.html">Assistant</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
-<span>  name <span class="op">=</span> <span class="st">"my-assistant"</span>,</span>
-<span>  instructions <span class="op">=</span> <span class="st">"Answer back when the user says hello."</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">my_thread</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Thread.html">Thread</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">my_thread</span><span class="op">$</span><span class="fu">create_message</span><span class="op">(</span><span class="st">"Hello my assistant!"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">my_run</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Run.html">Run</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>thread <span class="op">=</span> <span class="va">my_thread</span>, assistant <span class="op">=</span> <span class="va">my_assistant</span><span class="op">)</span><span class="op">$</span><span class="fu">wait</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">messages</span> <span class="op">&lt;-</span> <span class="va">my_thread</span><span class="op">$</span><span class="fu">list_messages</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">messages</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">content_text</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Hello! How can I assist you today?"</span></span>
-<span></span>
-<span><span class="va">my_thread</span><span class="op">$</span><span class="fu">create_message</span><span class="op">(</span><span class="st">"Goodbye my assistant!"</span><span class="op">)</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="va">my_assistant</span><span class="op">)</span><span class="op">$</span><span class="fu">wait</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">my_thread</span><span class="op">$</span><span class="fu">list_messages</span><span class="op">(</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">content_text</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Goodbye! If you need any help in the future, just let me know. Have a great day!"</span></span>
-<span></span>
-<span><span class="va">my_assistant</span><span class="op">$</span><span class="fu">delete</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="section level4">
-<h4 id="function-tools">Function tools<a class="anchor" aria-label="anchor" href="#function-tools"></a>
-</h4>
-<p>If your assistant uses function tools, the <code>wait()</code> method will automatically execute the required function tools by finding the R functions of the same name (by searching the calling environment by default). If you want to use a different environment, you can specify it with the <code>env</code> argument.</p>
-<p>You can specify the function tools when creating the assistant using the <code><a href="reference/oai_function_tool.html">oai_function_tool()</a></code> and <code>oai_function_tool_parameters()</code> functions:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">package_version</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">package</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="va">package</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="va">my_tool</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/oai_function_tool.html">oai_function_tool</a></span><span class="op">(</span></span>
-<span>  name <span class="op">=</span> <span class="st">"package_version"</span>,</span>
-<span>  description <span class="op">=</span> <span class="st">"Get the version of a R packages"</span>,</span>
-<span>  <span class="fu"><a href="reference/oai_function_tool.html">oai_function_tool_parameter</a></span><span class="op">(</span></span>
-<span>    name <span class="op">=</span> <span class="st">"package"</span>,</span>
-<span>    type <span class="op">=</span> <span class="st">"string"</span>,</span>
-<span>    description <span class="op">=</span> <span class="st">"Name of the package"</span>,</span>
-<span>    required <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">my_test_assistant</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Assistant.html">Assistant</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
-<span>  name <span class="op">=</span> <span class="st">"Test assistant"</span>,</span>
-<span>  instructions <span class="op">=</span> <span class="st">"You will provide the version of R packages when the user asks. Use the `package_version` function tool."</span>,</span>
-<span>  tools <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">my_tool</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">messages</span> <span class="op">&lt;-</span> <span class="va">my_test_assistant</span><span class="op">$</span><span class="fu">thread_and_run</span><span class="op">(</span></span>
-<span>  messages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="reference/utils.html">oai_message</a></span><span class="op">(</span><span class="st">"What is the version of openaiapi?"</span>, role <span class="op">=</span> <span class="st">"user"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span><span class="op">$</span><span class="fu">wait</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">thread</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">list_messages</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">messages</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">content_text</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; "The version of the `openaiapi` package is 0.0.0.9100."</span></span>
-<span></span>
-<span><span class="va">my_test_assistant</span><span class="op">$</span><span class="fu">delete</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
 </div>
 <div class="section level2">
-<h2 id="files">Files<a class="anchor" aria-label="anchor" href="#files"></a>
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<div class="section level3">
-<h3 id="file-uploads">File uploads<a class="anchor" aria-label="anchor" href="#file-uploads"></a>
-</h3>
-<p>You can upload files to the OpenAI API with the <code><a href="reference/files_api.html">oai_upload_file()</a></code> function and by creating a File object:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/files_api.html">oai_upload_file</a></span><span class="op">(</span><span class="st">"path/to/file"</span><span class="op">)</span></span>
-<span><span class="co">## or</span></span>
-<span><span class="va">file</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/File.html">File</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"path/to/file"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="vector-store">Vector store<a class="anchor" aria-label="anchor" href="#vector-store"></a>
-</h3>
-<p>The Vector Store API allows you to store and retrieve vectors. You can create a new vector store with the <code><a href="reference/vector_store_api.html">oai_create_vector_store()</a></code> function or by creating a VectorStore object:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">my_vector_store</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/vector_store_api.html">oai_create_vector_store</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"my-vector-store"</span><span class="op">)</span></span>
-<span><span class="co">## or</span></span>
-<span><span class="va">my_vector_store</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/VectorStore.html">VectorStore</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"my-vector-store"</span><span class="op">)</span></span></code></pre></div>
-</div>
+<ul>
+<li>Use function tools with the Assistants API <code><a href="articles/assistants.html">vignette("assistants")</a></code>
+</li>
+<li>Stream asynchronously in Shiny <code><a href="articles/shiny.html">vignette("shiny")</a></code>
+</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="todo">Todo:<a class="anchor" aria-label="anchor" href="#todo"></a>
 </h2>
 <ul class="task-list">
-<li><label><input type="checkbox">Implement streaming</label></li>
-<li><label><input type="checkbox">Implement Administration API’s</label></li>
+<li><label><input type="checkbox">Implement Responses API</label></li>
+<li><label><input type="checkbox">Implement Administration API</label></li>
 <li><label><input type="checkbox">Implement Images API</label></li>
 <li><label><input type="checkbox">Implement Moderations API</label></li>
 <li><label><input type="checkbox">Implement Realtime API</label></li>
 <li><label><input type="checkbox">Add tests</label></li>
+<li><label><input type="checkbox" checked>Implement streaming</label></li>
 </ul>
 </div>
 </div>

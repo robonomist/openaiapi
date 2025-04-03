@@ -55,7 +55,7 @@ oai_delete_chat_completion(): Delete a stored chat completion. Only chat complet
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,6 +64,11 @@ oai_delete_chat_completion(): Delete a stored chat completion. Only chat complet
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/assistants.html">Using the Assistants API</a></li>
+    <li><a class="dropdown-item" href="../articles/shiny.html">Example with shiny</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/robonomist/openaiapi/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -107,12 +112,14 @@ oai_delete_chat_completion(): Delete a stored chat completion. Only chat complet
 <span>  service_tier <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stop <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stream <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stream_options <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  temperature <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tools <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tools_choice <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  parallel_tool_calls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  web_search_options <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
@@ -123,7 +130,13 @@ oai_delete_chat_completion(): Delete a stored chat completion. Only chat complet
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_get_chat_messages</span><span class="op">(</span><span class="va">completion_id</span>, after <span class="op">=</span> <span class="cn">NULL</span>, limit <span class="op">=</span> <span class="cn">NULL</span>, order <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">oai_get_chat_messages</span><span class="op">(</span></span>
+<span>  <span class="va">completion_id</span>,</span>
+<span>  after <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  limit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_list_chat_completions</span><span class="op">(</span></span>
 <span>  model <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -200,7 +213,11 @@ oai_delete_chat_completion(): Delete a stored chat completion. Only chat complet
 
 
 <dt id="arg-stream">stream<a class="anchor" aria-label="anchor" href="#arg-stream"></a></dt>
-<dd><p>not yet implemented.</p></dd>
+<dd><p>Logical. If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only server-sent events as they become available, with the stream terminated by a data.</p></dd>
+
+
+<dt id="arg-stream-options">stream_options<a class="anchor" aria-label="anchor" href="#arg-stream-options"></a></dt>
+<dd><p>List. Options for streaming response. Only set this when you set <code>stream = TRUE</code>.</p></dd>
 
 
 <dt id="arg-temperature">temperature<a class="anchor" aria-label="anchor" href="#arg-temperature"></a></dt>
@@ -225,6 +242,10 @@ oai_delete_chat_completion(): Delete a stored chat completion. Only chat complet
 
 <dt id="arg-user">user<a class="anchor" aria-label="anchor" href="#arg-user"></a></dt>
 <dd><p>Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.</p></dd>
+
+
+<dt id="arg-web-search-options">web_search_options<a class="anchor" aria-label="anchor" href="#arg-web-search-options"></a></dt>
+<dd><p>List. This tool searches the web for relevant results to use in a response.</p></dd>
 
 
 <dt id="arg--classify-response">.classify_response<a class="anchor" aria-label="anchor" href="#arg--classify-response"></a></dt>

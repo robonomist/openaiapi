@@ -21,10 +21,6 @@ oai_retrieve_run(): Retrieve a run.
 
 
 
-oai_retrieve_run_step(): Retrieve a run step.
-
-
-
 oai_modify_run(): Modify a run.
 
 
@@ -38,6 +34,10 @@ oai_submit_tool_outputs(): Submit tool outputs.
 
 
 oai_tool_output(): A helper function to format a tool output.
+
+
+
+oai_retrieve_run_step(): Retrieve a run step.
 
 "><meta property="og:description" content="Runs represents executions run on a thread.
 
@@ -61,10 +61,6 @@ oai_retrieve_run(): Retrieve a run.
 
 
 
-oai_retrieve_run_step(): Retrieve a run step.
-
-
-
 oai_modify_run(): Modify a run.
 
 
@@ -79,6 +75,10 @@ oai_submit_tool_outputs(): Submit tool outputs.
 
 oai_tool_output(): A helper function to format a tool output.
 
+
+
+oai_retrieve_run_step(): Retrieve a run step.
+
 "></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -87,7 +87,7 @@ oai_tool_output(): A helper function to format a tool output.
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,6 +96,11 @@ oai_tool_output(): A helper function to format a tool output.
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/assistants.html">Using the Assistants API</a></li>
+    <li><a class="dropdown-item" href="../articles/shiny.html">Example with shiny</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/robonomist/openaiapi/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -108,7 +113,7 @@ oai_tool_output(): A helper function to format a tool output.
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Run API</h1>
-      <small class="dont-index">Source: <a href="https://github.com/robonomist/openaiapi/blob/main/R/run.R" class="external-link"><code>R/run.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/robonomist/openaiapi/blob/main/R/run.R" class="external-link"><code>R/run.R</code></a>, <a href="https://github.com/robonomist/openaiapi/blob/main/R/run_step.R" class="external-link"><code>R/run_step.R</code></a></small>
       <div class="d-none name"><code>run_api.Rd</code></div>
     </div>
 
@@ -119,11 +124,11 @@ oai_tool_output(): A helper function to format a tool output.
 </ul><ul><li><p><code>oai_list_runs()</code>: List runs.</p></li>
 </ul><ul><li><p><code>oai_list_run_steps()</code>: List run steps.</p></li>
 </ul><ul><li><p><code>oai_retrieve_run()</code>: Retrieve a run.</p></li>
-</ul><ul><li><p><code>oai_retrieve_run_step()</code>: Retrieve a run step.</p></li>
 </ul><ul><li><p><code>oai_modify_run()</code>: Modify a run.</p></li>
 </ul><ul><li><p><code>oai_cancel_run()</code>: Cancel a run.</p></li>
 </ul><ul><li><p><code>oai_submit_tool_outputs()</code>: Submit tool outputs.</p></li>
 </ul><ul><li><p><code>oai_tool_output()</code>: A helper function to format a tool output.</p></li>
+</ul><ul><li><p><code>oai_retrieve_run_step()</code>: Retrieve a run step.</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -175,7 +180,8 @@ oai_tool_output(): A helper function to format a tool output.
 <span>  order <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  after <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  before <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_list_run_steps</span><span class="op">(</span></span>
@@ -185,18 +191,11 @@ oai_tool_output(): A helper function to format a tool output.
 <span>  order <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  after <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  before <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">oai_retrieve_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">oai_retrieve_run_step</span><span class="op">(</span></span>
-<span>  <span class="va">thread_id</span>,</span>
-<span>  <span class="va">run_id</span>,</span>
-<span>  <span class="va">step_id</span>,</span>
 <span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">oai_retrieve_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_modify_run</span><span class="op">(</span></span>
 <span>  <span class="va">thread_id</span>,</span>
@@ -206,7 +205,7 @@ oai_tool_output(): A helper function to format a tool output.
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_cancel_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">oai_cancel_run</span><span class="op">(</span><span class="va">thread_id</span>, <span class="va">run_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_submit_tool_outputs</span><span class="op">(</span></span>
 <span>  <span class="va">thread_id</span>,</span>
@@ -217,7 +216,15 @@ oai_tool_output(): A helper function to format a tool output.
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_tool_output</span><span class="op">(</span><span class="va">tool_call_id</span>, <span class="va">output</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">oai_tool_output</span><span class="op">(</span><span class="va">tool_call_id</span>, <span class="va">output</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">oai_retrieve_run_step</span><span class="op">(</span></span>
+<span>  <span class="va">thread_id</span>,</span>
+<span>  <span class="va">run_id</span>,</span>
+<span>  <span class="va">step_id</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -265,7 +272,7 @@ oai_tool_output(): A helper function to format a tool output.
 
 
 <dt id="arg-stream">stream<a class="anchor" aria-label="anchor" href="#arg-stream"></a></dt>
-<dd><p>not yet implemented.</p></dd>
+<dd><p>Logical. If TRUE, the function will return a RunStream object.</p></dd>
 
 
 <dt id="arg-max-prompt-tokens">max_prompt_tokens<a class="anchor" aria-label="anchor" href="#arg-max-prompt-tokens"></a></dt>
@@ -324,10 +331,6 @@ oai_tool_output(): A helper function to format a tool output.
 <dd><p>Character. ID of the run.</p></dd>
 
 
-<dt id="arg-step-id">step_id<a class="anchor" aria-label="anchor" href="#arg-step-id"></a></dt>
-<dd><p>Character. ID of the step.</p></dd>
-
-
 <dt id="arg-tool-outputs">tool_outputs<a class="anchor" aria-label="anchor" href="#arg-tool-outputs"></a></dt>
 <dd><p>List of tool outputs.</p></dd>
 
@@ -339,12 +342,19 @@ oai_tool_output(): A helper function to format a tool output.
 <dt id="arg-output">output<a class="anchor" aria-label="anchor" href="#arg-output"></a></dt>
 <dd><p>Character. The output of the tool call to be submitted to continue the run.</p></dd>
 
+
+<dt id="arg-step-id">step_id<a class="anchor" aria-label="anchor" href="#arg-step-id"></a></dt>
+<dd><p>Character. ID of the step.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A Run R6 object.</p>
 <p><code>oai_list_runs()</code> returns a list of <code>Run</code> objects.</p>
 <p><code>oai_list_run_steps()</code> returns a list of <code>RunStep</code> objects.</p>
+<p><code>oai_modify_run()</code> returns a <code>Run</code> object.</p>
+<p><code>oai_cancel_run()</code> returns a <code>Run</code> object.</p>
+<p><code>oai_submit_tool_outputs()</code> returns a <code>Run</code> object.</p>
 <p><code>oai_retrieve_run_step()</code> returns a <code>RunStep</code> object.</p>
     </div>
 

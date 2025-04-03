@@ -2,10 +2,14 @@
 <url><loc>https://robonomist.github.io/openaiapi/404.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/LICENSE-text.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/LICENSE.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/articles/assistants.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/articles/index.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/articles/shiny.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/authors.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/index.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/Assistant.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/ChatCompletion.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/reference/ChatCompletionStream.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/Embedding.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/File.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/FineTuningJob.html</loc></url>
@@ -21,6 +25,7 @@
 <url><loc>https://robonomist.github.io/openaiapi/reference/chat_completion_api.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/common_parameters.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/compact.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/reference/do_call_sandbox.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/embeddings_api.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/files_api.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/fine_tuning_api.html</loc></url>
