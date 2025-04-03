@@ -2,6 +2,7 @@
 
 S3method("$",oai_promise)
 export(Assistant)
+export(ChatCompletionStream)
 export(Embedding)
 export(File)
 export(FineTuningJob)

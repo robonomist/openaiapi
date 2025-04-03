@@ -5,6 +5,7 @@
 StreamReader <- R6Class(
   "StreamReader",
   portable = FALSE,
+  cloneable = FALSE,
   public = list(
     initialize = function(con, .async = FALSE) {
       async <<- .async

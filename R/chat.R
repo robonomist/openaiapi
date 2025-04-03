@@ -179,6 +179,7 @@ oai_delete_chat_completion <- function(completion_id, .async = FALSE) {
 #' @param messages A list of messages comprising the conversation so far.
 #' @param ... Additional parameters passed to API functions
 #' @param .async Logical. If TRUE, the API call will be asynchronous.
+#' @rdname ChatCompletion
 ChatCompletion <- R6Class(
   "ChatCompletion",
   portable = FALSE,
@@ -264,14 +265,21 @@ ChatCompletion <- R6Class(
   )
 )
 
+#' ChatCompletionStream R6 class
+#' @rdname ChatCompletionStream
+#' @export
 ChatCompletionStream <- R6Class(
   "ChatCompletionStream",
   inherit = ChatCompletion,
   portable = FALSE,
   public = list(
+    #' @description Initialize a ChatCompletionStream object.
+    #' @param stream_reader A StreamReader object.
     initialize = function(stream_reader) {
       stream_reader <<- stream_reader
     },
+    #' @description Get the chat completion object.
+    #' @param callback A function that is called on each event, taking the updated `choices` field as an argument.
     stream_async = function(callback) {
       stream_reader$stream_async(
         handle_event = function(event) {
@@ -283,6 +291,8 @@ ChatCompletionStream <- R6Class(
           self
         })
     },
+    #' @description Get the chat completion object.
+    #' @param env The environment to use for tool calls.
     do_tool_calls = function(env = parent.env()) {
       lapply(choices, function(choice) {
         if (identical(choice$finish_reason, "tool_calls")) {
@@ -290,11 +300,6 @@ ChatCompletionStream <- R6Class(
             lapply(function(x) {
               list(content = x$output, role = "tool", tool_call_id = x$tool_call_id)
             })
-          ## lapply(choice$message$tool_calls, function(tool_call) {
-          ##   args <- fromJSON(tool_call$`function`$arguments)
-          ##   output <- do.call(tool_call$`function`$name, args, envir = env)
-          ##   oai_message(output, role = "tool", tool_call_id = tool_call$id)
-          ## })
         }
       })
     }

@@ -26,6 +26,7 @@ reference:
   - oai_update_chat_completion
   - oai_delete_chat_completion
   - ChatCompletion
+  - ChatCompletionStream
 - title: Assistants
   desc: Create and manage Assistants.
   contents:
@@ -44,6 +45,7 @@ reference:
   contents:
   - oai_create_run
   - Run
+  - RunStream
 - subtitle: Vector store
   contents:
   - matches("vector")

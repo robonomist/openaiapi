@@ -73,7 +73,7 @@ Alternatively you can use Assistant class constructor directly:
 Assistant$new(model = "gpt-4o", name = "my-assistant")
 
 ## Retrieve an existing assistant
-Assistant$new(assistant_id = "your-assistant-id")
+Assistant$new(assistant_id = "*your-assistant-id*")
 ```
 
 To modify the assistant, you can use the `oai_modify_assistant` function ore the `modify` method of the Assistant object:
@@ -239,12 +239,13 @@ my_vector_store <- VectorStore$new(name = "my-vector-store")
 
 ## Todo:
 
-- [x] Implement streaming
-- [ ] Implement Administration API's
+- [ ] Implement Responses API
+- [ ] Implement Administration API
 - [ ] Implement Images API
 - [ ] Implement Moderations API
 - [ ] Implement Realtime API
 - [ ] Add tests
+- [x] Implement streaming
 
 
 
