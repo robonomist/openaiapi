@@ -67,7 +67,8 @@ oai_create_chat_completion <- function(messages,
     method = "POST",
     body = body,
     .classify_response = .classify_response,
-    .async = .async
+    .async = .async,
+    .stream_class = "ChatCompletion",
   )
 }
 

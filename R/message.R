@@ -52,7 +52,7 @@ oai_list_messages <- function(thread_id,
                               .classify_response = TRUE,
                               .async = FALSE) {
   query <- list(
-    limit = as.integer(limit),
+    limit = limit,
     order = order,
     after = after,
     before = before

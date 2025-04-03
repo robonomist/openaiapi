@@ -64,7 +64,8 @@ oai_query <- function(ep,
                       headers = NULL,
                       path = NULL,
                       .classify_response = TRUE,
-                      .async = FALSE) {
+                      .async = FALSE,
+                      .stream_class = NULL) {
   body <- compact(body)
   query <- compact(query)
   req <- oai_request(ep, body, method, headers, encode)
@@ -75,7 +76,7 @@ oai_query <- function(ep,
       con <- req_perform_connection(req, blocking = !.async)
       s <- StreamReader$new(con, .async = .async)
       if (.classify_response) {
-        s <- classify_stream(s, ep)
+        s <- classify_stream(s, .stream_class)
       }
       s
     }
@@ -194,7 +195,6 @@ oai_query_list <- function(...) {
       fetch_recursive(combined, length(combined))
     }
 
-    initial_resp <- do.call(oai_query, args)
     n <- length(initial_resp)
     fetch_recursive(initial_resp, n)
   }
@@ -228,14 +228,12 @@ classify_response <- function(x) {
   )
 }
 
-classify_stream <- function(x, ep) {
-  ep <- paste0(ep, collapse = "/")
-  if (ep == "chat/completions") {
-    ChatCompletionStream$new(x)
-  } else if (grepl("threads/[^/]+/runs", ep)) {
-    RunStream$new(x)
-  } else {
+classify_stream <- function(x, .stream_class = NULL) {
+  switch(
+    .stream_class,
+    "ChatCompletion" = ChatCompletionStream$new(x),
+    "Run" = RunStream$new(x),
     x
-  }
+  )
 }
 

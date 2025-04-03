@@ -71,7 +71,8 @@ oai_create_run <- function(thread_id,
     body = body,
     method = "POST",
     .classify_response = .classify_response,
-    .async = .async
+    .async = .async,
+    .stream_class=  "Run"
   )
 }
 
@@ -123,7 +124,8 @@ oai_create_thread_and_run <- function(assistant_id,
     body = body,
     method = "POST",
     .classify_response = .classify_response,
-    .async = .async
+    .async = .async,
+    .stream_class = "Run"
   )
 }
 
@@ -257,7 +259,8 @@ oai_submit_tool_outputs <- function(thread_id,
     body = body,
     method = "POST",
     .classify_response = .classify_response,
-    .async = .async
+    .async = .async,
+    .stream_class = "Run"
   )
 }
 
