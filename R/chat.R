@@ -52,10 +52,9 @@ oai_create_chat_completion <- function(messages,
                                        tools_choice = NULL,
                                        parallel_tool_calls = NULL,
                                        user = NULL,
-                                        web_search_options = NULL,
+                                       web_search_options = NULL,
                                        .classify_response = TRUE,
-                                       .async = FALSE
-                                       ) {
+                                       .async = FALSE) {
   if (inherits(messages, "oai_message")) {
     messages <- list(messages)
   } else if (is.character(messages)) {
@@ -197,8 +196,7 @@ ChatCompletion <- R6Class(
     initialize = function(completion_id = NULL,
                           messages = NULL, ...,
                           resp = NULL,
-                          .async = FALSE
-                          ) {
+                          .async = FALSE) {
       if (!is.null(completion_id)) {
         id <<- completion_id
         .async <<- .async
@@ -215,9 +213,11 @@ ChatCompletion <- R6Class(
     },
     #' @field id A unique identifier for the chat completion.
     id = NULL,
-    #' @field choices A list of chat completion choices. Can be more than one if n is greater than 1.
+    #' @field choices A list of chat completion choices. Can be more than
+    #' one if n is greater than 1.
     choices = NULL,
-    #' @field created The Unix timestamp (in seconds) of when the chat completion was created.
+    #' @field created The Unix timestamp (in seconds) of when the chat
+    #' completion was created.
     created = NULL,
     #' @field model The model used for the chat completion.
     model = NULL,

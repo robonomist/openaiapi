@@ -16,9 +16,11 @@ ChatCompletion R6 class
 \describe{
 \item{\code{id}}{A unique identifier for the chat completion.}
 
-\item{\code{choices}}{A list of chat completion choices. Can be more than one if n is greater than 1.}
+\item{\code{choices}}{A list of chat completion choices. Can be more than
+one if n is greater than 1.}
 
-\item{\code{created}}{The Unix timestamp (in seconds) of when the chat completion was created.}
+\item{\code{created}}{The Unix timestamp (in seconds) of when the chat
+completion was created.}
 
 \item{\code{model}}{The model used for the chat completion.}
 
