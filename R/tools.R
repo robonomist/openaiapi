@@ -40,8 +40,10 @@ oai_function_tool <- function(name,
       name = name,
       parameters = .parameters,
       strict = strict
-    ) |> compact()
-  )
+    ) |>
+      compact()
+  ) |>
+    structure(class = "oai_function_tool")
 }
 
 #' Create a function tool parameter for `oai_function_tool`

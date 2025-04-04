@@ -24,11 +24,9 @@ StreamReader <- R6Class(
                   readfds = fd()$reads,
                   timeout = getOption("openaiapi.stream_timeout", 60)
                 )
-              } else if (event$data == "[DONE]") {
+              } else if (event$data == "[DONE]" || is_complete()) {
                 close(con)
                 resolve("[DONE]")
-              } else if (is_complete()) {
-                reject("StreamReader is complete before [DONE] event")
               } else {
                 event$data <- fromJSON(event$data, simplifyVector = FALSE)
                 handle_event(event)
@@ -40,6 +38,20 @@ StreamReader <- R6Class(
         }
         read_stream()
       })
+    },
+    stream_sync = function(handle_event) {
+      repeat {
+        event <- resp_stream_sse(con)
+        if (is.null(event)) {
+          Sys.sleep(0.1)
+        } else if (event$data == "[DONE]" || is_complete()) {
+          close(con)
+          return("[DONE]")
+        } else {
+          event$data <- fromJSON(event$data, simplifyVector = FALSE)
+          handle_event(event)
+        }
+      }
     },
     is_complete = function() {
       resp_stream_is_complete(con)
