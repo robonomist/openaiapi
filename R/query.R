@@ -211,8 +211,10 @@ oai_list <- function(x) {
 }
 
 classify_response <- function(x) {
-  switch(x$object,
+  switch(
+    x$object,
     "list" = oai_list(x),
+    "response" = ModelResponse$new(resp = x),
     "chat.completion" = ChatCompletion$new(resp = x),
     "assistant" = Assistant$new(resp = x),
     "thread" = Thread$new(resp = x),
@@ -231,6 +233,7 @@ classify_response <- function(x) {
 classify_stream <- function(x, .stream_class = NULL) {
   switch(
     .stream_class,
+    "ModelResponse" = ModelResponseStream$new(x),
     "ChatCompletion" = ChatCompletionStream$new(x),
     "Run" = RunStream$new(x),
     x

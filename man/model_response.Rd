@@ -16,29 +16,29 @@ oai_create_model_response(
   parallel_tool_calls = NULL,
   previous_response_id = NULL,
   reasoning = NULL,
-  store = TRUE,
-  stream = FALSE,
-  temperature = 1,
+  store = NULL,
+  stream = NULL,
+  temperature = NULL,
   text = NULL,
   tool_choice = NULL,
   tools = NULL,
-  top_p = 1,
-  truncation = "disabled",
+  top_p = NULL,
+  truncation = NULL,
   user = NULL,
-  .classify_response = NULL,
+  .classify_response = TRUE,
   .async = FALSE
 )
 
 oai_get_model_response(
   response_id,
   include = NULL,
-  .classify_response = NULL,
+  .classify_response = TRUE,
   .async = FALSE
 )
 
 oai_delete_model_response(
   response_id,
-  .classify_response = NULL,
+  .classify_response = TRUE,
   .async = FALSE
 )
 
@@ -49,7 +49,7 @@ oai_list_items(
   include = NULL,
   limit = NULL,
   order = NULL,
-  .classify_response = NULL,
+  .classify_response = TRUE,
   .async = FALSE
 )
 }
