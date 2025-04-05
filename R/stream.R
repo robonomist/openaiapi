@@ -13,18 +13,28 @@ StreamReader <- R6Class(
     },
     stream_async = function(handle_event) {
       promise(function(resolve, reject) {
+        time <- Sys.time()
         read_stream <- function(...) {
           tryCatch(
             {
               event <- resp_stream_sse(con)
-              if (is.null(event)) {
+              if (is_complete()) {
+                close(con)
+                resolve("[COMPLETE]")
+              } else if (is.null(event)) {
                 ## No event, wait and try again
+                time_elapsed <- Sys.time() - time
+                if (time_elapsed > getOption("openaiapi.stream_timeout", 60)) {
+                  close(con)
+                  reject("Timeout")
+                }
+                time <<- Sys.time()
                 later_fd(
                   read_stream,
                   readfds = fd()$reads,
                   timeout = getOption("openaiapi.stream_timeout", 60)
                 )
-              } else if (event$data == "[DONE]" || is_complete()) {
+              } else if (event$data == "[DONE]") {
                 close(con)
                 resolve("[DONE]")
               } else {
