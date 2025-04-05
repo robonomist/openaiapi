@@ -14,6 +14,8 @@
 <url><loc>https://robonomist.github.io/openaiapi/reference/File.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/FineTuningJob.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/Message.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/reference/ModelResponse.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/reference/ModelResponseStream.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/Run.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/Thread.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/VectorStore.html</loc></url>
@@ -30,7 +32,9 @@
 <url><loc>https://robonomist.github.io/openaiapi/reference/files_api.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/fine_tuning_api.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/index.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/reference/make_sandbox_env.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/message_api.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/reference/model_response.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/models_api.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/oai_function_tool.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/oai_set_api_key.html</loc></url>
