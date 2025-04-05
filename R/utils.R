@@ -1,6 +1,6 @@
 #' @keywords internal
 isEmpty <- function(x) {
-  is.null(x) || length(x) == 0L
+  (is.null(x) || length(x) == 0L) && !inherits(x, "AsIs")
 }
 
 #' Compact a list
@@ -11,7 +11,7 @@ isEmpty <- function(x) {
 ## }
 compact <- function(x) {
   x <- lapply(x, function(el) {
-    if (is.list(el)) compact(el) else el
+    if (is.list(el) && !inherits(el, "AsIs")) compact(el) else el
   })
   x <- Filter(Negate(isEmpty), x)
   if (length(x)) x else NULL

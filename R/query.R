@@ -30,7 +30,7 @@ oai_request <- function(ep, body, method, headers, encode) {
     req_method(method) |>
     req_error(body = oai_error_body)
   if (!is.null(body) && encode == "json") {
-    req <- req_body_json(req, body, force = TRUE)
+    req <- req_body_json(req, body, force = TRUE, null = "list")
   } else if (encode == "multipart") {
     req <- req_body_multipart(req, !!!body)
   }

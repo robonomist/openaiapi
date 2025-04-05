@@ -175,8 +175,9 @@ ModelResponse <- R6Class(
   portable = FALSE,
   private = list(
     schema = list(
-      as_is = c("error", "id", "incomplete_details", "instructions", "model", "output", "output_text", "parallel_tool_calls", "previous_response_id", "reasoning", "status", "temperature", "text", "tool_choice", "tools", "top_p", "truncation", "usage", "user"),
-      as_time = c("created_at")
+      as_is = c("error", "id", "incomplete_details", "instructions", "model", "output", "output_text", "parallel_tool_calls", "previous_response_id", "reasoning", "status", "temperature", "text", "tool_choice", "top_p", "truncation", "usage", "user"),
+      as_time = c("created_at"),
+      tools = c("tools")
     ),
     .stream = NULL
   ),
@@ -307,7 +308,7 @@ ModelResponse <- R6Class(
         r <- oai_create_model_response(
           input = tool_outputs,
           instructions = instructions,
-          tools = tools,
+          tools = I(tools),
           max_output_tokens = max_output_tokens,
           previous_response_id = id,
           reasoning = reasoning,

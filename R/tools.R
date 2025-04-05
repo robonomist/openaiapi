@@ -30,7 +30,13 @@ oai_function_tool <- function(name,
       properties = properties,
       required = I(required),
       additionalProperties = FALSE
-    ) |> compact()
+    )
+  } else {
+    I(list(
+      type = "object",
+      properties = NULL,
+      additionalProperties = FALSE
+    ))
   }
 
   list(
