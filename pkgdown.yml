@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   assistants: assistants.html
   shiny: shiny.html
-last_built: 2025-04-05T16:39Z
+last_built: 2025-04-05T17:07Z
 urls:
   reference: https://robonomist.github.io/openaiapi/reference
   article: https://robonomist.github.io/openaiapi/articles
