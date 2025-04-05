@@ -391,7 +391,7 @@ ModelResponseStream <- R6Class(
           then(~ {
             tool_outputs <- do_tool_calls(env)
             if (length(tool_outputs) > 0L) {
-              submit_tool_outputs(tool_outputs, stream = TRUE) |>
+              submit_tool_outputs(tool_outputs) |>
                 then(~ {
                   stream_reader <<- .x
                   stream(on_event, on_output_text_delta, env)
@@ -404,7 +404,7 @@ ModelResponseStream <- R6Class(
         stream_reader$stream_sync(handle_event = fun)
         tool_outputs <- do_tool_calls(env)
         if (length(tool_outputs) > 0L) {
-          stream_reader <<- submit_tool_outputs(tool_outputs, stream = TRUE)
+          stream_reader <<- submit_tool_outputs(tool_outputs)
           stream(on_event, on_output_text_delta, env)
         }
         invisible(self)
@@ -415,7 +415,6 @@ ModelResponseStream <- R6Class(
     .stream = TRUE,
     stream_reader = NULL,
     handle_event = function(event, on_event, on_output_text_delta) {
-      ## cat("Event received:", event$type, "\n")
       event$type |> switch(
         "response.created" = ,
         "response.in_progress" = ,
