@@ -3,7 +3,17 @@ template:
   bootstrap: 5
 reference:
 - title: Setup
-  contents: oai_set_api_key
+  contents:
+    - oai_set_api_key
+    - make_sandbox_env
+- title: Responses
+  contents:
+  - oai_create_model_response
+  - oai_get_model_response
+  - oai_delete_model_response
+  - oai_list_input_items
+  - ModelResponse
+  - ModelResponseStream
 - title: Models
   contents:
   - oai_list_models

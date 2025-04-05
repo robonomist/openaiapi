@@ -30,9 +30,17 @@ detect_index <- function(x, p) {
   }
   0L
 }
-
+#' Create a sandbox environment for function tools
+#'
+#' For convenience, all function tools calling methods, by default, are evaluated in the parent frame. This poses a security risk, as the function tools call, which is receved from the API, can access the environment of the caller (and thus potentially any function or variable in R). This function creates a sandbox environment for the function tools, which is a copy of the parent frame, but without any unnecessary variables or functions from the parent frame. This sandbox environment can be used to evaluate the function tools in a safe manner.
+#'
+#' @param tools A list of function tools.
+#' @param env The environment to use to find the function tools. Defaults to the parent frame.
 #' @export
 make_sandbox_env <- function(tools, env = parent.frame()) {
+  if (inherits(tools, "oai_function_tool")) {
+    tools <- list(tools)
+  }
   function_tool_names <- sapply(tools, function(x) x$`function`$name)
   env <- env_get_list(
     env = env,
@@ -80,7 +88,7 @@ do_call_sandbox <- function(tool_call_function, env) {
   output
 }
 
-#
+#' @keywords internal
 .do_tool_calls <- function(tool_calls, env) {
   lapply(tool_calls, function(x) {
     if (x$type != "function") {

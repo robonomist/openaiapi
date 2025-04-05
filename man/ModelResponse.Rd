@@ -63,6 +63,12 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 \itemize{
 \item \href{#method-ModelResponse-new}{\code{ModelResponse$new()}}
 \item \href{#method-ModelResponse-get}{\code{ModelResponse$get()}}
+\item \href{#method-ModelResponse-delete}{\code{ModelResponse$delete()}}
+\item \href{#method-ModelResponse-list_input_items}{\code{ModelResponse$list_input_items()}}
+\item \href{#method-ModelResponse-do_tool_calls}{\code{ModelResponse$do_tool_calls()}}
+\item \href{#method-ModelResponse-submit_tool_outputs}{\code{ModelResponse$submit_tool_outputs()}}
+\item \href{#method-ModelResponse-wait}{\code{ModelResponse$wait()}}
+\item \href{#method-ModelResponse-await}{\code{ModelResponse$await()}}
 \item \href{#method-ModelResponse-clone}{\code{ModelResponse$clone()}}
 }
 }
@@ -113,6 +119,101 @@ Get a fresh copy of the model response.
 \if{html}{\out{<div class="r">}}\preformatted{ModelResponse$get()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponse-delete"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponse-delete}{}}}
+\subsection{Method \code{delete()}}{
+Store the model response.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$delete()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponse-list_input_items"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponse-list_input_items}{}}}
+\subsection{Method \code{list_input_items()}}{
+List input items for the model response.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$list_input_items(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Additional parameters to pass to the \code{oai_list_items()} function.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponse-do_tool_calls"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponse-do_tool_calls}{}}}
+\subsection{Method \code{do_tool_calls()}}{
+Do all tool calls in the model response and return the results.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$do_tool_calls(env = parent.frame())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{env}}{Environment. The environment in which to evaluate the tool calls.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponse-submit_tool_outputs"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponse-submit_tool_outputs}{}}}
+\subsection{Method \code{submit_tool_outputs()}}{
+Submit tool outputs to generate a new model response.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$submit_tool_outputs(tool_outputs)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{tool_outputs}}{List. The tool outputs to submit.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponse-wait"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponse-wait}{}}}
+\subsection{Method \code{wait()}}{
+Submit tool outputs to generate a new model response.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$wait(env = parent.frame())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{env}}{Environment. The environment in which to evaluate the tool calls.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponse-await"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponse-await}{}}}
+\subsection{Method \code{await()}}{
+Wait for the model response to complete.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$await(env = parent.frame())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{env}}{Environment. The environment in which to evaluate the tool calls.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ModelResponse-clone"></a>}}

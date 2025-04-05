@@ -4,7 +4,7 @@
 \alias{oai_create_model_response}
 \alias{oai_get_model_response}
 \alias{oai_delete_model_response}
-\alias{oai_list_items}
+\alias{oai_list_input_items}
 \title{Responses API}
 \usage{
 oai_create_model_response(
@@ -42,7 +42,7 @@ oai_delete_model_response(
   .async = FALSE
 )
 
-oai_list_items(
+oai_list_input_items(
   response_id,
   after = NULL,
   before = NULL,
@@ -125,6 +125,6 @@ oai_list_items(
 }
 
 \itemize{
-\item \code{oai_list_items()} - List input items for a model response.
+\item \code{oai_list_input_items()} - List input items for a model response.
 }
 }

@@ -130,10 +130,10 @@ oai_delete_model_response <- function(response_id,
   )
 }
 
-#' @description * `oai_list_items()` - List input items for a model response.
+#' @description * `oai_list_input_items()` - List input items for a model response.
 #' @param response_id Character. The ID of the response to retrieve input items for.
 #' @rdname model_response
-oai_list_items <- function(response_id,
+oai_list_input_items <- function(response_id,
                            after = NULL,
                            before = NULL,
                            include = NULL,
@@ -167,6 +167,7 @@ oai_list_items <- function(response_id,
 #' @param ... Additional parameters to pass to the model.
 #' @param resp List. The response object returned by the OpenAI API.
 #' @param .async Logical. Whether to retrieve the response asynchronously.
+#' @param env Environment. The environment in which to evaluate the tool calls.
 #' @export
 ModelResponse <- R6Class(
   "ModelResponse",
@@ -176,7 +177,8 @@ ModelResponse <- R6Class(
     schema = list(
       as_is = c("error", "id", "incomplete_details", "instructions", "model", "output", "output_text", "parallel_tool_calls", "previous_response_id", "reasoning", "status", "temperature", "text", "tool_choice", "tools", "top_p", "truncation", "usage", "user"),
       as_time = c("created_at")
-    )
+    ),
+    .stream = NULL
   ),
   public = list(
     #' @description Initialize a `ModelResponse` object.
@@ -253,51 +255,130 @@ ModelResponse <- R6Class(
       ) |>
         store_response()
     },
-    do_tool_calls = function(env = parent.frame()) {
-      tool_outputs <- NULL
-      for (i in seq_along(output)) {
-        if (output[[i]]$type == "function_call") {
-          function_call <- output[[i]]
-          args <- fromJSON(
-            function_call$arguments,
-            simplifyVector = getOption("openaiapi.tool_call_simplifyVector", TRUE)
-          )
-          what <- function_call$name
-          result <- do.call(what, args, envir = env)
-          tool_outputs[[length(tool_outputs) + 1L]] <- list(
-            type = "function_call_output",
-            call_id = function_call$call_id,
-            output = result
-          )
-        }
-      }
-      oai_create_model_response(
-        input = tool_outputs,
-        instructions = instructions,
-        tools = tools,
-        max_output_tokens = max_output_tokens,
-        previous_response_id = id,
-        reasoning = reasoning,
-        temperature = temperature,
-        top_p = top_p,
-        truncation = truncation,
-        user = user,
-        .classify_response = FALSE
+    #' @description Store the model response.
+    delete = function() {
+      oai_delete_model_response(
+        response_id = id,
+        .classify_response = FALSE,
+        .async = .async
       ) |>
         store_response()
+    },
+    #' @description List input items for the model response.
+    #' @param ... Additional parameters to pass to the `oai_list_items()` function.
+    list_input_items = function(...) {
+      oai_list_input_items(
+        response_id = id,
+        ...,
+        .classify_response = FALSE,
+        .async = .async
+      ) |>
+        store_response()
+    },
+    #' @description Do all tool calls in the model response and return the results.
+    do_tool_calls = function(env = parent.frame()) {
+      if (is.null(env)) {
+        return(NULL)
+      }
+      tool_calls <- lapply(output, function(x) {
+        if (x$type == "function_call") x
+      })
+      tool_calls <- Filter(Negate(is.null), tool_calls)
+      tool_outputs <-
+        tool_calls |>
+        lapply(function(x) {
+          args <- fromJSON(
+            x$arguments,
+            simplifyVector = getOption("openaiapi.tool_call_simplifyVector", FALSE)
+          )
+          what <- x$name
+          result <- do.call(what, args, envir = env)
+          list(
+            type = "function_call_output",
+            call_id = x$call_id,
+            output = result
+          )
+        })
+    },
+    #' @description Submit tool outputs to generate a new model response.
+    #' @param tool_outputs List. The tool outputs to submit.
+    submit_tool_outputs = function(tool_outputs) {
+      if (length(tool_outputs) > 0L) {
+        r <- oai_create_model_response(
+          input = tool_outputs,
+          instructions = instructions,
+          tools = tools,
+          max_output_tokens = max_output_tokens,
+          previous_response_id = id,
+          reasoning = reasoning,
+          temperature = temperature,
+          top_p = top_p,
+          truncation = truncation,
+          user = user,
+          stream = .stream,
+          .async = .async,
+          .classify_response = FALSE
+        )
+        if (isTRUE(.stream)) {
+          r
+        } else {
+          store_response(r)
+        }
+      }
+    },
+    #' @description Submit tool outputs to generate a new model response.
+    wait = function(env = parent.frame()) {
+      while(length(tool_outputs <- do_tool_calls(env))) {
+        submit_tool_outputs(tool_outputs)
+      }
+      self
+    },
+    #' @description Wait for the model response to complete.
+    await = function(env = parent.frame()) {
+      promise(function(resolve, reject) {
+        handle_tool_calls <- function() {
+          tool_outputs <-
+            tryCatch(do_tool_calls(env), error = function(e) {
+            reject(paste("Error in tool calls:", e$message))
+          })
+          if (length(tool_outputs) > 0L) {
+            tryCatch(
+              submit_tool_outputs(tool_outputs),
+              error = function(e) {
+                reject(paste("Error in tool outputs:", e$message))
+              }
+            )
+            handle_tool_calls()
+          } else {
+            resolve(self)
+          }
+        }
+        handle_tool_calls()
+      })
     }
   )
 )
 
+#' ModelResponseStream R6 Class
 ModelResponseStream <- R6Class(
   "ModelResponseStream",
   inherit = ModelResponse,
   portable = FALSE,
   public = list(
+    #' @description Initialize a `ModelResponseStream` object.
+    #' @param stream_reader StreamReader. The stream reader object.
     initialize = function(stream_reader) {
       stream_reader <<- stream_reader
       .async <<- stream_reader$async
     },
+    #' @description Stream the model response.
+    #' @param on_event Function. Callback function to handle all events.
+    #' The function should accept a single argument, `event`, which is a list
+    #' containing the event `type` and `data`.
+    #' @param on_output_text_delta Function. Callback function to handle output
+    #' text delta events. The function should accept a single argument
+    #' containing the delta event data.
+    #' @param env Environment. The environment in which to evaluate the tool calls.
     stream = function(on_event = function(event) {},
                       on_output_text_delta = function(data) {},
                       env = parent.frame()) {
@@ -306,16 +387,31 @@ ModelResponseStream <- R6Class(
       }
       if (.async) {
         stream_reader$stream_async(handle_event = fun) |>
-          then(function(...) {
-            self
+          then(~ {
+            tool_outputs <- do_tool_calls(env)
+            if (length(tool_outputs) > 0L) {
+              submit_tool_outputs(tool_outputs, stream = TRUE) |>
+                then(~ {
+                  stream_reader <<- .x
+                  stream(on_event, on_output_text_delta, env)
+                })
+            } else {
+              self
+            }
           })
       } else {
         stream_reader$stream_sync(handle_event = fun)
+        tool_outputs <- do_tool_calls(env)
+        if (length(tool_outputs) > 0L) {
+          stream_reader <<- submit_tool_outputs(tool_outputs, stream = TRUE)
+          stream(on_event, on_output_text_delta, env)
+        }
         invisible(self)
       }
     }
   ),
   private = list(
+    .stream = TRUE,
     stream_reader = NULL,
     handle_event = function(event, on_event, on_output_text_delta) {
       ## cat("Event received:", event$type, "\n")
