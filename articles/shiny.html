@@ -128,6 +128,18 @@ every 100 milliseconds while the completion is being generated.</p>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">shinyApp</span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+<p>If using <code>bslib</code>, the default busy indicator when
+recalculating the output is a opacity fade, which does not work well
+with text streaming. You can turn it off with
+<code>busyIndicatorOptions(fade_opacity = 1)</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rstudio.github.io/bslib/reference/page.html" class="external-link">page_fixed</a></span><span class="op">(</span></span>
+<span>  <span class="fu">busyIndicatorOptions</span><span class="op">(</span>fade_opacity <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rstudio.github.io/bslib/reference/input_task_button.html" class="external-link">input_task_button</a></span><span class="op">(</span><span class="st">"prompt"</span>, <span class="st">"Prompt"</span><span class="op">)</span>,</span>
+<span>  <span class="fu">uiOutput</span><span class="op">(</span><span class="st">"timer"</span><span class="op">)</span>,</span>
+<span>  <span class="fu">uiOutput</span><span class="op">(</span><span class="st">"answer"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">shinyApp</span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="todo">TODO:<a class="anchor" aria-label="anchor" href="#todo"></a>
 </h3>
