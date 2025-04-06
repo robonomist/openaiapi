@@ -76,6 +76,20 @@ server <- function(input, output, session) {
   })
 }
 shinyApp(ui, server)
+
+```
+
+If using `bslib`, the default busy indicator when recalculating the output is a opacity fade, which does not work well with text streaming. You can turn it off with `busyIndicatorOptions(fade_opacity = 1)`.
+
+``` r
+ui <- page_fixed(
+  busyIndicatorOptions(fade_opacity = 1),
+  input_task_button("prompt", "Prompt"),
+  uiOutput("timer"),
+  uiOutput("answer")
+)
+shinyApp(ui, server)
+
 ```
 
 ### TODO:

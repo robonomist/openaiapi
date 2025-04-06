@@ -23,17 +23,6 @@ Utils <- R6Class(
       for (name in schema$unlist) {
         self[[name]] <- resp[[name]] |> unlist(use.names = FALSE)
       }
-      for (name in schema$tools) {
-        ## HACK: Add empty properties to tools
-        tools <- lapply(resp[[name]], function(tool) {
-          if (length(tool$parameters$properties) == 0L) {
-            tool$parameters <-
-              I(append(tool$parameters, list(properties = NULL)))
-          }
-          tool
-        })
-        self[[name]] <- tools
-      }
       self
     }
   ),

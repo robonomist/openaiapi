@@ -175,13 +175,41 @@ ModelResponse <- R6Class(
   portable = FALSE,
   private = list(
     schema = list(
-      as_is = c("error", "id", "incomplete_details", "instructions", "model", "output", "output_text", "parallel_tool_calls", "previous_response_id", "reasoning", "status", "temperature", "text", "tool_choice", "top_p", "truncation", "usage", "user"),
-      as_time = c("created_at"),
-      tools = c("tools")
+      as_is = c("error", "id", "incomplete_details", "instructions", "model", "output", "parallel_tool_calls", "previous_response_id", "reasoning", "tools", "status", "temperature", "text", "tool_choice", "top_p", "truncation", "usage", "user"),
+      as_time = c("created_at")
     ),
     .stream = NULL
   ),
   public = list(
+    store_response = function(resp) {
+      super$store_response(resp)
+      if (!is.null(tools)) {
+        ## HACK: Add empty properties to tools
+        tools <<- lapply(tools, function(tool) {
+          if (length(tool$parameters$properties) == 0L) {
+            tool$parameters <-
+              I(append(tool$parameters, list(properties = NULL)))
+          }
+          tool
+        })
+      }
+      output_text <<- NULL
+      if (!is.null(output)) {
+        ## Set output_text if available
+        for (i in output) {
+          if (i$type == "message" && i$role == "assistant") {
+            for (j in i$content) {
+              if (j$type == "output_text") {
+                output_text <<- paste0(
+                  output_text %||% "",
+                  j$text
+                )
+              }
+            }
+          }
+        }
+      }
+    },
     #' @description Initialize a `ModelResponse` object.
     initialize = function(response_id = NULL,
                           input = NULL,
@@ -285,46 +313,48 @@ ModelResponse <- R6Class(
         if (x$type == "function_call") x
       })
       tool_calls <- Filter(Negate(is.null), tool_calls)
-      tool_outputs <-
+      if (length(tool_calls) > 0L) {
         tool_calls |>
-        lapply(function(x) {
-          args <- fromJSON(
-            x$arguments,
-            simplifyVector = getOption("openaiapi.tool_call_simplifyVector", FALSE)
-          )
-          what <- x$name
-          result <- do.call(what, args, envir = env)
-          list(
-            type = "function_call_output",
-            call_id = x$call_id,
-            output = result
-          )
-        })
+          lapply(function(x) {
+            args <- fromJSON(
+              x$arguments,
+              simplifyVector = getOption("openaiapi.tool_call_simplifyVector", FALSE)
+            )
+            what <- x$name
+            result <- do.call(what, args, envir = env)
+            list(
+              type = "function_call_output",
+              call_id = x$call_id,
+              output = result
+            )
+          })
+      }
     },
     #' @description Submit tool outputs to generate a new model response.
     #' @param tool_outputs List. The tool outputs to submit.
     submit_tool_outputs = function(tool_outputs) {
-      if (length(tool_outputs) > 0L) {
-        r <- oai_create_model_response(
-          input = tool_outputs,
-          instructions = instructions,
-          tools = I(tools),
-          max_output_tokens = max_output_tokens,
-          previous_response_id = id,
-          reasoning = reasoning,
-          temperature = temperature,
-          top_p = top_p,
-          truncation = truncation,
-          user = user,
-          stream = .stream,
-          .async = .async,
-          .classify_response = FALSE
-        )
-        if (isTRUE(.stream)) {
-          r
-        } else {
-          store_response(r)
-        }
+      if (length(tool_outputs) == 0L) {
+        cli_abort("No tool outputs to submit.")
+      }
+      r <- oai_create_model_response(
+        input = tool_outputs,
+        instructions = instructions,
+        tools = I(tools),
+        max_output_tokens = max_output_tokens,
+        previous_response_id = id,
+        reasoning = reasoning,
+        temperature = temperature,
+        top_p = top_p,
+        truncation = truncation,
+        user = user,
+        stream = .stream,
+        .async = .async,
+        .classify_response = FALSE
+      )
+      if (isTRUE(.stream)) {
+        r
+      } else {
+        store_response(r)
       }
     },
     #' @description Submit tool outputs to generate a new model response.
@@ -381,7 +411,7 @@ ModelResponseStream <- R6Class(
     #' containing the delta event data.
     #' @param env Environment. The environment in which to evaluate the tool calls.
     stream = function(on_event = function(event) {},
-                      on_output_text_delta = function(data) {},
+                      on_output_text_delta = function(output_text, delta) {},
                       env = parent.frame()) {
       fun <- function(event) {
         handle_event(event, on_event, on_output_text_delta)
@@ -390,7 +420,7 @@ ModelResponseStream <- R6Class(
         stream_reader$stream_async(handle_event = fun) |>
           then(~ {
             tool_outputs <- do_tool_calls(env)
-            if (length(tool_outputs) > 0L) {
+            if (!is.null(tool_outputs)) {
               submit_tool_outputs(tool_outputs) |>
                 then(~ {
                   stream_reader <<- .x
@@ -415,6 +445,7 @@ ModelResponseStream <- R6Class(
     .stream = TRUE,
     stream_reader = NULL,
     handle_event = function(event, on_event, on_output_text_delta) {
+      ## cat("Event: ", event$type, "\n")
       event$type |> switch(
         "response.created" = ,
         "response.in_progress" = ,
@@ -437,11 +468,13 @@ ModelResponseStream <- R6Class(
         "response.output_text.delta" = {
           output_index <- event$data$output_index + 1L
           content_index <- event$data$content_index + 1L
-          output[[output_index]]$content[[content_index]]$text <<- paste0(
+          new_text <- paste0(
             output[[output_index]]$content[[content_index]]$text,
             event$data$delta
           )
-          on_output_text_delta(event$data)
+          output[[output_index]]$content[[content_index]]$text <<- new_text
+          output_text[output_index] <<- new_text
+          on_output_text_delta(output_text, event$data)
         },
         "response.output_text.annotation.added" = {
           output_index <- event$data$output_index + 1L
