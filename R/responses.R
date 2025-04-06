@@ -181,6 +181,7 @@ ModelResponse <- R6Class(
     .stream = NULL
   ),
   public = list(
+    #' @description Store the model response.
     store_response = function(resp) {
       super$store_response(resp)
       if (!is.null(tools)) {
@@ -406,12 +407,15 @@ ModelResponseStream <- R6Class(
     #' @param on_event Function. Callback function to handle all events.
     #' The function should accept a single argument, `event`, which is a list
     #' containing the event `type` and `data`.
+    #' @param on_output_text Function. Callback function to handle event that change output text. The function should accept a single argument
+    #' containing the output text string.
     #' @param on_output_text_delta Function. Callback function to handle output
     #' text delta events. The function should accept a single argument
     #' containing the delta event data.
     #' @param env Environment. The environment in which to evaluate the tool calls.
     stream = function(on_event = function(event) {},
-                      on_output_text_delta = function(output_text, delta) {},
+                      on_output_text = function(output_text) {},
+                      on_output_text_delta = function(delta) {},
                       env = parent.frame()) {
       fun <- function(event) {
         handle_event(event, on_event, on_output_text_delta)
@@ -435,7 +439,7 @@ ModelResponseStream <- R6Class(
         tool_outputs <- do_tool_calls(env)
         if (length(tool_outputs) > 0L) {
           stream_reader <<- submit_tool_outputs(tool_outputs)
-          stream(on_event, on_output_text_delta, env)
+          stream(on_event, on_output_text, on_output_text_delta, env)
         }
         invisible(self)
       }
@@ -474,7 +478,8 @@ ModelResponseStream <- R6Class(
           )
           output[[output_index]]$content[[content_index]]$text <<- new_text
           output_text[output_index] <<- new_text
-          on_output_text_delta(output_text, event$data)
+          on_output_text(output_text)
+          on_output_text_delta(event$data)
         },
         "response.output_text.annotation.added" = {
           output_index <- event$data$output_index + 1L

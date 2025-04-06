@@ -61,6 +61,7 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
+\item \href{#method-ModelResponse-store_response}{\code{ModelResponse$store_response()}}
 \item \href{#method-ModelResponse-new}{\code{ModelResponse$new()}}
 \item \href{#method-ModelResponse-get}{\code{ModelResponse$get()}}
 \item \href{#method-ModelResponse-delete}{\code{ModelResponse$delete()}}
@@ -72,13 +73,23 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 \item \href{#method-ModelResponse-clone}{\code{ModelResponse$clone()}}
 }
 }
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
-</ul>
-</details>
-}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponse-store_response"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponse-store_response}{}}}
+\subsection{Method \code{store_response()}}{
+Store the model response.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$store_response(resp)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{resp}}{List. The response object returned by the OpenAI API.}
+}
+\if{html}{\out{</div>}}
+}
+}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ModelResponse-new"></a>}}
 \if{latex}{\out{\hypertarget{method-ModelResponse-new}{}}}

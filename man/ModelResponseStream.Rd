@@ -22,12 +22,12 @@ ModelResponseStream R6 Class
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="await"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-await'><code>openaiapi::ModelResponse$await()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="delete"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-delete'><code>openaiapi::ModelResponse$delete()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="do_tool_calls"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-do_tool_calls'><code>openaiapi::ModelResponse$do_tool_calls()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="get"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-get'><code>openaiapi::ModelResponse$get()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="list_input_items"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-list_input_items'><code>openaiapi::ModelResponse$list_input_items()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="store_response"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-store_response'><code>openaiapi::ModelResponse$store_response()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="submit_tool_outputs"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-submit_tool_outputs'><code>openaiapi::ModelResponse$submit_tool_outputs()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="wait"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-wait'><code>openaiapi::ModelResponse$wait()</code></a></span></li>
 </ul>
@@ -59,7 +59,9 @@ Stream the model response.
 \if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$stream(
   on_event = function(event) {
  },
-  on_output_text_delta = function(data) {
+  on_output_text = function(output_text) {
+ },
+  on_output_text_delta = function(delta) {
  },
   env = parent.frame()
 )}\if{html}{\out{</div>}}
@@ -71,6 +73,9 @@ Stream the model response.
 \item{\code{on_event}}{Function. Callback function to handle all events.
 The function should accept a single argument, \code{event}, which is a list
 containing the event \code{type} and \code{data}.}
+
+\item{\code{on_output_text}}{Function. Callback function to handle event that change output text. The function should accept a single argument
+containing the output text string.}
 
 \item{\code{on_output_text_delta}}{Function. Callback function to handle output
 text delta events. The function should accept a single argument
