@@ -112,7 +112,10 @@ oai_query <- function(ep,
     if (.async) {
       ## Handle async non-streaming case
       req_perform_promise(req, path = path) |>
-        then(handle_response) |>
+        then(
+          onFulfilled = handle_response,
+          onRejected = ~ cli_abort("Failed to perform request", parent = .x)
+        ) |>
         as_oai_promise()
     } else {
       ## Handle sync non-streaming case
