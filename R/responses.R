@@ -321,13 +321,15 @@ ModelResponse <- R6Class(
               x$arguments,
               simplifyVector = getOption("openaiapi.tool_call_simplifyVector", FALSE)
             )
+            if (length(args) == 0L) {
+              args <- list()
+            }
             what <- x$name
             result <- tryCatch(
               do.call(what, args, envir = env),
               error = function(cnd) {
                 cli_abort(
-                  "do_tool_calls() failed to call `{what}`",
-                  parent = cnd,
+                  "do_tool_calls() failed to call `{what}:{cnd$message}`",
                   call = call("do_tool_calls")
                 )
               }
@@ -376,6 +378,7 @@ ModelResponse <- R6Class(
     },
     #' @description Wait for the model response to complete.
     await = function(env = parent.frame()) {
+      env <- force(env)
       promise(function(resolve, reject) {
         handle_tool_calls <- function() {
           tool_outputs <-
@@ -426,23 +429,31 @@ ModelResponseStream <- R6Class(
                       on_output_text = function(output_text) {},
                       on_output_text_delta = function(delta) {},
                       env = parent.frame()) {
+      env <- force(env)
       fun <- function(event) {
         handle_event(event, on_event, on_output_text, on_output_text_delta)
       }
       if (.async) {
-        stream_reader$stream_async(handle_event = fun) |>
-          then(~ {
+        stream_reader$stream_async(handle_event = fun) |> then(
+          onFulfilled = ~ {
             tool_outputs <- do_tool_calls(env)
             if (!is.null(tool_outputs)) {
-              submit_tool_outputs(tool_outputs) |>
-                then(~ {
+              submit_tool_outputs(tool_outputs) |> then(
+                onFulfilled = ~ {
                   stream_reader <<- .x
                   stream(on_event, on_output_text, on_output_text_delta, env)
+                },
+                onRejected = ~ {
+                  cli_abort("Failed while submitting tool outputs", parent = .x)
                 })
             } else {
               self
             }
-          })
+          },
+          onRejected = ~ {
+            cli_abort("Failed while reading the stream", parent = .x)
+          }
+          )
       } else {
         stream_reader$stream_sync(handle_event = fun)
         tool_outputs <- do_tool_calls(env)
