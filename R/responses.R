@@ -322,7 +322,16 @@ ModelResponse <- R6Class(
               simplifyVector = getOption("openaiapi.tool_call_simplifyVector", FALSE)
             )
             what <- x$name
-            result <- do.call(what, args, envir = env)
+            result <- tryCatch(
+              do.call(what, args, envir = env),
+              error = function(cnd) {
+                cli_abort(
+                  "do_tool_calls() failed to call `{what}`",
+                  parent = cnd,
+                  call = call("do_tool_calls")
+                )
+              }
+            )
             list(
               type = "function_call_output",
               call_id = x$call_id,
@@ -418,7 +427,7 @@ ModelResponseStream <- R6Class(
                       on_output_text_delta = function(delta) {},
                       env = parent.frame()) {
       fun <- function(event) {
-        handle_event(event, on_event, on_output_text_delta)
+        handle_event(event, on_event, on_output_text, on_output_text_delta)
       }
       if (.async) {
         stream_reader$stream_async(handle_event = fun) |>
@@ -428,7 +437,7 @@ ModelResponseStream <- R6Class(
               submit_tool_outputs(tool_outputs) |>
                 then(~ {
                   stream_reader <<- .x
-                  stream(on_event, on_output_text_delta, env)
+                  stream(on_event, on_output_text, on_output_text_delta, env)
                 })
             } else {
               self
@@ -448,7 +457,7 @@ ModelResponseStream <- R6Class(
   private = list(
     .stream = TRUE,
     stream_reader = NULL,
-    handle_event = function(event, on_event, on_output_text_delta) {
+    handle_event = function(event, on_event, on_output_text, on_output_text_delta) {
       ## cat("Event: ", event$type, "\n")
       event$type |> switch(
         "response.created" = ,
