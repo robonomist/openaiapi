@@ -144,36 +144,20 @@
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-ModelResponse-store_response"><code>ModelResponse$store_response()</code></a></p></li>
-<li><p><a href="#method-ModelResponse-new"><code>ModelResponse$new()</code></a></p></li>
+<ul><li><p><a href="#method-ModelResponse-new"><code>ModelResponse$new()</code></a></p></li>
 <li><p><a href="#method-ModelResponse-get"><code>ModelResponse$get()</code></a></p></li>
 <li><p><a href="#method-ModelResponse-delete"><code>ModelResponse$delete()</code></a></p></li>
 <li><p><a href="#method-ModelResponse-list_input_items"><code>ModelResponse$list_input_items()</code></a></p></li>
 <li><p><a href="#method-ModelResponse-do_tool_calls"><code>ModelResponse$do_tool_calls()</code></a></p></li>
+<li><p><a href="#method-ModelResponse-respond"><code>ModelResponse$respond()</code></a></p></li>
 <li><p><a href="#method-ModelResponse-submit_tool_outputs"><code>ModelResponse$submit_tool_outputs()</code></a></p></li>
 <li><p><a href="#method-ModelResponse-wait"><code>ModelResponse$wait()</code></a></p></li>
 <li><p><a href="#method-ModelResponse-await"><code>ModelResponse$await()</code></a></p></li>
 <li><p><a href="#method-ModelResponse-clone"><code>ModelResponse$clone()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-ModelResponse-store_response"></a><div class="section">
-<h3 id="method-store-response-">Method <code>store_response()</code><a class="anchor" aria-label="anchor" href="#method-store-response-"></a></h3>
-<p>Store the model response.</p><div class="section">
-<h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponse</span><span class="op">$</span><span class="fu">store_response</span><span class="op">(</span><span class="va">resp</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>resp</code></dt>
-<dd><p>List. The response object returned by the OpenAI API.</p></dd>
-
-
-</dl><p></p></div>
-</div>
-
-</div><p></p><hr><a id="method-ModelResponse-new"></a><div class="section">
+</ul></div><p></p><hr><a id="method-ModelResponse-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Initialize a <code>ModelResponse</code> object.</p><div class="section">
-<h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
+<h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/ModelResponse.html">ModelResponse</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
 <span>  response_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  input <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -184,7 +168,7 @@
 </div>
 
 <div class="section">
-<h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
+<h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>response_id</code></dt>
 <dd><p>Character. Unique identifier for this Response.</p></dd>
 
@@ -211,7 +195,7 @@
 </div><p></p><hr><a id="method-ModelResponse-get"></a><div class="section">
 <h3 id="method-get-">Method <code><a href="https://rdrr.io/r/base/get.html" class="external-link">get()</a></code><a class="anchor" aria-label="anchor" href="#method-get-"></a></h3>
 <p>Get a fresh copy of the model response.</p><div class="section">
-<h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
+<h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponse</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -219,7 +203,7 @@
 </div><p></p><hr><a id="method-ModelResponse-delete"></a><div class="section">
 <h3 id="method-delete-">Method <code>delete()</code><a class="anchor" aria-label="anchor" href="#method-delete-"></a></h3>
 <p>Store the model response.</p><div class="section">
-<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
+<h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponse</span><span class="op">$</span><span class="fu">delete</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -227,12 +211,12 @@
 </div><p></p><hr><a id="method-ModelResponse-list_input_items"></a><div class="section">
 <h3 id="method-list-input-items-">Method <code>list_input_items()</code><a class="anchor" aria-label="anchor" href="#method-list-input-items-"></a></h3>
 <p>List input items for the model response.</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponse</span><span class="op">$</span><span class="fu">list_input_items</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
+<h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Additional parameters to pass to the <code>oai_list_items()</code> function.</p></dd>
 
@@ -243,14 +227,35 @@
 </div><p></p><hr><a id="method-ModelResponse-do_tool_calls"></a><div class="section">
 <h3 id="method-do-tool-calls-">Method <code>do_tool_calls()</code><a class="anchor" aria-label="anchor" href="#method-do-tool-calls-"></a></h3>
 <p>Do all tool calls in the model response and return the results.</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponse</span><span class="op">$</span><span class="fu">do_tool_calls</span><span class="op">(</span>env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>env</code></dt>
 <dd><p>Environment. The environment in which to evaluate the tool calls.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-ModelResponse-respond"></a><div class="section">
+<h3 id="method-respond-">Method <code>respond()</code><a class="anchor" aria-label="anchor" href="#method-respond-"></a></h3>
+
+<div class="section">
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponse</span><span class="op">$</span><span class="fu">respond</span><span class="op">(</span><span class="va">input</span>, stream <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>input</code></dt>
+<dd><p>Character or List. Text, image, or file inputs to the model, used to generate a response.</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>Additional parameters to pass to the model.</p></dd>
 
 
 </dl><p></p></div>
