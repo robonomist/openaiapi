@@ -89,13 +89,6 @@ RunStream R6 class
 \item \href{#method-Run-clone}{\code{Run$clone()}}
 }
 }
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
-</ul>
-</details>
-}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Run-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Run-new}{}}}
@@ -326,7 +319,6 @@ The objects of this class are cloneable with this method.
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="assistant"><a href='../../openaiapi/html/Run.html#method-Run-assistant'><code>openaiapi::Run$assistant()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="await"><a href='../../openaiapi/html/Run.html#method-Run-await'><code>openaiapi::Run$await()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="Run" data-id="cancel"><a href='../../openaiapi/html/Run.html#method-Run-cancel'><code>openaiapi::Run$cancel()</code></a></span></li>

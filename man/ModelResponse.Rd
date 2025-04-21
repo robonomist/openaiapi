@@ -61,33 +61,16 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-ModelResponse-store_response}{\code{ModelResponse$store_response()}}
 \item \href{#method-ModelResponse-new}{\code{ModelResponse$new()}}
 \item \href{#method-ModelResponse-get}{\code{ModelResponse$get()}}
 \item \href{#method-ModelResponse-delete}{\code{ModelResponse$delete()}}
 \item \href{#method-ModelResponse-list_input_items}{\code{ModelResponse$list_input_items()}}
 \item \href{#method-ModelResponse-do_tool_calls}{\code{ModelResponse$do_tool_calls()}}
+\item \href{#method-ModelResponse-respond}{\code{ModelResponse$respond()}}
 \item \href{#method-ModelResponse-submit_tool_outputs}{\code{ModelResponse$submit_tool_outputs()}}
 \item \href{#method-ModelResponse-wait}{\code{ModelResponse$wait()}}
 \item \href{#method-ModelResponse-await}{\code{ModelResponse$await()}}
 \item \href{#method-ModelResponse-clone}{\code{ModelResponse$clone()}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ModelResponse-store_response"></a>}}
-\if{latex}{\out{\hypertarget{method-ModelResponse-store_response}{}}}
-\subsection{Method \code{store_response()}}{
-Store the model response.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$store_response(resp)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{resp}}{List. The response object returned by the OpenAI API.}
-}
-\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -171,6 +154,24 @@ Do all tool calls in the model response and return the results.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{env}}{Environment. The environment in which to evaluate the tool calls.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponse-respond"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponse-respond}{}}}
+\subsection{Method \code{respond()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$respond(input, stream = NULL, ...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{input}}{Character or List. Text, image, or file inputs to the model, used to generate a response.}
+
+\item{\code{...}}{Additional parameters to pass to the model.}
 }
 \if{html}{\out{</div>}}
 }

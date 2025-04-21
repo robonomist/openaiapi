@@ -71,7 +71,9 @@ StreamReader <- R6Class(
   ),
   private = list(
     finalizer = function() {
-      close(con)
+      if (!is.null(con) && !isOpen(con)) {
+        try(close(con))
+      }
     },
     con = NULL
   )

@@ -44,6 +44,8 @@ oai_create_model_response <- function(input,
   # Validate input
   if (missing(input)) {
     stop("The 'input' parameter is required.")
+  } else if (inherits(input, "oai_message")) {
+    input <- list(input)
   }
   if (!is.null(tools)) {
     if (inherits(tools, "oai_function_tool")) {
@@ -178,10 +180,6 @@ ModelResponse <- R6Class(
       as_is = c("error", "id", "incomplete_details", "instructions", "model", "output", "parallel_tool_calls", "previous_response_id", "reasoning", "tools", "status", "temperature", "text", "tool_choice", "top_p", "truncation", "usage", "user"),
       as_time = c("created_at")
     ),
-    .stream = NULL
-  ),
-  public = list(
-    #' @description Store the model response.
     store_response = function(resp) {
       super$store_response(resp)
       if (!is.null(tools)) {
@@ -211,6 +209,9 @@ ModelResponse <- R6Class(
         }
       }
     },
+    .stream = NULL
+  ),
+  public = list(
     #' @description Initialize a `ModelResponse` object.
     initialize = function(response_id = NULL,
                           input = NULL,
@@ -342,14 +343,9 @@ ModelResponse <- R6Class(
           })
       }
     },
-    #' @description Submit tool outputs to generate a new model response.
-    #' @param tool_outputs List. The tool outputs to submit.
-    submit_tool_outputs = function(tool_outputs) {
-      if (length(tool_outputs) == 0L) {
-        cli_abort("No tool outputs to submit.")
-      }
-      r <- oai_create_model_response(
-        input = tool_outputs,
+    respond = function(input, stream = NULL, ...) {
+      args <- list(input = input, ...)
+      defaults <- list(
         instructions = instructions,
         tools = I(tools),
         max_output_tokens = max_output_tokens,
@@ -359,15 +355,21 @@ ModelResponse <- R6Class(
         top_p = top_p,
         truncation = truncation,
         user = user,
-        stream = .stream,
+        stream = stream %||% .stream,
         .async = .async,
         .classify_response = FALSE
       )
-      if (isTRUE(.stream)) {
-        r
-      } else {
-        store_response(r)
+      args <- modifyList(defaults, args)
+      do.call(oai_create_model_response, args) |>
+        store_response()
+    },
+    #' @description Submit tool outputs to generate a new model response.
+    #' @param tool_outputs List. The tool outputs to submit.
+    submit_tool_outputs = function(tool_outputs) {
+      if (length(tool_outputs) == 0L) {
+        cli_abort("No tool outputs to submit.")
       }
+      respond(tool_outputs)
     },
     #' @description Submit tool outputs to generate a new model response.
     wait = function(env = parent.frame()) {
@@ -412,8 +414,7 @@ ModelResponseStream <- R6Class(
     #' @description Initialize a `ModelResponseStream` object.
     #' @param stream_reader StreamReader. The stream reader object.
     initialize = function(stream_reader) {
-      stream_reader <<- stream_reader
-      .async <<- stream_reader$async
+      store_response(stream_reader)
     },
     #' @description Stream the model response.
     #' @param on_event Function. Callback function to handle all events.
@@ -440,7 +441,6 @@ ModelResponseStream <- R6Class(
             if (!is.null(tool_outputs)) {
               submit_tool_outputs(tool_outputs) |> then(
                 onFulfilled = ~ {
-                  stream_reader <<- .x
                   stream(on_event, on_output_text, on_output_text_delta, env)
                 },
                 onRejected = ~ {
@@ -468,6 +468,15 @@ ModelResponseStream <- R6Class(
   private = list(
     .stream = TRUE,
     stream_reader = NULL,
+    store_response = function(resp) {
+      if (is.promise(resp)) {
+        resp$then(store_response)
+      } else {
+        stream_reader <<- resp
+        .async <<- stream_reader$async %||% .async
+        self
+      }
+    },
     handle_event = function(event, on_event, on_output_text, on_output_text_delta) {
       ## cat("Event: ", event$type, "\n")
       event$type |> switch(
@@ -476,7 +485,7 @@ ModelResponseStream <- R6Class(
         "response.completed" = ,
         "response.failed" = ,
         "response.incomplete" = {
-          store_response(event$data$response)
+          super$store_response(event$data$response)
         },
         "response.output_item.added" = ,
         "response.output_item.done" = {

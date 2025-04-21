@@ -3,30 +3,30 @@ Utils <- R6Class(
   "Utils",
   portable = FALSE,
   public = list(
-    .async = FALSE,
+    .async = FALSE
+  ),
+  private = list(
     store_response = function(resp) {
       if (is.promise(resp)) {
-        p <- resp$then(function(x) {
+        resp$then(function(x) {
           store_response(resp = x)
         }) |>
           as_oai_promise()
-        return(p)
+      } else {
+        self[[".async"]] <- resp[[".async"]] %||% self[[".async"]]
+        resp <- compact(resp)
+        for (name in schema$as_is) {
+          self[[name]] <- resp[[name]]
+        }
+        for (name in schema$as_time) {
+          self[[name]] <- resp[[name]] |> as_time()
+        }
+        for (name in schema$unlist) {
+          self[[name]] <- resp[[name]] |> unlist(use.names = FALSE)
+        }
+        self
       }
-      self[[".async"]] <- resp[[".async"]] %||% self[[".async"]]
-      resp <- compact(resp)
-      for (name in schema$as_is) {
-        self[[name]] <- resp[[name]]
-      }
-      for (name in schema$as_time) {
-        self[[name]] <- resp[[name]] |> as_time()
-      }
-      for (name in schema$unlist) {
-        self[[name]] <- resp[[name]] |> unlist(use.names = FALSE)
-      }
-      self
-    }
-  ),
-  private = list(
+    },
     .print = function(...) {
       cli_h1(class(self)[1])
       cli_dl(c(...))

@@ -23,7 +23,6 @@ ChatCompletionStream R6 class
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ChatCompletion" data-id="content_text"><a href='../../openaiapi/html/ChatCompletion.html#method-ChatCompletion-content_text'><code>openaiapi::ChatCompletion$content_text()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ChatCompletion" data-id="delete"><a href='../../openaiapi/html/ChatCompletion.html#method-ChatCompletion-delete'><code>openaiapi::ChatCompletion$delete()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ChatCompletion" data-id="get"><a href='../../openaiapi/html/ChatCompletion.html#method-ChatCompletion-get'><code>openaiapi::ChatCompletion$get()</code></a></span></li>

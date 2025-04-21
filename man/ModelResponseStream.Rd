@@ -27,7 +27,7 @@ ModelResponseStream R6 Class
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="do_tool_calls"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-do_tool_calls'><code>openaiapi::ModelResponse$do_tool_calls()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="get"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-get'><code>openaiapi::ModelResponse$get()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="list_input_items"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-list_input_items'><code>openaiapi::ModelResponse$list_input_items()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="store_response"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-store_response'><code>openaiapi::ModelResponse$store_response()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="respond"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-respond'><code>openaiapi::ModelResponse$respond()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="submit_tool_outputs"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-submit_tool_outputs'><code>openaiapi::ModelResponse$submit_tool_outputs()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="wait"><a href='../../openaiapi/html/ModelResponse.html#method-ModelResponse-wait'><code>openaiapi::ModelResponse$wait()</code></a></span></li>
 </ul>

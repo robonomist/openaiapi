@@ -28,13 +28,6 @@ R6 class representing an Embedding in the OpenAI API
 \item \href{#method-Embedding-clone}{\code{Embedding$clone()}}
 }
 }
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="openaiapi" data-topic="Utils" data-id="store_response"><a href='../../openaiapi/html/Utils.html#method-Utils-store_response'><code>openaiapi::Utils$store_response()</code></a></span></li>
-</ul>
-</details>
-}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Embedding-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Embedding-new}{}}}
