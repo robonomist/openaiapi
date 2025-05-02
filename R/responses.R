@@ -136,13 +136,13 @@ oai_delete_model_response <- function(response_id,
 #' @param response_id Character. The ID of the response to retrieve input items for.
 #' @rdname model_response
 oai_list_input_items <- function(response_id,
-                           after = NULL,
-                           before = NULL,
-                           include = NULL,
-                           limit = NULL,
-                           order = NULL,
-                           .classify_response = TRUE,
-                           .async = FALSE) {
+                                 after = NULL,
+                                 before = NULL,
+                                 include = NULL,
+                                 limit = NULL,
+                                 order = NULL,
+                                 .classify_response = TRUE,
+                                 .async = FALSE) {
   if (missing(response_id)) {
     stop("The 'response_id' parameter is required.")
   }
@@ -373,7 +373,7 @@ ModelResponse <- R6Class(
     },
     #' @description Submit tool outputs to generate a new model response.
     wait = function(env = parent.frame()) {
-      while(length(tool_outputs <- do_tool_calls(env))) {
+      while (length(tool_outputs <- do_tool_calls(env))) {
         submit_tool_outputs(tool_outputs)
       }
       self
@@ -385,8 +385,8 @@ ModelResponse <- R6Class(
         handle_tool_calls <- function() {
           tool_outputs <-
             tryCatch(do_tool_calls(env), error = function(e) {
-            reject(paste("Error in tool calls:", e$message))
-          })
+              reject(paste("Error in tool calls:", e$message))
+            })
           if (length(tool_outputs) > 0L) {
             tryCatch(
               submit_tool_outputs(tool_outputs),
@@ -431,11 +431,9 @@ ModelResponseStream <- R6Class(
                       on_output_text_delta = function(delta) {},
                       env = parent.frame()) {
       env <- force(env)
-      fun <- function(event) {
-        handle_event(event, on_event, on_output_text, on_output_text_delta)
-      }
+      handler <- event_handler(on_event, on_output_text, on_output_text_delta)
       if (.async) {
-        stream_reader$stream_async(handle_event = fun) |> then(
+        stream_reader$stream_async(handle_event = handler) |> then(
           onFulfilled = ~ {
             tool_outputs <- do_tool_calls(env)
             if (!is.null(tool_outputs)) {
@@ -445,7 +443,8 @@ ModelResponseStream <- R6Class(
                 },
                 onRejected = ~ {
                   cli_abort("Failed while submitting tool outputs", parent = .x)
-                })
+                }
+              )
             } else {
               self
             }
@@ -453,9 +452,9 @@ ModelResponseStream <- R6Class(
           onRejected = ~ {
             cli_abort("Failed while reading the stream", parent = .x)
           }
-          )
+        )
       } else {
-        stream_reader$stream_sync(handle_event = fun)
+        stream_reader$stream_sync(handle_event = handler)
         tool_outputs <- do_tool_calls(env)
         if (length(tool_outputs) > 0L) {
           stream_reader <<- submit_tool_outputs(tool_outputs)
@@ -477,115 +476,115 @@ ModelResponseStream <- R6Class(
         self
       }
     },
-    handle_event = function(event, on_event, on_output_text, on_output_text_delta) {
-      ## cat("Event: ", event$type, "\n")
-      event$type |> switch(
-        "response.created" = ,
-        "response.in_progress" = ,
-        "response.completed" = ,
-        "response.failed" = ,
-        "response.incomplete" = {
-          super$store_response(event$data$response)
-        },
-        "response.output_item.added" = ,
-        "response.output_item.done" = {
-          output_index <- event$data$output_index + 1L
-          output[[output_index]] <<- event$data$item
-        },
-        "response.content_part.added" = ,
-        "response.content_part.done" = {
-          output_index <- event$data$output_index + 1L
-          content_index <- event$data$content_index + 1L
-          output[[output_index]]$content[[content_index]] <<- event$data$part
-        },
-        "response.output_text.delta" = {
-          output_index <- event$data$output_index + 1L
-          content_index <- event$data$content_index + 1L
-          new_text <- paste0(
-            output[[output_index]]$content[[content_index]]$text,
-            event$data$delta
-          )
-          output[[output_index]]$content[[content_index]]$text <<- new_text
-          output_text[output_index] <<- new_text
-          on_output_text(output_text)
-          on_output_text_delta(event$data)
-        },
-        "response.output_text.annotation.added" = {
-          output_index <- event$data$output_index + 1L
-          content_index <- event$data$content_index + 1L
-          annotation_index <- event$data$annotation_index + 1L
-          output[[output_index]]$content[[content_index]]$annotations[[annotation_index]] <<- event$data$annotation
-        },
-        "response.output_text.done" = {
-          output_index <- event$data$output_index + 1L
-          content_index <- event$data$content_index + 1L
-          output[[output_index]]$content[[content_index]]$text <<- event$data$text
-        },
-        "response.refusal.delta" = {
-          output_index <- event$data$output_index + 1L
-          content_index <- event$data$content_index + 1L
-          output[[output_index]]$content[[content_index]]$refusal <<- paste0(
-            output[[output_index]]$content[[content_index]]$refusal,
-            event$data$delta
-          )
-          ## on_refusal_delta(event$data)
-        },
-        "response.refusal.done" = {
-          output_index <- event$data$output_index + 1L
-          content_index <- event$data$content_index + 1L
-          output[[output_index]]$content[[content_index]]$refusal <<- event$data$refusal
-        },
-        "response.function_call_arguments.delta" = {
-          output_index <- event$data$output_index + 1L
-          output[[output_index]]$arguments <<- paste0(
-            output[[output_index]]$arguments,
-            event$data$delta
-          )
-          ## on_function_call_arguments_delta(event$data)
-        },
-        "response.function_call_arguments.done" = {
-          output_index <- event$data$output_index + 1L
-          output[[output_index]]$arguments <<- event$data$arguments
-        },
-        "response.file_search_call.in_progress" = {
-          output_index <- event$data$output_index + 1L
-          event$data$status <- "in_progress"
-          output[[output_index]] <<- event$data
-        },
-        "response.file_search_call.searching" = {
-          output_index <- event$data$output_index + 1L
-          event$data$status <- "searching"
-          output[[output_index]] <<- event$data
-        },
-        "response.file_search_call.completed" = {
-          output_index <- event$data$output_index + 1L
-          event$data$status <- "completed"
-          output[[output_index]] <<- event$data
-        },
-        "response.web_search_call.in_progress" = {
-          output_index <- event$data$output_index + 1L
-          event$data$status <- "in_progress"
-          output[[output_index]] <<- event$data
-        },
-        "response.web_search_call.searching" = {
-          output_index <- event$data$output_index + 1L
-          event$data$status <- "searching"
-          output[[output_index]] <<- event$data
-        },
-        "response.web_search_call.completed" = {
-          output_index <- event$data$output_index + 1L
-          event$data$status <- "completed"
-          output[[output_index]] <<- event$data
-        },
-        "error" = {
-          cli_abort(
-            c("x" = "Error {event$data$code}: {event$data$message}"),
-            params = event$data$params
-          )
-        }
-      )
-      on_event(event)
+    event_handler = function(on_event, on_output_text, on_output_text_delta) {
+      function(event) {
+        event$type |> switch(
+          "response.created" = ,
+          "response.in_progress" = ,
+          "response.completed" = ,
+          "response.failed" = ,
+          "response.incomplete" = {
+            super$store_response(event$data$response)
+          },
+          "response.output_item.added" = ,
+          "response.output_item.done" = {
+            output_index <- event$data$output_index + 1L
+            output[[output_index]] <<- event$data$item
+          },
+          "response.content_part.added" = ,
+          "response.content_part.done" = {
+            output_index <- event$data$output_index + 1L
+            content_index <- event$data$content_index + 1L
+            output[[output_index]]$content[[content_index]] <<- event$data$part
+          },
+          "response.output_text.delta" = {
+            output_index <- event$data$output_index + 1L
+            content_index <- event$data$content_index + 1L
+            new_text <- paste0(
+              output[[output_index]]$content[[content_index]]$text,
+              event$data$delta
+            )
+            output[[output_index]]$content[[content_index]]$text <<- new_text
+            output_text[output_index] <<- new_text
+            on_output_text(output_text)
+            on_output_text_delta(event$data)
+          },
+          "response.output_text.annotation.added" = {
+            output_index <- event$data$output_index + 1L
+            content_index <- event$data$content_index + 1L
+            annotation_index <- event$data$annotation_index + 1L
+            output[[output_index]]$content[[content_index]]$annotations[[annotation_index]] <<- event$data$annotation
+          },
+          "response.output_text.done" = {
+            output_index <- event$data$output_index + 1L
+            content_index <- event$data$content_index + 1L
+            output[[output_index]]$content[[content_index]]$text <<- event$data$text
+          },
+          "response.refusal.delta" = {
+            output_index <- event$data$output_index + 1L
+            content_index <- event$data$content_index + 1L
+            output[[output_index]]$content[[content_index]]$refusal <<- paste0(
+              output[[output_index]]$content[[content_index]]$refusal,
+              event$data$delta
+            )
+            ## on_refusal_delta(event$data)
+          },
+          "response.refusal.done" = {
+            output_index <- event$data$output_index + 1L
+            content_index <- event$data$content_index + 1L
+            output[[output_index]]$content[[content_index]]$refusal <<- event$data$refusal
+          },
+          "response.function_call_arguments.delta" = {
+            output_index <- event$data$output_index + 1L
+            output[[output_index]]$arguments <<- paste0(
+              output[[output_index]]$arguments,
+              event$data$delta
+            )
+            ## on_function_call_arguments_delta(event$data)
+          },
+          "response.function_call_arguments.done" = {
+            output_index <- event$data$output_index + 1L
+            output[[output_index]]$arguments <<- event$data$arguments
+          },
+          "response.file_search_call.in_progress" = {
+            output_index <- event$data$output_index + 1L
+            event$data$status <- "in_progress"
+            output[[output_index]] <<- event$data
+          },
+          "response.file_search_call.searching" = {
+            output_index <- event$data$output_index + 1L
+            event$data$status <- "searching"
+            output[[output_index]] <<- event$data
+          },
+          "response.file_search_call.completed" = {
+            output_index <- event$data$output_index + 1L
+            event$data$status <- "completed"
+            output[[output_index]] <<- event$data
+          },
+          "response.web_search_call.in_progress" = {
+            output_index <- event$data$output_index + 1L
+            event$data$status <- "in_progress"
+            output[[output_index]] <<- event$data
+          },
+          "response.web_search_call.searching" = {
+            output_index <- event$data$output_index + 1L
+            event$data$status <- "searching"
+            output[[output_index]] <<- event$data
+          },
+          "response.web_search_call.completed" = {
+            output_index <- event$data$output_index + 1L
+            event$data$status <- "completed"
+            output[[output_index]] <<- event$data
+          },
+          "error" = {
+            cli_abort(
+              c("x" = "Error {event$data$code}: {event$data$message}"),
+              params = event$data$params
+            )
+          }
+        )
+        on_event(event)
+      }
     }
   )
 )
-
