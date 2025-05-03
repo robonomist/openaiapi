@@ -14,6 +14,32 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Example with `shinychat`
+
+```r
+library(shiny)
+library(bslib)
+library(shinychat)
+library(openaiapi)
+
+ui <- page_fluid(
+  chat_ui("chat")
+)
+server <- function(input, output, session) {
+  chat <- oai_response_factory(
+    instructions = "You're a trickster who answers in riddles."
+  )
+  observeEvent(input$chat_user_input, {
+    stream <- chat$generator(input = input$chat_user_input)
+    chat_append("chat", stream)
+  })
+}
+
+shinyApp(ui, server)
+```
+
+## Low level example
+
 This is an example of a Shiny app that uses `openaiapi` to stream a completion asynchonously. The completion is then rendered as markdown.
 
 To the stream is non-blocking, the app displays a timer that updates every 100 milliseconds while the completion is being generated.

@@ -61,6 +61,23 @@ StreamReader <- R6Class(
         }
       }
     },
+    generator = function() {
+      coro::gen({
+        repeat {
+          event <- resp_stream_sse(con)
+          if (is.null(event)) {
+            Sys.sleep(0.1)
+            ## yield("")
+          } else if (event$data == "[DONE]" || is_complete()) {
+            close(con)
+            return("[DONE]")
+          } else {
+            data <- fromJSON(event$data, simplifyVector = FALSE)
+            yield(data$delta)
+          }
+        }
+      })
+    },
     is_complete = function() {
       resp_stream_is_complete(con)
     },

@@ -162,6 +162,7 @@ Do all tool calls in the model response and return the results.
 \if{html}{\out{<a id="method-ModelResponse-respond"></a>}}
 \if{latex}{\out{\hypertarget{method-ModelResponse-respond}{}}}
 \subsection{Method \code{respond()}}{
+Create a new model response based on the previous response.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ModelResponse$respond(input, stream = NULL, ...)}\if{html}{\out{</div>}}
 }
@@ -170,6 +171,8 @@ Do all tool calls in the model response and return the results.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{input}}{Character or List. Text, image, or file inputs to the model, used to generate a response.}
+
+\item{\code{stream}}{Logical. Use to change the streaming mode of the response.}
 
 \item{\code{...}}{Additional parameters to pass to the model.}
 }

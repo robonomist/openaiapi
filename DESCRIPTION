@@ -18,7 +18,8 @@ Imports:
     R6,
     curl,
     later (>= 1.4.0),
-    promises
+    promises,
+    coro
 Suggests:
     knitr,
     rmarkdown

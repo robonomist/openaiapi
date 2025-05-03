@@ -16,6 +16,7 @@ ModelResponseStream R6 Class
 \itemize{
 \item \href{#method-ModelResponseStream-new}{\code{ModelResponseStream$new()}}
 \item \href{#method-ModelResponseStream-stream}{\code{ModelResponseStream$stream()}}
+\item \href{#method-ModelResponseStream-generator}{\code{ModelResponseStream$generator()}}
 \item \href{#method-ModelResponseStream-clone}{\code{ModelResponseStream$clone()}}
 }
 }
@@ -39,13 +40,15 @@ ModelResponseStream R6 Class
 \subsection{Method \code{new()}}{
 Initialize a \code{ModelResponseStream} object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$new(stream_reader)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$new(stream_reader = NULL, init = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{stream_reader}}{StreamReader. The stream reader object.}
+
+\item{\code{init}}{List. The initial response object.}
 }
 \if{html}{\out{</div>}}
 }
@@ -84,6 +87,26 @@ containing the delta event data.}
 \item{\code{env}}{Environment. The environment in which to evaluate the tool calls.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponseStream-generator"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponseStream-generator}{}}}
+\subsection{Method \code{generator()}}{
+Get the generator function for the stream reader.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$generator(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Additional arguments to pass to \code{oai_create_model_response()}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A coro package generator function.
 }
 }
 \if{html}{\out{<hr>}}

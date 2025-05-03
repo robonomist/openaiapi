@@ -47,19 +47,7 @@ oai_create_model_response <- function(input,
   } else if (inherits(input, "oai_message")) {
     input <- list(input)
   }
-  if (!is.null(tools)) {
-    if (inherits(tools, "oai_function_tool")) {
-      tools <- list(tools)
-    }
-    ## Cast legacy tools for responses API
-    tools <- lapply(tools, function(tool) {
-      if (inherits(tool, "oai_function_tool")) {
-        tool <- tool$`function`
-        tool$type <- "function"
-      }
-      tool
-    })
-  }
+  tools <- coerse_tools(tools)
   # Create request body
   body <- list(
     input = input,
@@ -88,6 +76,49 @@ oai_create_model_response <- function(input,
     .async = .async,
     .stream_class = "ModelResponse"
   )
+}
+
+#' @keywords internal
+coerse_tools <- function(tools) {
+  if (!is.null(tools)) {
+    if (inherits(tools, "oai_function_tool")) {
+      tools <- list(tools)
+    }
+    ## Cast legacy tools for responses API
+    tools <- lapply(tools, function(tool) {
+      if (inherits(tool, "oai_function_tool")) {
+        tool <- tool$`function`
+        tool$type <- "function"
+      }
+      tool
+    })
+    tools
+  }
+}
+
+#' @description * `oai_response_factory()` - Create an adaptor for streaming `shinychat` dialogs.
+#' @details This function is used to create a `ModelResponseStream` object that produces response generators via the `coro` package. The object does not call the OpenAI API directly. Instead, you can use the `generator()` method to input messages and get a generator function that can be used to stream the response.
+#' @return A `ModelResponseStream` object.
+#' @rdname model_response
+#' @export
+oai_response_factory <- function(model = "gpt-4o",
+                                   include = NULL,
+                                   instructions = NULL,
+                                   max_output_tokens = NULL,
+                                   parallel_tool_calls = NULL,
+                                   previous_response_id = NULL,
+                                   reasoning = NULL,
+                                   store = NULL,
+                                   temperature = NULL,
+                                   text = NULL,
+                                   tool_choice = NULL,
+                                   tools = NULL,
+                                   top_p = NULL,
+                                   truncation = NULL,
+                                   user = NULL) {
+  args <- as.list(environment())
+  args$tools <- coerse_tools(tools)
+  ModelResponseStream$new(init = args)
 }
 
 #' @description * `oai_get_model_response()` - Retrieve a model response.
@@ -343,11 +374,14 @@ ModelResponse <- R6Class(
           })
       }
     },
+    #' @description Create a new model response based on the previous response.
+    #' @param input Character or List. Text, image, or file inputs to the model, used to generate a response.
+    #' @param stream Logical. Use to change the streaming mode of the response.
     respond = function(input, stream = NULL, ...) {
       args <- list(input = input, ...)
       defaults <- list(
         instructions = instructions,
-        tools = I(tools),
+        tools = if (!is.null(tools)) I(tools),
         max_output_tokens = max_output_tokens,
         previous_response_id = id,
         reasoning = reasoning,
@@ -413,8 +447,13 @@ ModelResponseStream <- R6Class(
   public = list(
     #' @description Initialize a `ModelResponseStream` object.
     #' @param stream_reader StreamReader. The stream reader object.
-    initialize = function(stream_reader) {
-      store_response(stream_reader)
+    #' @param init List. The initial response object.
+    initialize = function(stream_reader = NULL, init = NULL) {
+      if (is.null(stream_reader)) {
+        super$store_response(init)
+      } else {
+        store_response(stream_reader)
+      }
     },
     #' @description Stream the model response.
     #' @param on_event Function. Callback function to handle all events.
@@ -462,6 +501,13 @@ ModelResponseStream <- R6Class(
         }
         invisible(self)
       }
+    },
+    #' @description Get the generator function for the stream reader.
+    #' @param ... Additional arguments to pass to `oai_create_model_response()`.
+    #' @return A coro package generator function.
+    generator = function(...) {
+      respond(...)
+      stream_reader$generator()
     }
   ),
   private = list(
@@ -588,3 +634,4 @@ ModelResponseStream <- R6Class(
     }
   )
 )
+

@@ -2,6 +2,7 @@
 % Please edit documentation in R/responses.R
 \name{oai_create_model_response}
 \alias{oai_create_model_response}
+\alias{oai_response_factory}
 \alias{oai_get_model_response}
 \alias{oai_delete_model_response}
 \alias{oai_list_input_items}
@@ -27,6 +28,24 @@ oai_create_model_response(
   user = NULL,
   .classify_response = TRUE,
   .async = FALSE
+)
+
+oai_response_factory(
+  model = "gpt-4o",
+  include = NULL,
+  instructions = NULL,
+  max_output_tokens = NULL,
+  parallel_tool_calls = NULL,
+  previous_response_id = NULL,
+  reasoning = NULL,
+  store = NULL,
+  temperature = NULL,
+  text = NULL,
+  tool_choice = NULL,
+  tools = NULL,
+  top_p = NULL,
+  truncation = NULL,
+  user = NULL
 )
 
 oai_get_model_response(
@@ -107,6 +126,8 @@ oai_list_input_items(
 \item \code{oai_create_model_response()} - A \code{ModelResponse} object.
 }
 
+A \code{ModelResponseStream} object.
+
 \itemize{
 \item \code{oai_get_model_response()} - A \code{ModelResponse} object.
 }
@@ -114,6 +135,10 @@ oai_list_input_items(
 \description{
 \itemize{
 \item \code{oai_create_model_response()} - Create a model response.
+}
+
+\itemize{
+\item \code{oai_response_factory()} - Create an adaptor for streaming \code{shinychat} dialogs.
 }
 
 \itemize{
@@ -127,4 +152,7 @@ oai_list_input_items(
 \itemize{
 \item \code{oai_list_input_items()} - List input items for a model response.
 }
+}
+\details{
+This function is used to create a \code{ModelResponseStream} object that produces response generators via the \code{coro} package. The object does not call the OpenAI API directly. Instead, you can use the \code{generator()} method to input messages and get a generator function that can be used to stream the response.
 }
