@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,12 +65,39 @@
 
     
     
+<div class="section level2">
+<h2 id="example-with-shinychat">Example with <code>shinychat</code><a class="anchor" aria-label="anchor" href="#example-with-shinychat"></a>
+</h2>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/bslib/" class="external-link">bslib</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jcheng5/shinychat" class="external-link">shinychat</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/robonomist/openaiapi" class="external-link">openaiapi</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rstudio.github.io/bslib/reference/page.html" class="external-link">page_fluid</a></span><span class="op">(</span></span>
+<span>  <span class="fu">chat_ui</span><span class="op">(</span><span class="st">"chat"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_response.html">oai_response_factory</a></span><span class="op">(</span></span>
+<span>    instructions <span class="op">=</span> <span class="st">"You're a trickster who answers in riddles."</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="fu">observeEvent</span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">chat_user_input</span>, <span class="op">{</span></span>
+<span>    <span class="va">stream</span> <span class="op">&lt;-</span> <span class="va">chat</span><span class="op">$</span><span class="fu">generator</span><span class="op">(</span>input <span class="op">=</span> <span class="va">input</span><span class="op">$</span><span class="va">chat_user_input</span><span class="op">)</span></span>
+<span>    <span class="fu">chat_append</span><span class="op">(</span><span class="st">"chat"</span>, <span class="va">stream</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">shinyApp</span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="low-level-example">Low level example<a class="anchor" aria-label="anchor" href="#low-level-example"></a>
+</h2>
 <p>This is an example of a Shiny app that uses <code>openaiapi</code> to
 stream a completion asynchonously. The completion is then rendered as
 markdown.</p>
 <p>To the stream is non-blocking, the app displays a timer that updates
 every 100 milliseconds while the completion is being generated.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/robonomist/openaiapi" class="external-link">openaiapi</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/bslib/" class="external-link">bslib</a></span><span class="op">)</span></span>
@@ -132,7 +159,7 @@ every 100 milliseconds while the completion is being generated.</p>
 recalculating the output is a opacity fade, which does not work well
 with text streaming. You can turn it off with
 <code>busyIndicatorOptions(fade_opacity = 1)</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rstudio.github.io/bslib/reference/page.html" class="external-link">page_fixed</a></span><span class="op">(</span></span>
 <span>  <span class="fu">busyIndicatorOptions</span><span class="op">(</span>fade_opacity <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rstudio.github.io/bslib/reference/input_task_button.html" class="external-link">input_task_button</a></span><span class="op">(</span><span class="st">"prompt"</span>, <span class="st">"Prompt"</span><span class="op">)</span>,</span>
@@ -151,7 +178,9 @@ Therefore, at the beginning of the stream, there is a 0.5-1 second delay
 during which R is blocked.</label></li>
 </ul>
 </div>
-  </main>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
@@ -161,7 +190,7 @@ during which R is blocked.</label></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>

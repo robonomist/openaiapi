@@ -9,7 +9,7 @@ ModelResponseStream R6 Class"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +57,7 @@ ModelResponseStream R6 Class"></head><body>
 
 <ul><li><p><a href="#method-ModelResponseStream-new"><code>ModelResponseStream$new()</code></a></p></li>
 <li><p><a href="#method-ModelResponseStream-stream"><code>ModelResponseStream$stream()</code></a></p></li>
+<li><p><a href="#method-ModelResponseStream-generator"><code>ModelResponseStream$generator()</code></a></p></li>
 <li><p><a href="#method-ModelResponseStream-clone"><code>ModelResponseStream$clone()</code></a></p></li>
 </ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="await"><a href="ModelResponse.html#method-await"><code>openaiapi::ModelResponse$await()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="openaiapi" data-topic="ModelResponse" data-id="delete"><a href="ModelResponse.html#method-delete"><code>openaiapi::ModelResponse$delete()</code></a></span></li>
@@ -70,13 +71,17 @@ ModelResponseStream R6 Class"></head><body>
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Initialize a <code>ModelResponseStream</code> object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/ModelResponseStream.html">ModelResponseStream</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">stream_reader</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/ModelResponseStream.html">ModelResponseStream</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>stream_reader <span class="op">=</span> <span class="cn">NULL</span>, init <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>stream_reader</code></dt>
 <dd><p>StreamReader. The stream reader object.</p></dd>
+
+
+<dt><code>init</code></dt>
+<dd><p>List. The initial response object.</p></dd>
 
 
 </dl><p></p></div>
@@ -123,15 +128,35 @@ containing the delta event data.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-ModelResponseStream-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-ModelResponseStream-generator"></a><div class="section">
+<h3 id="method-generator-">Method <code>generator()</code><a class="anchor" aria-label="anchor" href="#method-generator-"></a></h3>
+<p>Get the generator function for the stream reader.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponseStream</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponseStream</span><span class="op">$</span><span class="fu">generator</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>...</code></dt>
+<dd><p>Additional arguments to pass to <code><a href="model_response.html">oai_create_model_response()</a></code>.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
+<p>A coro package generator function.</p>
+</div>
+
+</div><p></p><hr><a id="method-ModelResponseStream-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">ModelResponseStream</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -152,7 +177,7 @@ containing the delta event data.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer></div>
