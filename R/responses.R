@@ -97,25 +97,25 @@ coerse_tools <- function(tools) {
 }
 
 #' @description * `oai_response_factory()` - Create an adaptor for streaming `shinychat` dialogs.
-#' @details This function is used to create a `ModelResponseStream` object that produces response generators via the `coro` package. The object does not call the OpenAI API directly. Instead, you can use the `generator()` method to input messages and get a generator function that can be used to stream the response.
+#' @details This function is used to create a `ModelResponseStream` object that produces response generators via the `coro` package. The object does not call the OpenAI API directly. Instead, you can use the `generator()` method to input messages and get a generator function that can be used to stream responses asyncronously. See the vignette for more details: `vignette("shiny", package = "openaiapi")`.
 #' @return A `ModelResponseStream` object.
 #' @rdname model_response
 #' @export
 oai_response_factory <- function(model = "gpt-4o",
-                                   include = NULL,
-                                   instructions = NULL,
-                                   max_output_tokens = NULL,
-                                   parallel_tool_calls = NULL,
-                                   previous_response_id = NULL,
-                                   reasoning = NULL,
-                                   store = NULL,
-                                   temperature = NULL,
-                                   text = NULL,
-                                   tool_choice = NULL,
-                                   tools = NULL,
-                                   top_p = NULL,
-                                   truncation = NULL,
-                                   user = NULL) {
+                                 include = NULL,
+                                 instructions = NULL,
+                                 max_output_tokens = NULL,
+                                 parallel_tool_calls = NULL,
+                                 previous_response_id = NULL,
+                                 reasoning = NULL,
+                                 store = NULL,
+                                 temperature = NULL,
+                                 text = NULL,
+                                 tool_choice = NULL,
+                                 tools = NULL,
+                                 top_p = NULL,
+                                 truncation = NULL,
+                                 user = NULL) {
   args <- as.list(environment())
   args$tools <- coerse_tools(tools)
   ModelResponseStream$new(init = args)
@@ -634,4 +634,3 @@ ModelResponseStream <- R6Class(
     }
   )
 )
-

@@ -154,5 +154,5 @@ A \code{ModelResponseStream} object.
 }
 }
 \details{
-This function is used to create a \code{ModelResponseStream} object that produces response generators via the \code{coro} package. The object does not call the OpenAI API directly. Instead, you can use the \code{generator()} method to input messages and get a generator function that can be used to stream the response.
+This function is used to create a \code{ModelResponseStream} object that produces response generators via the \code{coro} package. The object does not call the OpenAI API directly. Instead, you can use the \code{generator()} method to input messages and get a generator function that can be used to stream responses asyncronously. See the vignette for more details: \code{vignette("shiny", package = "openaiapi")}.
 }
