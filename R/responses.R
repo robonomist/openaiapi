@@ -417,10 +417,12 @@ ModelResponse <- R6Class(
       env <- force(env)
       promise(function(resolve, reject) {
         handle_tool_calls <- function() {
-          tool_outputs <-
-            tryCatch(do_tool_calls(env), error = function(e) {
+          tool_outputs <- tryCatch(
+            do_tool_calls(env),
+            error = function(e) {
               reject(paste("Error in tool calls:", e$message))
-            })
+            }
+          )
           if (length(tool_outputs) > 0L) {
             tryCatch(
               submit_tool_outputs(tool_outputs),
@@ -440,6 +442,15 @@ ModelResponse <- R6Class(
 )
 
 #' ModelResponseStream R6 Class
+#' @param on_event Function. Callback function to handle all events.
+#' The function should accept a single argument, `event`, which is a list
+#' containing the event `type` and `data`.
+#' @param on_output_text Function. Callback function to handle event that change output text. The function should accept a single argument
+#' containing the output text string.
+#' @param on_output_text_delta Function. Callback function to handle output
+#' text delta events. The function should accept a single argument
+#' containing the delta event data.
+#' @param env Environment. The environment in which to evaluate the tool calls.
 ModelResponseStream <- R6Class(
   "ModelResponseStream",
   inherit = ModelResponse,
@@ -456,15 +467,6 @@ ModelResponseStream <- R6Class(
       }
     },
     #' @description Stream the model response.
-    #' @param on_event Function. Callback function to handle all events.
-    #' The function should accept a single argument, `event`, which is a list
-    #' containing the event `type` and `data`.
-    #' @param on_output_text Function. Callback function to handle event that change output text. The function should accept a single argument
-    #' containing the output text string.
-    #' @param on_output_text_delta Function. Callback function to handle output
-    #' text delta events. The function should accept a single argument
-    #' containing the delta event data.
-    #' @param env Environment. The environment in which to evaluate the tool calls.
     stream = function(on_event = function(event) {},
                       on_output_text = function(output_text) {},
                       on_output_text_delta = function(delta) {},
@@ -505,9 +507,31 @@ ModelResponseStream <- R6Class(
     #' @description Get the generator function for the stream reader.
     #' @param ... Additional arguments to pass to `oai_create_model_response()`.
     #' @return A coro package generator function.
-    generator = function(...) {
+    generator = function(...,
+                         on_event = function(event) {},
+                         on_output_text = function(output_text) {},
+                         on_output_text_delta = function(delta) {},
+                         env = parent.frame()) {
+      env <- force(env)
+      handler <- event_handler(on_event, on_output_text, on_output_text_delta)
       respond(...)
-      stream_reader$generator()
+      coro::gen({
+        stream <- stream_reader$generator(handler)
+        repeat {
+          y <- stream()
+          if (is.null(y)) {
+            tool_outputs <- do_tool_calls(env)
+            if (length(tool_outputs) > 0L) {
+              submit_tool_outputs(tool_outputs)
+              stream <- stream_reader$generator(handler)
+            } else {
+              break
+            }
+          } else {
+            yield(y)
+          }
+        }
+      })
     }
   ),
   private = list(

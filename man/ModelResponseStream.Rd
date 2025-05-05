@@ -95,13 +95,35 @@ containing the delta event data.}
 \subsection{Method \code{generator()}}{
 Get the generator function for the stream reader.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$generator(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$generator(
+  ...,
+  on_event = function(event) {
+ },
+  on_output_text = function(output_text) {
+ },
+  on_output_text_delta = function(delta) {
+ },
+  env = parent.frame()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{Additional arguments to pass to \code{oai_create_model_response()}.}
+
+\item{\code{on_event}}{Function. Callback function to handle all events.
+The function should accept a single argument, \code{event}, which is a list
+containing the event \code{type} and \code{data}.}
+
+\item{\code{on_output_text}}{Function. Callback function to handle event that change output text. The function should accept a single argument
+containing the output text string.}
+
+\item{\code{on_output_text_delta}}{Function. Callback function to handle output
+text delta events. The function should accept a single argument
+containing the delta event data.}
+
+\item{\code{env}}{Environment. The environment in which to evaluate the tool calls.}
 }
 \if{html}{\out{</div>}}
 }

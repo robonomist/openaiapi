@@ -61,19 +61,20 @@ StreamReader <- R6Class(
         }
       }
     },
-    generator = function() {
+    generator = function(handle_event) {
       coro::gen({
+        on.exit(close(con))
         repeat {
           event <- resp_stream_sse(con)
-          if (is.null(event)) {
-            Sys.sleep(0.1)
-            ## yield("")
-          } else if (event$data == "[DONE]" || is_complete()) {
-            close(con)
-            return("[DONE]")
+          if (is.null(event) || identical(event$data, "[DONE]")) {
+            break
           } else {
             data <- fromJSON(event$data, simplifyVector = FALSE)
-            yield(data$delta)
+            event$data <- data
+            handle_event(event)
+            if (identical(event$type, "response.output_text.delta")) {
+              yield(data$delta)
+            }
           }
         }
       })
