@@ -30,7 +30,7 @@ server <- function(input, output, session) {
     instructions = "You're a trickster who answers in riddles."
   )
   observeEvent(input$chat_user_input, {
-    stream <- chat$generator(input = input$chat_user_input)
+    stream <- chat$async_generator(input = input$chat_user_input)
     chat_append("chat", stream)
   })
 }

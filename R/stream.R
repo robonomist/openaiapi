@@ -1,6 +1,8 @@
 #' @importFrom jsonlite fromJSON
 #' @importFrom curl multi_fdset
 #' @importFrom later later later_fd
+#' @importFrom promises promise
+#' @importFrom coro gen async_generator yield await
 #' @keywords internal
 StreamReader <- R6Class(
   "StreamReader",
@@ -78,6 +80,41 @@ StreamReader <- R6Class(
           }
         }
       })
+    },
+    async_generator = function(handle_event) {
+      coro::async_generator(function() {
+        on.exit(close(con))
+        repeat {
+          event <- resp_stream_sse(con)
+          if (is.null(event)) {
+            if (!is_complete()) {
+              ## No event, wait and try again
+              await(promise(function(resolve, reject) {
+                later_fd(
+                  resolve,
+                  readfds = fd()$reads,
+                  timeout = getOption("openaiapi.stream_timeout", 60)
+                )
+              }))
+              next
+            } else {
+              ## If the stream is complete, finish the generator
+              break
+            }
+          } else if (identical(event$data, "[DONE]")) {
+            ## Reached the end of the stream, finish the generator
+            break
+          } else {
+            ## Parse the event data and yield the delta
+            data <- fromJSON(event$data, simplifyVector = FALSE)
+            event$data <- data
+            handle_event(event)
+            if (identical(event$type, "response.output_text.delta")) {
+              yield(data$delta)
+            }
+          }
+        }
+      })()
     },
     is_complete = function() {
       resp_stream_is_complete(con)

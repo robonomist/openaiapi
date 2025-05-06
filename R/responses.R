@@ -516,22 +516,45 @@ ModelResponseStream <- R6Class(
       handler <- event_handler(on_event, on_output_text, on_output_text_delta)
       respond(...)
       coro::gen({
-        stream <- stream_reader$generator(handler)
         repeat {
-          y <- stream()
-          if (is.null(y)) {
-            tool_outputs <- do_tool_calls(env)
-            if (length(tool_outputs) > 0L) {
-              submit_tool_outputs(tool_outputs)
-              stream <- stream_reader$generator(handler)
-            } else {
-              break
-            }
+          stream <- stream_reader$generator(handler)
+          for (chunk in stream) {
+            yield(chunk)
+          }
+          tool_outputs <- do_tool_calls(env)
+          if (length(tool_outputs) > 0L) {
+            submit_tool_outputs(tool_outputs)
+            next
           } else {
-            yield(y)
+            break
           }
         }
       })
+    },
+    async_generator = function(...,
+                               on_event = function(event) {},
+                               on_output_text = function(output_text) {},
+                               on_output_text_delta = function(delta) {},
+                               env = parent.frame()) {
+      env <- force(env)
+      handler <- event_handler(on_event, on_output_text, on_output_text_delta)
+      args <- list(...)
+      args$.async <- TRUE
+      coro::async_generator(function() {
+        await(do.call(respond, args))
+        repeat {
+          stream <- stream_reader$async_generator(handler)
+          for (i in coro::await_each(stream)) {
+            yield(i)
+          }
+          tool_outputs <- do_tool_calls(env)
+          if (length(tool_outputs) > 0L) {
+            await(submit_tool_outputs(tool_outputs))
+          } else {
+            break
+          }
+        }
+      })()
     }
   ),
   private = list(

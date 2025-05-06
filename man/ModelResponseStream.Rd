@@ -17,6 +17,7 @@ ModelResponseStream R6 Class
 \item \href{#method-ModelResponseStream-new}{\code{ModelResponseStream$new()}}
 \item \href{#method-ModelResponseStream-stream}{\code{ModelResponseStream$stream()}}
 \item \href{#method-ModelResponseStream-generator}{\code{ModelResponseStream$generator()}}
+\item \href{#method-ModelResponseStream-async_generator}{\code{ModelResponseStream$async_generator()}}
 \item \href{#method-ModelResponseStream-clone}{\code{ModelResponseStream$clone()}}
 }
 }
@@ -129,6 +130,42 @@ containing the delta event data.}
 }
 \subsection{Returns}{
 A coro package generator function.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ModelResponseStream-async_generator"></a>}}
+\if{latex}{\out{\hypertarget{method-ModelResponseStream-async_generator}{}}}
+\subsection{Method \code{async_generator()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$async_generator(
+  ...,
+  on_event = function(event) {
+ },
+  on_output_text = function(output_text) {
+ },
+  on_output_text_delta = function(delta) {
+ },
+  env = parent.frame()
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{on_event}}{Function. Callback function to handle all events.
+The function should accept a single argument, \code{event}, which is a list
+containing the event \code{type} and \code{data}.}
+
+\item{\code{on_output_text}}{Function. Callback function to handle event that change output text. The function should accept a single argument
+containing the output text string.}
+
+\item{\code{on_output_text_delta}}{Function. Callback function to handle output
+text delta events. The function should accept a single argument
+containing the delta event data.}
+
+\item{\code{env}}{Environment. The environment in which to evaluate the tool calls.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
