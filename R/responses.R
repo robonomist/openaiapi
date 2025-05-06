@@ -469,7 +469,7 @@ ModelResponseStream <- R6Class(
     #' @description Stream the model response.
     stream = function(on_event = function(event) {},
                       on_output_text = function(output_text) {},
-                      on_output_text_delta = function(delta) {},
+                      on_output_text_delta = function(data) {},
                       env = parent.frame()) {
       env <- force(env)
       handler <- event_handler(on_event, on_output_text, on_output_text_delta)
@@ -510,7 +510,7 @@ ModelResponseStream <- R6Class(
     generator = function(...,
                          on_event = function(event) {},
                          on_output_text = function(output_text) {},
-                         on_output_text_delta = function(delta) {},
+                         on_output_text_delta = function(data) {},
                          env = parent.frame()) {
       env <- force(env)
       handler <- event_handler(on_event, on_output_text, on_output_text_delta)
@@ -534,7 +534,7 @@ ModelResponseStream <- R6Class(
     async_generator = function(...,
                                on_event = function(event) {},
                                on_output_text = function(output_text) {},
-                               on_output_text_delta = function(delta) {},
+                               on_output_text_delta = function(data) {},
                                env = parent.frame()) {
       env <- force(env)
       handler <- event_handler(on_event, on_output_text, on_output_text_delta)
@@ -562,7 +562,8 @@ ModelResponseStream <- R6Class(
     stream_reader = NULL,
     store_response = function(resp) {
       if (is.promise(resp)) {
-        resp$then(store_response)
+        resp$then(store_response) |>
+          as_oai_promise()
       } else {
         stream_reader <<- resp
         .async <<- stream_reader$async %||% .async
