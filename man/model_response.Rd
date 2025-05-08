@@ -2,7 +2,7 @@
 % Please edit documentation in R/responses.R
 \name{oai_create_model_response}
 \alias{oai_create_model_response}
-\alias{oai_response_factory}
+\alias{oai_model_response}
 \alias{oai_get_model_response}
 \alias{oai_delete_model_response}
 \alias{oai_list_input_items}
@@ -27,25 +27,27 @@ oai_create_model_response(
   truncation = NULL,
   user = NULL,
   .classify_response = TRUE,
-  .async = FALSE
+  .async = FALSE,
+  .perform_query = TRUE
 )
 
-oai_response_factory(
+oai_model_response(
   model = "gpt-4o",
-  include = NULL,
   instructions = NULL,
   max_output_tokens = NULL,
   parallel_tool_calls = NULL,
   previous_response_id = NULL,
   reasoning = NULL,
   store = NULL,
+  stream = NULL,
   temperature = NULL,
   text = NULL,
   tool_choice = NULL,
   tools = NULL,
   top_p = NULL,
   truncation = NULL,
-  user = NULL
+  user = NULL,
+  .async = FALSE
 )
 
 oai_get_model_response(
@@ -91,7 +93,7 @@ oai_list_input_items(
 
 \item{store}{Logical. Whether to store the generated model response for later retrieval via API.}
 
-\item{stream}{Logical. If set to true, the function will return a \code{ModelResponseStream} object.}
+\item{stream}{Logical. If set to \code{TRUE}, the function will return a \code{ModelResponseStream} object.}
 
 \item{temperature}{Numeric. What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.}
 
@@ -111,6 +113,8 @@ oai_list_input_items(
 
 \item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
+\item{.perform_query}{Logical. Set to \code{FALSE} to skip the API call and return a ModelResponse or ModelResponseStream object, which can be used to call the API later.}
+
 \item{response_id}{Character. The ID of the response to retrieve input items for.}
 
 \item{after}{Character. Optional. A cursor for use in pagination. \code{after} is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include \code{after = "obj_foo"} in order to fetch the next page of the list.}
@@ -126,7 +130,9 @@ oai_list_input_items(
 \item \code{oai_create_model_response()} - A \code{ModelResponse} object.
 }
 
-A \code{ModelResponseStream} object.
+\itemize{
+\item \code{oai_model_response()} - A \code{ModelResponse} or \code{ModelResponseStream} object.
+}
 
 \itemize{
 \item \code{oai_get_model_response()} - A \code{ModelResponse} object.
@@ -138,7 +144,7 @@ A \code{ModelResponseStream} object.
 }
 
 \itemize{
-\item \code{oai_response_factory()} - Create an adaptor for streaming \code{shinychat} dialogs.
+\item \code{oai_model_response()} - Create a ModelResponse or ModelResponseStream object without making an API call.
 }
 
 \itemize{
@@ -152,7 +158,4 @@ A \code{ModelResponseStream} object.
 \itemize{
 \item \code{oai_list_input_items()} - List input items for a model response.
 }
-}
-\details{
-This function is used to create a \code{ModelResponseStream} object that produces response generators via the \code{coro} package. The object does not call the OpenAI API directly. Instead, you can use the \code{generator()} method to input messages and get a generator function that can be used to stream responses asyncronously. See the vignette for more details: \code{vignette("shiny", package = "openaiapi")}.
 }

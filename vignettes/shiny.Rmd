@@ -26,8 +26,10 @@ ui <- page_fluid(
   chat_ui("chat")
 )
 server <- function(input, output, session) {
-  chat <- oai_response_factory(
-    instructions = "You're a trickster who answers in riddles."
+  chat <- oai_model_response(
+    instructions = "You're a trickster who answers in riddles.",
+    stream = TRUE,
+    .async = TRUE
   )
   observeEvent(input$chat_user_input, {
     stream <- chat$async_generator(input = input$chat_user_input)

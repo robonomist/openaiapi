@@ -10,7 +10,7 @@
 #' @param previous_response_id Character. The unique ID of the previous response to the model. Use this to create multi-turn conversations.
 #' @param reasoning List. Configuration options for reasoning models.
 #' @param store Logical. Whether to store the generated model response for later retrieval via API.
-#' @param stream Logical. If set to true, the function will return a `ModelResponseStream` object.
+#' @param stream Logical. If set to `TRUE`, the function will return a `ModelResponseStream` object.
 #' @param temperature Numeric. What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
 #' @param text List. Configuration options for a text response from the model. Can be plain text or structured JSON data.
 #' @param tool_choice Character or List. How the model should select which tool (or tools) to use when generating a response.
@@ -18,6 +18,7 @@
 #' @param top_p Numeric. An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass.
 #' @param truncation Character. The truncation strategy to use for the model response.
 #' @param user Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
+#' @param .perform_query Logical. Set to `FALSE` to skip the API call and return a ModelResponse or ModelResponseStream object, which can be used to call the API later.
 #' @inheritParams common_parameters
 #' @return * `oai_create_model_response()` - A `ModelResponse` object.
 #' @export
@@ -40,14 +41,29 @@ oai_create_model_response <- function(input,
                                       truncation = NULL,
                                       user = NULL,
                                       .classify_response = TRUE,
-                                      .async = FALSE) {
+                                      .async = FALSE,
+                                      .perform_query = TRUE) {
   # Validate input
-  if (missing(input)) {
+  if (!.perform_query) {
+    input <- NULL
+  } else if (missing(input)) {
     stop("The 'input' parameter is required.")
   } else if (inherits(input, "oai_message")) {
     input <- list(input)
   }
-  tools <- coerse_tools(tools)
+  if (!is.null(tools)) {
+    if (inherits(tools, "oai_function_tool")) {
+      tools <- list(tools)
+    }
+    ## Cast legacy tools for responses API
+    tools <- lapply(tools, function(tool) {
+      if (inherits(tool, "oai_function_tool")) {
+        tool <- tool$`function`
+        tool$type <- "function"
+      }
+      tool
+    })
+  }
   # Create request body
   body <- list(
     input = input,
@@ -68,58 +84,53 @@ oai_create_model_response <- function(input,
     truncation = truncation,
     user = user
   )
-  oai_query(
-    ep = "responses",
-    method = "POST",
-    body = body,
-    .classify_response = .classify_response,
-    .async = .async,
-    .stream_class = "ModelResponse"
-  )
-}
-
-#' @keywords internal
-coerse_tools <- function(tools) {
-  if (!is.null(tools)) {
-    if (inherits(tools, "oai_function_tool")) {
-      tools <- list(tools)
-    }
-    ## Cast legacy tools for responses API
-    tools <- lapply(tools, function(tool) {
-      if (inherits(tool, "oai_function_tool")) {
-        tool <- tool$`function`
-        tool$type <- "function"
+  if (.perform_query) {
+    oai_query(
+      ep = "responses",
+      method = "POST",
+      body = body,
+      .classify_response = .classify_response,
+      .async = .async,
+      .stream_class = "ModelResponse"
+    )
+  } else {
+    obj <-
+      if (isTRUE(stream)) {
+        ModelResponseStream$new(init = body)
+      } else {
+        ModelResponse$new(resp = body)
       }
-      tool
-    })
-    tools
+    obj$.async <- .async
+    obj
   }
 }
 
-#' @description * `oai_response_factory()` - Create an adaptor for streaming `shinychat` dialogs.
-#' @details This function is used to create a `ModelResponseStream` object that produces response generators via the `coro` package. The object does not call the OpenAI API directly. Instead, you can use the `generator()` method to input messages and get a generator function that can be used to stream responses asyncronously. See the vignette for more details: `vignette("shiny", package = "openaiapi")`.
-#' @return A `ModelResponseStream` object.
+
+#' @description * `oai_model_response()` - Create a ModelResponse or ModelResponseStream object without making an API call.
+#' @return * `oai_model_response()` - A `ModelResponse` or `ModelResponseStream` object.
 #' @rdname model_response
 #' @export
-oai_response_factory <- function(model = "gpt-4o",
-                                 include = NULL,
-                                 instructions = NULL,
-                                 max_output_tokens = NULL,
-                                 parallel_tool_calls = NULL,
-                                 previous_response_id = NULL,
-                                 reasoning = NULL,
-                                 store = NULL,
-                                 temperature = NULL,
-                                 text = NULL,
-                                 tool_choice = NULL,
-                                 tools = NULL,
-                                 top_p = NULL,
-                                 truncation = NULL,
-                                 user = NULL) {
-  args <- as.list(environment())
-  args$tools <- coerse_tools(tools)
-  ModelResponseStream$new(init = args)
+oai_model_response <- function(model = "gpt-4o",
+                               instructions = NULL,
+                               max_output_tokens = NULL,
+                               parallel_tool_calls = NULL,
+                               previous_response_id = NULL,
+                               reasoning = NULL,
+                               store = NULL,
+                               stream = NULL,
+                               temperature = NULL,
+                               text = NULL,
+                               tool_choice = NULL,
+                               tools = NULL,
+                               top_p = NULL,
+                               truncation = NULL,
+                               user = NULL,
+                               .async = FALSE) {
+  args <- as.list(environment(), all.names = TRUE)
+  args$.perform_query <- FALSE
+  do.call(oai_create_model_response, args)
 }
+
 
 #' @description * `oai_get_model_response()` - Retrieve a model response.
 #' @param response_id Character. The ID of the response to retrieve.
@@ -504,7 +515,7 @@ ModelResponseStream <- R6Class(
         invisible(self)
       }
     },
-    #' @description Get the generator function for the stream reader.
+    #' @description Get the generator function for the stream.
     #' @param ... Additional arguments to pass to `oai_create_model_response()`.
     #' @return A coro package generator function.
     generator = function(...,
@@ -531,6 +542,8 @@ ModelResponseStream <- R6Class(
         }
       })
     },
+    #' @description Get the async generator function for the stream.
+    #' @param ... Additional arguments to pass to `oai_create_model_response()`.
     async_generator = function(...,
                                on_event = function(event) {},
                                on_output_text = function(output_text) {},
