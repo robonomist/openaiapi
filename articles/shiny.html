@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,8 +78,10 @@
 <span>  <span class="fu">chat_ui</span><span class="op">(</span><span class="st">"chat"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_response.html">oai_response_factory</a></span><span class="op">(</span></span>
-<span>    instructions <span class="op">=</span> <span class="st">"You're a trickster who answers in riddles."</span></span>
+<span>  <span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/model_response.html">oai_model_response</a></span><span class="op">(</span></span>
+<span>    instructions <span class="op">=</span> <span class="st">"You're a trickster who answers in riddles."</span>,</span>
+<span>    stream <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    .async <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>  <span class="op">)</span></span>
 <span>  <span class="fu">observeEvent</span><span class="op">(</span><span class="va">input</span><span class="op">$</span><span class="va">chat_user_input</span>, <span class="op">{</span></span>
 <span>    <span class="va">stream</span> <span class="op">&lt;-</span> <span class="va">chat</span><span class="op">$</span><span class="fu">async_generator</span><span class="op">(</span>input <span class="op">=</span> <span class="va">input</span><span class="op">$</span><span class="va">chat_user_input</span><span class="op">)</span></span>
