@@ -23,17 +23,22 @@ library(shinychat)
 library(openaiapi)
 
 ui <- page_fluid(
-  chat_ui("chat")
+  shinychat::chat_ui("chat")
 )
 server <- function(input, output, session) {
-  chat <- oai_model_response(
+  chat <- oai_create_model_response(
     instructions = "You're a trickster who answers in riddles.",
     stream = TRUE,
-    .async = TRUE
+    .async = TRUE,
+    .perform_query = FALSE
   )
   observeEvent(input$chat_user_input, {
-    stream <- chat$async_generator(input = input$chat_user_input)
-    chat_append("chat", stream)
+    chat$
+      respond(input = input$chat_user_input)$
+      async_generator()$
+      then(function(stream) {
+        shinychat::chat_append("chat", stream)
+      })
   })
 }
 

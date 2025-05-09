@@ -485,6 +485,9 @@ ModelResponseStream <- R6Class(
                       env = parent.frame()) {
       env <- force(env)
       handler <- event_handler(on_event, on_output_text, on_output_text_delta)
+      if (is.null(stream_reader)) {
+        cli_abort("No stream available.")
+      }
       if (.async) {
         stream_reader$stream_async(handle_event = handler) |> then(
           onFulfilled = ~ {
@@ -517,16 +520,13 @@ ModelResponseStream <- R6Class(
       }
     },
     #' @description Get the generator function for the stream.
-    #' @param ... Additional arguments to pass to `oai_create_model_response()`.
     #' @return A coro package generator function.
-    generator = function(...,
-                         on_event = function(event) {},
+    generator = function(on_event = function(event) {},
                          on_output_text = function(output_text) {},
                          on_output_text_delta = function(data) {},
                          env = parent.frame()) {
       env <- force(env)
       handler <- event_handler(on_event, on_output_text, on_output_text_delta)
-      respond(...)
       coro::gen({
         repeat {
           stream <- stream_reader$generator(handler)
@@ -544,18 +544,13 @@ ModelResponseStream <- R6Class(
       })
     },
     #' @description Get the async generator function for the stream.
-    #' @param ... Additional arguments to pass to `oai_create_model_response()`.
-    async_generator = function(...,
-                               on_event = function(event) {},
+    async_generator = function(on_event = function(event) {},
                                on_output_text = function(output_text) {},
                                on_output_text_delta = function(data) {},
                                env = parent.frame()) {
       env <- force(env)
       handler <- event_handler(on_event, on_output_text, on_output_text_delta)
-      args <- list(...)
-      args$.async <- TRUE
       coro::async_generator(function() {
-        await(do.call(respond, args))
         repeat {
           stream <- stream_reader$async_generator(handler)
           for (i in coro::await_each(stream)) {
