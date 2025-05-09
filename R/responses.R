@@ -226,9 +226,11 @@ ModelResponse <- R6Class(
     store_response = function(resp) {
       super$store_response(resp)
       if (!is.null(tools)) {
-        ## HACK: Add empty properties to tools
+        ## Fix missing properties field in tools:
+        ## The API does not return this if null, but it's required in queries
         tools <<- lapply(tools, function(tool) {
-          if (length(tool$parameters$properties) == 0L) {
+          if (tool$type == "function" &&
+                length(tool$parameters$properties) == 0L) {
             tool$parameters <-
               I(append(tool$parameters, list(properties = NULL)))
           }
@@ -251,6 +253,7 @@ ModelResponse <- R6Class(
           }
         }
       }
+      self
     },
     .stream = NULL
   ),
@@ -488,6 +491,7 @@ ModelResponseStream <- R6Class(
       if (is.null(stream_reader)) {
         cli_abort("No stream available.")
       }
+      on.exit(private$stream_reader <- NULL)
       if (.async) {
         stream_reader$stream_async(handle_event = handler) |> then(
           onFulfilled = ~ {
