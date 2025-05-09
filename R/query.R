@@ -214,6 +214,9 @@ oai_list <- function(x) {
 }
 
 classify_response <- function(x) {
+  if (is.null(x$object)) {
+    return(x)
+  }
   switch(
     x$object,
     "list" = oai_list(x),

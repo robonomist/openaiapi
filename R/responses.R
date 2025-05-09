@@ -158,8 +158,8 @@ oai_get_model_response <- function(response_id,
 
 
 #' @description * `oai_delete_model_response()` - Delete a model response.
-#' @rdname model_response
 #' @export
+#' @rdname model_response
 oai_delete_model_response <- function(response_id,
                                       .classify_response = TRUE,
                                       .async = FALSE) {
@@ -176,6 +176,7 @@ oai_delete_model_response <- function(response_id,
 
 #' @description * `oai_list_input_items()` - List input items for a model response.
 #' @param response_id Character. The ID of the response to retrieve input items for.
+#' @export
 #' @rdname model_response
 oai_list_input_items <- function(response_id,
                                  after = NULL,
@@ -195,7 +196,7 @@ oai_list_input_items <- function(response_id,
     limit = limit,
     order = order
   )
-  oai_query(
+  oai_query_list(
     ep = c("responses", response_id, "input_items"),
     method = "GET",
     body = body,
