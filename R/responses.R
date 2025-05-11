@@ -347,10 +347,8 @@ ModelResponse <- R6Class(
       oai_list_input_items(
         response_id = id,
         ...,
-        .classify_response = FALSE,
         .async = .async
-      ) |>
-        store_response()
+      )
     },
     #' @description Do all tool calls in the model response and return the results.
     do_tool_calls = function(env = parent.frame()) {
