@@ -11,6 +11,9 @@ R6 class for managing a Vector Store in the OpenAI API
 \details{
 The \code{VectorStore} class provides methods to manage vector stores.
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{VectorStore}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -48,6 +51,7 @@ The \code{VectorStore} class provides methods to manage vector stores.
 \item \href{#method-VectorStore-list_files}{\code{VectorStore$list_files()}}
 \item \href{#method-VectorStore-retrieve_file}{\code{VectorStore$retrieve_file()}}
 \item \href{#method-VectorStore-delete_file}{\code{VectorStore$delete_file()}}
+\item \href{#method-VectorStore-search}{\code{VectorStore$search()}}
 \item \href{#method-VectorStore-create_file_batch}{\code{VectorStore$create_file_batch()}}
 \item \href{#method-VectorStore-retrieve_file_batch}{\code{VectorStore$retrieve_file_batch()}}
 \item \href{#method-VectorStore-cancel_file_batch}{\code{VectorStore$cancel_file_batch()}}
@@ -205,6 +209,27 @@ Delete a file in the vector store.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{file_id}}{Character. The ID of the file to be added to the vector store.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-VectorStore-search"></a>}}
+\if{latex}{\out{\hypertarget{method-VectorStore-search}{}}}
+\subsection{Method \code{search()}}{
+Search the vector store.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{VectorStore$search(query, ...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{query}}{Character. The query string for the search.}
+
+\item{\code{...}}{Additional arguments to be passed to the API functions.}
+
+\item{\code{filters}}{List. Optional. A filter to apply based on file attributes.}
 }
 \if{html}{\out{</div>}}
 }

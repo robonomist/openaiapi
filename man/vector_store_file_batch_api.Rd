@@ -12,16 +12,18 @@ oai_create_vector_store_file_batch(
   vector_store_id,
   file_ids,
   chunking_strategy = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_retrieve_vector_store_file_batch(
   vector_store_id,
   batch_id,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
-oai_cancel_vector_store_file_batch(vector_store_id, batch_id)
+oai_cancel_vector_store_file_batch(vector_store_id, batch_id, .async = FALSE)
 
 oai_list_vector_store_files_in_a_batch(
   vector_store_id,
@@ -44,6 +46,8 @@ oai_list_vector_store_files_in_a_batch(
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
 
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
+
 \item{batch_id}{Character. The ID of the batch to retrieve.}
 
 \item{limit}{Integer. Optional. A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.}
@@ -55,8 +59,6 @@ oai_list_vector_store_files_in_a_batch(
 \item{before}{Character. Optional. A cursor for use in pagination. before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include \code{before = "obj_foo"} in order to fetch the previous page of the list.}
 
 \item{filter}{Character. Optional. Filter the files based on certain criteria.}
-
-\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 }
 \value{
 A VectorStoreFilesBatch R6 object.

@@ -65,11 +65,15 @@ oai_list_vector_stores <- function(limit = NULL,
 #' @param vector_store_id Character. The ID of the vector store to retrieve.
 #' @rdname vector_store_api
 #' @export
-oai_retrieve_vector_store <- function(vector_store_id, .classify_response = TRUE) {
+oai_retrieve_vector_store <- function(vector_store_id,
+                                      .classify_response = TRUE,
+                                      .async = FALSE) {
   oai_query(
     c("vector_stores", vector_store_id),
     headers = openai_beta_header(),
-    .classify_response = .classify_response
+    method = "GET",
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -113,6 +117,40 @@ oai_delete_vector_store <- function(vector_store_id,
   )
 }
 
+#' @description * `oai_search_vector_store()`: Search a specific vector store.
+#'
+#' @param query Character. The query string for the search.
+#' @param filters List. Optional. A filter to apply based on file attributes.
+#' @param max_num_results Integer. Optional. The maximum number of results to return (1-50).
+#' @param ranking_options List. Optional. Ranking options for the search.
+#' @param rewrite_query Logical. Optional. Whether to rewrite the natural language query for vector search.
+#' @rdname vector_store_api
+#' @export
+#' @return * `oai_search_vector_store()` returns a list of search results from the vector store.
+oai_search_vector_store <- function(vector_store_id,
+                                    query,
+                                    filters = NULL,
+                                    max_num_results = NULL,
+                                    ranking_options = NULL,
+                                    rewrite_query = NULL,
+                                    .classify_response = TRUE,
+                                    .async = FALSE) {
+  body <- list(
+    query = query,
+    filters = filters,
+    max_num_results = as.integer(max_num_results),
+    ranking_options = ranking_options,
+    rewrite_query = rewrite_query
+  )
+  oai_query(
+    c("vector_stores", vector_store_id, "search"),
+    body = body,
+    method = "POST",
+    .classify_response = .classify_response,
+    .async = .async
+  )
+}
+
 #' R6 class for managing a Vector Store in the OpenAI API
 #'
 #' The `VectorStore` class provides methods to manage vector stores.
@@ -137,6 +175,13 @@ oai_delete_vector_store <- function(vector_store_id,
 VectorStore <- R6Class(
   "VectorStore",
   portable = FALSE,
+  inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = c("id", "name", "usage_bytes", "file_counts", "status", "metadata"),
+      as_time = c("created_at", "expires_at", "last_active_at")
+    )
+  ),
   public = list(
     #' @description Initialize a VectorStore object
     #'
@@ -144,25 +189,16 @@ VectorStore <- R6Class(
     #' @return A new instance of a VectorStore object.
     initialize = function(vector_store_id = NULL, ..., resp = NULL) {
       if (!is.null(resp)) {
-        id <<- resp$id
-        created_at <<- resp$created_at |> as_time()
-        name <<- resp$name
-        usage_bytes <<- resp$usage_bytes
-        file_counts <<- resp$file_counts
-        status <<- resp$status
-        expires_after <<- resp$expires_after
-        expires_at <<- resp$expires_at |> as_time()
-        last_active_at <<- resp$last_active_at |> as_time()
-        metadata <<- resp$metadata
+        store_response(resp)
       } else if (!is.null(vector_store_id)) {
         oai_retrieve_vector_store(
           vector_store_id = vector_store_id,
           .classify_response = FALSE
         ) |>
-          initialize(resp = _)
+          store_response()
       } else {
         oai_create_vector_store(..., .classify_response = FALSE) |>
-          initialize(resp = _)
+          store_response()
       }
     },
     id = NULL,
@@ -181,20 +217,22 @@ VectorStore <- R6Class(
     retrieve = function() {
       oai_retrieve_vector_store(
         vector_store_id = self$id,
-        .classify_response = FALSE
+        .classify_response = FALSE,
+        .async = .async
       ) |>
-        initialize(resp = _)
-      self
+        store_response()
     },
     #' @description Modify the vector store. The `...` argument is passed to `oai_modify_vector_store()`.
     modify = function(...) {
-      args <- list(..., vector_store_id = self$id, .classify_response = FALSE)
-      do.call(oai_modify_vector_store, args) |> initialize(resp = _)
-      self
+      args <- list(
+        ..., vector_store_id = self$id, .classify_response = FALSE, .async = .async
+      )
+      do.call(oai_modify_vector_store, args) |>
+        store_response()
     },
     #' @description Delete the vector store.
     delete = function() {
-      oai_delete_vector_store(vector_store_id = self$id)
+      oai_delete_vector_store(vector_store_id = self$id, .async = .async)
     },
     #' @description
     #' Create a file in the vector store. The `...` argument is passed to `oai_create_vector_store_file()`.
@@ -203,7 +241,8 @@ VectorStore <- R6Class(
         file_id <- file_id$id
       }
       oai_create_vector_store_file(
-        vector_store_id = self$id, file_id = file_id, ...
+        vector_store_id = self$id, file_id = file_id, ...,
+        .async = .async
       )
     },
     #' @description
@@ -213,7 +252,7 @@ VectorStore <- R6Class(
         file_id <- oai_upload_file(path, purpose, ...)$id
         self$create_file(file_id, ...)
       } else if (length(path) > 1L) {
-        cat("Creating a file batch...\n")
+        cli_alert_info("Creating a file batch...")
         file_ids <-
           lapply(path, function(x) oai_upload_file(x, ...)$id) |>
           unlist(use.names = FALSE)
@@ -222,16 +261,31 @@ VectorStore <- R6Class(
     },
     #' @description List files in the vector store. The `...` argument is passed to `oai_list_vector_store_files()`.
     list_files = function(...) {
-      args <- list(vector_store_id = self$id, ...)
+      args <- list(vector_store_id = self$id, ..., .async = .async)
       do.call(oai_list_vector_store_files, args)
     },
     #' @description Retrieve a file in the vector store.
     retrieve_file = function(file_id) {
-      oai_retrieve_vector_store_file(vector_store_id = self$id, file_id = file_id)
+      oai_retrieve_vector_store_file(
+        vector_store_id = self$id,
+        file_id = file_id,
+        .async = .async
+      )
     },
     #' @description Delete a file in the vector store.
     delete_file = function(file_id) {
-      oai_delete_vector_store_file(vector_store_id = self$id, file_id = file_id)
+      oai_delete_vector_store_file(vector_store_id = self$id, file_id = file_id, .async = .async)
+    },
+    #' @description Search the vector store.
+    #' @param query Character. The query string for the search.
+    #' @param filters List. Optional. A filter to apply based on file attributes.
+    search = function(query, ...) {
+      oai_search_vector_store(
+        vector_store_id = self$id,
+        query = query,
+        ...,
+        .async = .async
+      )
     },
     #' @description Create a file batch. The `...` argument is passed to `oai_create_vector_store_file_batch()`.
     #' @return A VectorStoreFilesBatch R6 object.
@@ -242,17 +296,23 @@ VectorStore <- R6Class(
     },
     #' @description Retrieve a file batch.
     retrieve_file_batch = function(batch_id) {
-      oai_retrieve_vector_store_file_batch(vector_store_id = self$id,
-                                           batch_id = batch_id)
+      oai_retrieve_vector_store_file_batch(
+        vector_store_id = self$id,
+        batch_id = batch_id,
+        .async = .async
+      )
     },
     #' @description Cancel a file batch
     cancel_file_batch = function(batch_id) {
-      oai_cancel_vector_store_file_batch(vector_store_id = self$id,
-                                         batch_id = batch_id)
+      oai_cancel_vector_store_file_batch(
+        vector_store_id = self$id,
+        batch_id = batch_id,
+        .async = .async
+      )
     },
     #' @description List files in a batch
     list_files_in_a_batch = function(batch_id = batch_id, ...) {
-      args <- list(vector_store_id = self$id, batch_id = batch_id, ...)
+      args <- list(vector_store_id = self$id, batch_id = batch_id, ..., .async = .async)
       do.call(oai_list_vector_store_files_in_a_batch, args)
     },
     #' @description

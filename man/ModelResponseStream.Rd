@@ -97,7 +97,6 @@ containing the delta event data.}
 Get the generator function for the stream.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$generator(
-  ...,
   on_event = function(event) {
  },
   on_output_text = function(output_text) {
@@ -111,8 +110,6 @@ Get the generator function for the stream.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{Additional arguments to pass to \code{oai_create_model_response()}.}
-
 \item{\code{on_event}}{Function. Callback function to handle all events.
 The function should accept a single argument, \code{event}, which is a list
 containing the event \code{type} and \code{data}.}
@@ -139,7 +136,6 @@ A coro package generator function.
 Get the async generator function for the stream.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{ModelResponseStream$async_generator(
-  ...,
   on_event = function(event) {
  },
   on_output_text = function(output_text) {
@@ -153,8 +149,6 @@ Get the async generator function for the stream.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{Additional arguments to pass to \code{oai_create_model_response()}.}
-
 \item{\code{on_event}}{Function. Callback function to handle all events.
 The function should accept a single argument, \code{event}, which is a list
 containing the event \code{type} and \code{data}.}

@@ -7,6 +7,7 @@
 \alias{oai_retrieve_vector_store}
 \alias{oai_modify_vector_store}
 \alias{oai_delete_vector_store}
+\alias{oai_search_vector_store}
 \title{Vector Store API}
 \usage{
 oai_create_vector_store(
@@ -28,7 +29,11 @@ oai_list_vector_stores(
   .async = FALSE
 )
 
-oai_retrieve_vector_store(vector_store_id, .classify_response = TRUE)
+oai_retrieve_vector_store(
+  vector_store_id,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 
 oai_modify_vector_store(
   vector_store_id,
@@ -40,6 +45,17 @@ oai_modify_vector_store(
 )
 
 oai_delete_vector_store(vector_store_id, .async = FALSE)
+
+oai_search_vector_store(
+  vector_store_id,
+  query,
+  filters = NULL,
+  max_num_results = NULL,
+  ranking_options = NULL,
+  rewrite_query = NULL,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 }
 \arguments{
 \item{file_ids}{Character. Optional. A vector of file IDs to include in the vector store.}
@@ -65,6 +81,16 @@ oai_delete_vector_store(vector_store_id, .async = FALSE)
 \item{before}{Character. Optional. A cursor for use in pagination. before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include \code{before = "obj_foo"} in order to fetch the previous page of the list.}
 
 \item{vector_store_id}{Character. The ID of the vector store to retrieve.}
+
+\item{query}{Character. The query string for the search.}
+
+\item{filters}{List. Optional. A filter to apply based on file attributes.}
+
+\item{max_num_results}{Integer. Optional. The maximum number of results to return (1-50).}
+
+\item{ranking_options}{List. Optional. Ranking options for the search.}
+
+\item{rewrite_query}{Logical. Optional. Whether to rewrite the natural language query for vector search.}
 }
 \value{
 VectorStore R6 object.
@@ -72,6 +98,10 @@ VectorStore R6 object.
 \code{oai_list_vector_stores()} returns a list of VectorStore objects.
 
 Deletion status.
+
+\itemize{
+\item \code{oai_search_vector_store()} returns a list of search results from the vector store.
+}
 }
 \description{
 Vector stores are used to store files for use by the \code{file_search} tool.
@@ -94,5 +124,9 @@ Vector stores are used to store files for use by the \code{file_search} tool.
 
 \itemize{
 \item \code{oai_delete_vector_store()}: Delete a specific vector store.
+}
+
+\itemize{
+\item \code{oai_search_vector_store()}: Search a specific vector store.
 }
 }

@@ -5,6 +5,7 @@
 \alias{oai_create_vector_store_file}
 \alias{oai_list_vector_store_files}
 \alias{oai_retrieve_vector_store_file}
+\alias{oai_update_vector_store_file}
 \alias{oai_delete_vector_store_file}
 \title{Vector store files API}
 \usage{
@@ -12,7 +13,8 @@ oai_create_vector_store_file(
   vector_store_id,
   file_id,
   chunking_strategy = NULL,
-  .classify_response = TRUE
+  .classify_response = TRUE,
+  .async = FALSE
 )
 
 oai_list_vector_store_files(
@@ -26,18 +28,33 @@ oai_list_vector_store_files(
   .async = FALSE
 )
 
-oai_retrieve_vector_store_file(vector_store_id, file_id)
+oai_retrieve_vector_store_file(
+  vector_store_id,
+  file_id,
+  .classify_response = TRUE,
+  .async = FALSE
+)
 
-oai_delete_vector_store_file(vector_store_id, file_id)
+oai_update_vector_store_file(
+  vector_store_id,
+  file_id,
+  attributes,
+  .classify_response = TRUE,
+  .async = FALSE
+)
+
+oai_delete_vector_store_file(vector_store_id, file_id, .async = FALSE)
 }
 \arguments{
-\item{vector_store_id}{Character. The ID of the vector store to list files from.}
+\item{vector_store_id}{Character. The ID of the vector store.}
 
 \item{file_id}{Character. The ID of the file to be added to the vector store.}
 
 \item{chunking_strategy}{List. Optional. Strategy for chunking data.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
+
+\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
 
 \item{limit}{Integer. Optional. A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.}
 
@@ -49,7 +66,7 @@ oai_delete_vector_store_file(vector_store_id, file_id)
 
 \item{filter}{Character. Optional. Filter by file status. One of "in_progress", "completed", "failed", "cancelled".}
 
-\item{.async}{Logical. If \code{TRUE}, the request is performed asynchronously.}
+\item{attributes}{Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.}
 }
 \value{
 VectorStoreFile R6 object.
@@ -71,6 +88,10 @@ Vector store files represent files inside a vector store.
 
 \itemize{
 \item \code{oai_retrieve_vector_store_file()}: Retrieve a specific file from a vector store.
+}
+
+\itemize{
+\item \code{oai_update_vector_store_file()}: Update attributes of a vector store file.
 }
 
 \itemize{

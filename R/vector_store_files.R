@@ -8,7 +8,7 @@ NULL
 
 #' @description * `oai_create_vector_store_file()`: Create a new file in a vector store.
 #'
-#' @param vector_store_id Character. The ID of the vector store where the file will be created.
+#' @param vector_store_id Character. The ID of the vector store.
 #' @param file_id Character. The ID of the file to be added to the vector store.
 #' @param chunking_strategy List. Optional. Strategy for chunking data.
 #' @rdname vector_store_file_api
@@ -16,7 +16,8 @@ NULL
 oai_create_vector_store_file <- function(vector_store_id,
                                          file_id,
                                          chunking_strategy = NULL,
-                                         .classify_response = TRUE) {
+                                         .classify_response = TRUE,
+                                         .async = FALSE) {
   body <- list(
     file_id = file_id,
     chunking_strategy = chunking_strategy
@@ -26,13 +27,13 @@ oai_create_vector_store_file <- function(vector_store_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
 #' @description * `oai_list_vector_store_files()`: List files in a vector store.
 #'
-#' @param vector_store_id Character. The ID of the vector store to list files from.
 #' @param filter Character. Optional. Filter by file status. One of "in_progress", "completed", "failed", "cancelled".
 #' @inheritParams oai_list_vector_stores
 #' @return A List of VectorStoreFile R6 objects.
@@ -67,10 +68,38 @@ oai_list_vector_store_files <- function(vector_store_id,
 #'
 #' @rdname vector_store_file_api
 #' @export
-oai_retrieve_vector_store_file <- function(vector_store_id, file_id) {
+oai_retrieve_vector_store_file <- function(vector_store_id,
+                                           file_id,
+                                           .classify_response = TRUE,
+                                           .async = FALSE) {
   oai_query(
     c("vector_stores", vector_store_id, "files", file_id),
-    headers = openai_beta_header()
+    headers = openai_beta_header(),
+    .classify_response = .classify_response,
+    .async = .async
+  )
+}
+
+#' @description * `oai_update_vector_store_file()`: Update attributes of a vector store file.
+#'
+#' @param attributes Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.
+#' @rdname vector_store_file_api
+#' @export
+oai_update_vector_store_file <- function(vector_store_id,
+                                         file_id,
+                                         attributes,
+                                         .classify_response = TRUE,
+                                         .async = FALSE) {
+  body <- list(
+    attributes = attributes
+  )
+  oai_query(
+    c("vector_stores", vector_store_id, "files", file_id),
+    headers = openai_beta_header(),
+    body = body,
+    method = "POST",
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -79,11 +108,14 @@ oai_retrieve_vector_store_file <- function(vector_store_id, file_id) {
 #' @return Deletion status.
 #' @rdname vector_store_file_api
 #' @export
-oai_delete_vector_store_file <- function(vector_store_id, file_id) {
+oai_delete_vector_store_file <- function(vector_store_id,
+                                         file_id,
+                                         .async = FALSE) {
   oai_query(
     c("vector_stores", vector_store_id, "files", file_id),
     headers = openai_beta_header(),
-    method = "DELETE"
+    method = "DELETE",
+    .async = .async
   )
 }
 
@@ -106,6 +138,13 @@ oai_delete_vector_store_file <- function(vector_store_id, file_id) {
 VectorStoreFile <- R6Class(
   "VectorStoreFile",
   portable = FALSE,
+  inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = c("id", "usage_bytes", "vector_store_id", "status", "last_error", "chunking_strategy"),
+      as_time = c("created_at")
+    )
+  ),
   public = list(
     #' @description Initialize a new VectorStoreFile object.
     #' Either provide a vector_store_file_id or a vector_store_id together with a file_id or a path to a file.
@@ -115,19 +154,13 @@ VectorStoreFile <- R6Class(
                           path = NULL,
                           resp = NULL) {
       if (!is.null(resp)) {
-        id <<- resp$id
-        created_at <<- resp$created_at |> as_time()
-        usage_bytes <<- resp$usage_bytes
-        vector_store_id <<- resp$vector_store_id
-        status <<- resp$status
-        last_error <<- resp$last_error
-        chunking_strategy <<- resp$chunking_strategy
+        store_response(resp)
       } else if (!is.null(vector_store_file_id)) {
         oai_retrieve_vector_store_file(
           vector_store_id = vector_store_id,
           file_id = vector_store_file_id
         ) |>
-          initialize(resp = _)
+          store_response()
       } else if (!is.null(vector_store_id) && !is.null(file_id)) {
         if (inherits(file_id, "File")) {
           file_id <- file_id$id
@@ -140,7 +173,7 @@ VectorStoreFile <- R6Class(
           file_id = file_id,
           .classify_response = FALSE
         ) |>
-          initialize(resp = _)
+          store_response()
       } else if (!is.null(vector_store_id) && !is.null(path)) {
         if (inherits(vector_store_id, "VectorStore")) {
           vector_store_id <- vector_store_id$id
@@ -151,7 +184,7 @@ VectorStoreFile <- R6Class(
           file_id = file_id,
           .classify_response = FALSE
         ) |>
-          initialize(resp = _)
+          store_response()
       } else {
         cli_abort(c(
           "You must provide one of the following:",
@@ -172,16 +205,30 @@ VectorStoreFile <- R6Class(
     retrieve = function() {
       oai_retrieve_vector_store_file(
         vector_store_id = self$vector_store_id,
-        file_id = self$id
+        file_id = self$id,
+        .classify_response = FALSE,
+        .async = .async
       ) |>
-        initialize()
-      self
+        store_response()
+    },
+    #' @description Update the vector store file in the OpenAI API.
+    #' @param attributes Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.
+    update = function(attributes) {
+      oai_update_vector_store_file(
+        vector_store_id = self$vector_store_id,
+        file_id = self$id,
+        attributes = attributes,
+        .classify_response = FALSE,
+        .async = .async
+      ) |>
+        store_response()
     },
     #' @description Delete the vector store file from the OpenAI API.
     delete = function() {
       oai_delete_vector_store_file(
         vector_store_id = self$vector_store_id,
-        file_id = self$id
+        file_id = self$id,
+        .async = .async
       )
     },
     #' @description Print the vector store file.

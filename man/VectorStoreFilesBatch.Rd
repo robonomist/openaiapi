@@ -8,6 +8,9 @@ VectorStoreFilesBatch R6 class
 
 VectorStoreFilesBatch R6 class
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{VectorStoreFilesBatch}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{

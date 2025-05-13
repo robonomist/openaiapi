@@ -8,6 +8,9 @@ VectorStoreFile R6 class
 
 VectorStoreFile R6 class
 }
+\section{Super class}{
+\code{openaiapi::Utils} -> \code{VectorStoreFile}
+}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -32,6 +35,7 @@ VectorStoreFile R6 class
 \itemize{
 \item \href{#method-VectorStoreFile-new}{\code{VectorStoreFile$new()}}
 \item \href{#method-VectorStoreFile-retrieve}{\code{VectorStoreFile$retrieve()}}
+\item \href{#method-VectorStoreFile-update}{\code{VectorStoreFile$update()}}
 \item \href{#method-VectorStoreFile-delete}{\code{VectorStoreFile$delete()}}
 \item \href{#method-VectorStoreFile-print}{\code{VectorStoreFile$print()}}
 \item \href{#method-VectorStoreFile-clone}{\code{VectorStoreFile$clone()}}
@@ -78,6 +82,23 @@ Retrieve the vector store file from the OpenAI API.
 \if{html}{\out{<div class="r">}}\preformatted{VectorStoreFile$retrieve()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-VectorStoreFile-update"></a>}}
+\if{latex}{\out{\hypertarget{method-VectorStoreFile-update}{}}}
+\subsection{Method \code{update()}}{
+Update the vector store file in the OpenAI API.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{VectorStoreFile$update(attributes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{attributes}}{Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-VectorStoreFile-delete"></a>}}

@@ -15,7 +15,8 @@ NULL
 oai_create_vector_store_file_batch <- function(vector_store_id,
                                                file_ids,
                                                chunking_strategy = NULL,
-                                               .classify_response = TRUE) {
+                                               .classify_response = TRUE,
+                                               .async = FALSE) {
   body <- list(
     file_ids = as.list(file_ids),
     chunking_strategy = chunking_strategy
@@ -25,7 +26,8 @@ oai_create_vector_store_file_batch <- function(vector_store_id,
     headers = openai_beta_header(),
     body = body,
     method = "POST",
-    .classify_response = .classify_response
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -36,11 +38,14 @@ oai_create_vector_store_file_batch <- function(vector_store_id,
 #' @export
 oai_retrieve_vector_store_file_batch <- function(vector_store_id,
                                                  batch_id,
-                                                 .classify_response = TRUE) {
+                                                 .classify_response = TRUE,
+                                                 .async = FALSE) {
   oai_query(
     ep = c("vector_stores", vector_store_id, "file_batches", batch_id),
     headers = openai_beta_header(),
-    .classify_response = .classify_response
+    method = "GET",
+    .classify_response = .classify_response,
+    .async = .async
   )
 }
 
@@ -49,11 +54,13 @@ oai_retrieve_vector_store_file_batch <- function(vector_store_id,
 #' @rdname vector_store_file_batch_api
 #' @export
 oai_cancel_vector_store_file_batch <- function(vector_store_id,
-                                               batch_id) {
+                                               batch_id,
+                                               .async = FALSE) {
   oai_query(
     ep = c("vector_stores", vector_store_id, "file_batches", batch_id, "cancel"),
     headers = openai_beta_header(),
-    method = "POST"
+    method = "POST",
+    .async = .async
   )
 }
 
@@ -108,6 +115,13 @@ oai_list_vector_store_files_in_a_batch <- function(vector_store_id,
 VectorStoreFilesBatch <- R6Class(
   "VectorStoreFilesBatch",
   portable = FALSE,
+  inherit = Utils,
+  private = list(
+    schema = list(
+      as_is = c("id", "vector_store_id", "status", "file_counts"),
+      as_time = c("created_at")
+    )
+  ),
   public = list(
     #' @description Initialize a VectorStoreFilesBatch object. The `...` argument is passed to the API functions.
     initialize = function(vector_store_id = NULL,
@@ -117,25 +131,21 @@ VectorStoreFilesBatch <- R6Class(
                           ...,
                           resp = NULL) {
       if (!is.null(resp)) {
-        id <<- resp$id
-        created_at <<- resp$created_at |> as_time()
-        vector_store_id <<- resp$vector_store_id
-        status <<- resp$status
-        file_counts <<- resp$file_counts
+        store_response(resp)
       } else if (!is.null(batch_id)) {
         oai_retrieve_vector_store_file_batch(
           vector_store_id = vector_store_id,
           batch_id = batch_id,
           .classify_response = FALSE
         ) |>
-          initialize(resp = _)
+          store_response()
       } else if (!is.null(vector_store_id) && !is.null(file_ids)) {
         oai_create_vector_store_file_batch(
           vector_store_id = vector_store_id,
           file_ids = file_ids,
           .classify_response = FALSE
         ) |>
-          initialize(resp = _)
+          store_response()
       } else if (!is.null(vector_store_id) && !is.null(paths)) {
         file_ids <- sapply(paths, function(path) {
           oai_upload_file(path = path, purpose = "assistants")$id
@@ -146,7 +156,7 @@ VectorStoreFilesBatch <- R6Class(
           ...,
           .classify_response = FALSE
         ) |>
-          initialize(resp = _)
+          store_response()
       }
     },
     id = NULL,
@@ -159,23 +169,25 @@ VectorStoreFilesBatch <- R6Class(
       oai_retrieve_vector_store_file_batch(
         vector_store_id = self$vector_store_id,
         batch_id = self$id,
-        .classify_response = FALSE
+        .classify_response = FALSE,
+        .async = .async
       ) |>
-        initialize(resp = _)
-      self
+        store_response()
     },
     #' @description Cancel the file batch.
     cancel = function() {
       oai_cancel_vector_store_file_batch(
         vector_store_id = self$vector_store_id,
-        batch_id = self$id
+        batch_id = self$id,
+        .async = .async
       )
     },
     #' @description Delete the file batch.
     delete = function() {
       oai_delete_vector_store_file_batch(
         vector_store_id = self$vector_store_id,
-        batch_id = self$id
+        batch_id = self$id,
+        .async = .async
       )
     },
     #' @description List all files in the file batch. The `...` argument is passed to `oai_list_vector_store_files()`.
@@ -183,9 +195,10 @@ VectorStoreFilesBatch <- R6Class(
       args <- list(batch_id = self$id,
                    vector_store_id = self$vector_store_id,
                    .classify_response = FALSE,
+                    .async = .async,
                    ...)
-      do.call(oai_modify_vector_store, args) |> initialize(resp = _)
-      self
+      do.call(oai_modify_vector_store, args) |>
+        store_response()
     },
     #' @description Print the file batch.
     print = function(...) {
