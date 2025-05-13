@@ -13,6 +13,10 @@ oai_retrieve_vector_store_file(): Retrieve a specific file from a vector store.
 
 
 
+oai_update_vector_store_file(): Update attributes of a vector store file.
+
+
+
 oai_delete_vector_store_file(): Delete a file from a vector store.
 
 "><meta property="og:description" content="Vector store files represent files inside a vector store.
@@ -26,6 +30,10 @@ oai_list_vector_store_files(): List files in a vector store.
 
 
 oai_retrieve_vector_store_file(): Retrieve a specific file from a vector store.
+
+
+
+oai_update_vector_store_file(): Update attributes of a vector store file.
 
 
 
@@ -74,6 +82,7 @@ oai_delete_vector_store_file(): Delete a file from a vector store.
 <ul><li><p><code>oai_create_vector_store_file()</code>: Create a new file in a vector store.</p></li>
 </ul><ul><li><p><code>oai_list_vector_store_files()</code>: List files in a vector store.</p></li>
 </ul><ul><li><p><code>oai_retrieve_vector_store_file()</code>: Retrieve a specific file from a vector store.</p></li>
+</ul><ul><li><p><code>oai_update_vector_store_file()</code>: Update attributes of a vector store file.</p></li>
 </ul><ul><li><p><code>oai_delete_vector_store_file()</code>: Delete a file from a vector store.</p></li>
 </ul></div>
 
@@ -83,7 +92,8 @@ oai_delete_vector_store_file(): Delete a file from a vector store.
 <span>  <span class="va">vector_store_id</span>,</span>
 <span>  <span class="va">file_id</span>,</span>
 <span>  chunking_strategy <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_list_vector_store_files</span><span class="op">(</span></span>
@@ -97,9 +107,22 @@ oai_delete_vector_store_file(): Delete a file from a vector store.
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_retrieve_vector_store_file</span><span class="op">(</span><span class="va">vector_store_id</span>, <span class="va">file_id</span><span class="op">)</span></span>
+<span><span class="fu">oai_retrieve_vector_store_file</span><span class="op">(</span></span>
+<span>  <span class="va">vector_store_id</span>,</span>
+<span>  <span class="va">file_id</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_delete_vector_store_file</span><span class="op">(</span><span class="va">vector_store_id</span>, <span class="va">file_id</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">oai_update_vector_store_file</span><span class="op">(</span></span>
+<span>  <span class="va">vector_store_id</span>,</span>
+<span>  <span class="va">file_id</span>,</span>
+<span>  <span class="va">attributes</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">oai_delete_vector_store_file</span><span class="op">(</span><span class="va">vector_store_id</span>, <span class="va">file_id</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -107,7 +130,7 @@ oai_delete_vector_store_file(): Delete a file from a vector store.
 
 
 <dl><dt id="arg-vector-store-id">vector_store_id<a class="anchor" aria-label="anchor" href="#arg-vector-store-id"></a></dt>
-<dd><p>Character. The ID of the vector store to list files from.</p></dd>
+<dd><p>Character. The ID of the vector store.</p></dd>
 
 
 <dt id="arg-file-id">file_id<a class="anchor" aria-label="anchor" href="#arg-file-id"></a></dt>
@@ -120,6 +143,10 @@ oai_delete_vector_store_file(): Delete a file from a vector store.
 
 <dt id="arg--classify-response">.classify_response<a class="anchor" aria-label="anchor" href="#arg--classify-response"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), the response is classified as an R6 object. If <code>FALSE</code>, the response is returned as a list.</p></dd>
+
+
+<dt id="arg--async">.async<a class="anchor" aria-label="anchor" href="#arg--async"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the request is performed asynchronously.</p></dd>
 
 
 <dt id="arg-limit">limit<a class="anchor" aria-label="anchor" href="#arg-limit"></a></dt>
@@ -142,8 +169,8 @@ oai_delete_vector_store_file(): Delete a file from a vector store.
 <dd><p>Character. Optional. Filter by file status. One of "in_progress", "completed", "failed", "cancelled".</p></dd>
 
 
-<dt id="arg--async">.async<a class="anchor" aria-label="anchor" href="#arg--async"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, the request is performed asynchronously.</p></dd>
+<dt id="arg-attributes">attributes<a class="anchor" aria-label="anchor" href="#arg-attributes"></a></dt>
+<dd><p>Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.</p></dd>
 
 </dl></div>
     <div class="section level2">

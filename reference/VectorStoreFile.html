@@ -46,6 +46,10 @@ VectorStoreFile R6 class"></head><body>
 
 
     <div class="section level2">
+    <h2 id="super-class">Super class<a class="anchor" aria-label="anchor" href="#super-class"></a></h2>
+    <p><code>openaiapi::Utils</code> -&gt; <code>VectorStoreFile</code></p>
+    </div>
+    <div class="section level2">
     <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
     <p></p><div class="r6-fields"><dl><dt><code>id</code></dt>
 <dd><p>Character. The ID of the vector store file.</p></dd>
@@ -85,6 +89,7 @@ VectorStoreFile R6 class"></head><body>
 
 <ul><li><p><a href="#method-VectorStoreFile-new"><code>VectorStoreFile$new()</code></a></p></li>
 <li><p><a href="#method-VectorStoreFile-retrieve"><code>VectorStoreFile$retrieve()</code></a></p></li>
+<li><p><a href="#method-VectorStoreFile-update"><code>VectorStoreFile$update()</code></a></p></li>
 <li><p><a href="#method-VectorStoreFile-delete"><code>VectorStoreFile$delete()</code></a></p></li>
 <li><p><a href="#method-VectorStoreFile-print"><code>VectorStoreFile$print()</code></a></p></li>
 <li><p><a href="#method-VectorStoreFile-clone"><code>VectorStoreFile$clone()</code></a></p></li>
@@ -135,10 +140,26 @@ Either provide a vector_store_file_id or a vector_store_id together with a file_
 </div>
 
 
+</div><p></p><hr><a id="method-VectorStoreFile-update"></a><div class="section">
+<h3 id="method-update-">Method <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code><a class="anchor" aria-label="anchor" href="#method-update-"></a></h3>
+<p>Update the vector store file in the OpenAI API.</p><div class="section">
+<h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStoreFile</span><span class="op">$</span><span class="fu">update</span><span class="op">(</span><span class="va">attributes</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>attributes</code></dt>
+<dd><p>Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
 </div><p></p><hr><a id="method-VectorStoreFile-delete"></a><div class="section">
 <h3 id="method-delete-">Method <code>delete()</code><a class="anchor" aria-label="anchor" href="#method-delete-"></a></h3>
 <p>Delete the vector store file from the OpenAI API.</p><div class="section">
-<h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
+<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStoreFile</span><span class="op">$</span><span class="fu">delete</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -146,12 +167,12 @@ Either provide a vector_store_file_id or a vector_store_id together with a file_
 </div><p></p><hr><a id="method-VectorStoreFile-print"></a><div class="section">
 <h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
 <p>Print the vector store file.</p><div class="section">
-<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStoreFile</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
+<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Additional arguments passed to API functions.</p></dd>
 
@@ -162,12 +183,12 @@ Either provide a vector_store_file_id or a vector_store_id together with a file_
 </div><p></p><hr><a id="method-VectorStoreFile-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStoreFile</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 

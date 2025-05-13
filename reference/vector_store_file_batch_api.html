@@ -83,16 +83,18 @@ oai_list_vector_store_files_in_a_batch(): List all files in a file batch.
 <span>  <span class="va">vector_store_id</span>,</span>
 <span>  <span class="va">file_ids</span>,</span>
 <span>  chunking_strategy <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_retrieve_vector_store_file_batch</span><span class="op">(</span></span>
 <span>  <span class="va">vector_store_id</span>,</span>
 <span>  <span class="va">batch_id</span>,</span>
-<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_cancel_vector_store_file_batch</span><span class="op">(</span><span class="va">vector_store_id</span>, <span class="va">batch_id</span><span class="op">)</span></span>
+<span><span class="fu">oai_cancel_vector_store_file_batch</span><span class="op">(</span><span class="va">vector_store_id</span>, <span class="va">batch_id</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_list_vector_store_files_in_a_batch</span><span class="op">(</span></span>
 <span>  <span class="va">vector_store_id</span>,</span>
@@ -127,6 +129,10 @@ oai_list_vector_store_files_in_a_batch(): List all files in a file batch.
 <dd><p>Logical. If <code>TRUE</code> (default), the response is classified as an R6 object. If <code>FALSE</code>, the response is returned as a list.</p></dd>
 
 
+<dt id="arg--async">.async<a class="anchor" aria-label="anchor" href="#arg--async"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the request is performed asynchronously.</p></dd>
+
+
 <dt id="arg-batch-id">batch_id<a class="anchor" aria-label="anchor" href="#arg-batch-id"></a></dt>
 <dd><p>Character. The ID of the batch to retrieve.</p></dd>
 
@@ -149,10 +155,6 @@ oai_list_vector_store_files_in_a_batch(): List all files in a file batch.
 
 <dt id="arg-filter">filter<a class="anchor" aria-label="anchor" href="#arg-filter"></a></dt>
 <dd><p>Character. Optional. Filter the files based on certain criteria.</p></dd>
-
-
-<dt id="arg--async">.async<a class="anchor" aria-label="anchor" href="#arg--async"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, the request is performed asynchronously.</p></dd>
 
 </dl></div>
     <div class="section level2">

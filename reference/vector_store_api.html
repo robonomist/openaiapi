@@ -19,6 +19,10 @@ oai_modify_vector_store(): Modify a specific vector store.
 
 oai_delete_vector_store(): Delete a specific vector store.
 
+
+
+oai_search_vector_store(): Search a specific vector store.
+
 "><meta property="og:description" content="Vector stores are used to store files for use by the file_search tool.
 
 oai_create_vector_store(): Create a new vector store.
@@ -38,6 +42,10 @@ oai_modify_vector_store(): Modify a specific vector store.
 
 
 oai_delete_vector_store(): Delete a specific vector store.
+
+
+
+oai_search_vector_store(): Search a specific vector store.
 
 "></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -84,6 +92,7 @@ oai_delete_vector_store(): Delete a specific vector store.
 </ul><ul><li><p><code>oai_retrieve_vector_store()</code>: Retrieve a specific vector store.</p></li>
 </ul><ul><li><p><code>oai_modify_vector_store()</code>: Modify a specific vector store.</p></li>
 </ul><ul><li><p><code>oai_delete_vector_store()</code>: Delete a specific vector store.</p></li>
+</ul><ul><li><p><code>oai_search_vector_store()</code>: Search a specific vector store.</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -107,7 +116,11 @@ oai_delete_vector_store(): Delete a specific vector store.
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_retrieve_vector_store</span><span class="op">(</span><span class="va">vector_store_id</span>, .classify_response <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">oai_retrieve_vector_store</span><span class="op">(</span></span>
+<span>  <span class="va">vector_store_id</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_modify_vector_store</span><span class="op">(</span></span>
 <span>  <span class="va">vector_store_id</span>,</span>
@@ -118,7 +131,18 @@ oai_delete_vector_store(): Delete a specific vector store.
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">oai_delete_vector_store</span><span class="op">(</span><span class="va">vector_store_id</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">oai_delete_vector_store</span><span class="op">(</span><span class="va">vector_store_id</span>, .async <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">oai_search_vector_store</span><span class="op">(</span></span>
+<span>  <span class="va">vector_store_id</span>,</span>
+<span>  <span class="va">query</span>,</span>
+<span>  filters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_num_results <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ranking_options <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rewrite_query <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -172,13 +196,34 @@ oai_delete_vector_store(): Delete a specific vector store.
 <dt id="arg-vector-store-id">vector_store_id<a class="anchor" aria-label="anchor" href="#arg-vector-store-id"></a></dt>
 <dd><p>Character. The ID of the vector store to retrieve.</p></dd>
 
+
+<dt id="arg-query">query<a class="anchor" aria-label="anchor" href="#arg-query"></a></dt>
+<dd><p>Character. The query string for the search.</p></dd>
+
+
+<dt id="arg-filters">filters<a class="anchor" aria-label="anchor" href="#arg-filters"></a></dt>
+<dd><p>List. Optional. A filter to apply based on file attributes.</p></dd>
+
+
+<dt id="arg-max-num-results">max_num_results<a class="anchor" aria-label="anchor" href="#arg-max-num-results"></a></dt>
+<dd><p>Integer. Optional. The maximum number of results to return (1-50).</p></dd>
+
+
+<dt id="arg-ranking-options">ranking_options<a class="anchor" aria-label="anchor" href="#arg-ranking-options"></a></dt>
+<dd><p>List. Optional. Ranking options for the search.</p></dd>
+
+
+<dt id="arg-rewrite-query">rewrite_query<a class="anchor" aria-label="anchor" href="#arg-rewrite-query"></a></dt>
+<dd><p>Logical. Optional. Whether to rewrite the natural language query for vector search.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>VectorStore R6 object.</p>
 <p><code>oai_list_vector_stores()</code> returns a list of VectorStore objects.</p>
 <p>Deletion status.</p>
-    </div>
+<ul><li><p><code>oai_search_vector_store()</code> returns a list of search results from the vector store.</p></li>
+</ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

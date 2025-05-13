@@ -50,6 +50,10 @@ R6 class for managing a Vector Store in the OpenAI API"></head><body>
     <p>The <code>VectorStore</code> class provides methods to manage vector stores.</p>
     </div>
     <div class="section level2">
+    <h2 id="super-class">Super class<a class="anchor" aria-label="anchor" href="#super-class"></a></h2>
+    <p><code>openaiapi::Utils</code> -&gt; <code>VectorStore</code></p>
+    </div>
+    <div class="section level2">
     <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
     <p></p><div class="r6-fields"><dl><dt><code>id</code></dt>
 <dd><p>Character. The unique identifier of the vector store.</p></dd>
@@ -108,6 +112,7 @@ R6 class for managing a Vector Store in the OpenAI API"></head><body>
 <li><p><a href="#method-VectorStore-list_files"><code>VectorStore$list_files()</code></a></p></li>
 <li><p><a href="#method-VectorStore-retrieve_file"><code>VectorStore$retrieve_file()</code></a></p></li>
 <li><p><a href="#method-VectorStore-delete_file"><code>VectorStore$delete_file()</code></a></p></li>
+<li><p><a href="#method-VectorStore-search"><code>VectorStore$search()</code></a></p></li>
 <li><p><a href="#method-VectorStore-create_file_batch"><code>VectorStore$create_file_batch()</code></a></p></li>
 <li><p><a href="#method-VectorStore-retrieve_file_batch"><code>VectorStore$retrieve_file_batch()</code></a></p></li>
 <li><p><a href="#method-VectorStore-cancel_file_batch"><code>VectorStore$cancel_file_batch()</code></a></p></li>
@@ -266,15 +271,39 @@ R6 class for managing a Vector Store in the OpenAI API"></head><body>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-VectorStore-create_file_batch"></a><div class="section">
-<h3 id="method-create-file-batch-">Method <code>create_file_batch()</code><a class="anchor" aria-label="anchor" href="#method-create-file-batch-"></a></h3>
-<p>Create a file batch. The <code>...</code> argument is passed to <code><a href="vector_store_file_batch_api.html">oai_create_vector_store_file_batch()</a></code>.</p><div class="section">
+</div><p></p><hr><a id="method-VectorStore-search"></a><div class="section">
+<h3 id="method-search-">Method <code><a href="https://rdrr.io/r/base/search.html" class="external-link">search()</a></code><a class="anchor" aria-label="anchor" href="#method-search-"></a></h3>
+<p>Search the vector store.</p><div class="section">
 <h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">create_file_batch</span><span class="op">(</span><span class="va">file_ids</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">search</span><span class="op">(</span><span class="va">query</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>query</code></dt>
+<dd><p>Character. The query string for the search.</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>Additional arguments to be passed to the API functions.</p></dd>
+
+
+<dt><code>filters</code></dt>
+<dd><p>List. Optional. A filter to apply based on file attributes.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-VectorStore-create_file_batch"></a><div class="section">
+<h3 id="method-create-file-batch-">Method <code>create_file_batch()</code><a class="anchor" aria-label="anchor" href="#method-create-file-batch-"></a></h3>
+<p>Create a file batch. The <code>...</code> argument is passed to <code><a href="vector_store_file_batch_api.html">oai_create_vector_store_file_batch()</a></code>.</p><div class="section">
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">create_file_batch</span><span class="op">(</span><span class="va">file_ids</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>file_ids</code></dt>
 <dd><p>Character. Optional. A vector of file IDs to include in the vector store.</p></dd>
 
@@ -293,24 +322,8 @@ R6 class for managing a Vector Store in the OpenAI API"></head><body>
 </div><p></p><hr><a id="method-VectorStore-retrieve_file_batch"></a><div class="section">
 <h3 id="method-retrieve-file-batch-">Method <code>retrieve_file_batch()</code><a class="anchor" aria-label="anchor" href="#method-retrieve-file-batch-"></a></h3>
 <p>Retrieve a file batch.</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">retrieve_file_batch</span><span class="op">(</span><span class="va">batch_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>batch_id</code></dt>
-<dd><p>Character. The ID of the batch to retrieve.</p></dd>
-
-
-</dl><p></p></div>
-</div>
-
-</div><p></p><hr><a id="method-VectorStore-cancel_file_batch"></a><div class="section">
-<h3 id="method-cancel-file-batch-">Method <code>cancel_file_batch()</code><a class="anchor" aria-label="anchor" href="#method-cancel-file-batch-"></a></h3>
-<p>Cancel a file batch</p><div class="section">
 <h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">cancel_file_batch</span><span class="op">(</span><span class="va">batch_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">retrieve_file_batch</span><span class="op">(</span><span class="va">batch_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -322,15 +335,31 @@ R6 class for managing a Vector Store in the OpenAI API"></head><body>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-VectorStore-list_files_in_a_batch"></a><div class="section">
-<h3 id="method-list-files-in-a-batch-">Method <code>list_files_in_a_batch()</code><a class="anchor" aria-label="anchor" href="#method-list-files-in-a-batch-"></a></h3>
-<p>List files in a batch</p><div class="section">
+</div><p></p><hr><a id="method-VectorStore-cancel_file_batch"></a><div class="section">
+<h3 id="method-cancel-file-batch-">Method <code>cancel_file_batch()</code><a class="anchor" aria-label="anchor" href="#method-cancel-file-batch-"></a></h3>
+<p>Cancel a file batch</p><div class="section">
 <h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">list_files_in_a_batch</span><span class="op">(</span>batch_id <span class="op">=</span> <span class="va">batch_id</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">cancel_file_batch</span><span class="op">(</span><span class="va">batch_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>batch_id</code></dt>
+<dd><p>Character. The ID of the batch to retrieve.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-VectorStore-list_files_in_a_batch"></a><div class="section">
+<h3 id="method-list-files-in-a-batch-">Method <code>list_files_in_a_batch()</code><a class="anchor" aria-label="anchor" href="#method-list-files-in-a-batch-"></a></h3>
+<p>List files in a batch</p><div class="section">
+<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">list_files_in_a_batch</span><span class="op">(</span>batch_id <span class="op">=</span> <span class="va">batch_id</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>batch_id</code></dt>
 <dd><p>Character. The ID of the batch to retrieve.</p></dd>
 
@@ -345,12 +374,12 @@ R6 class for managing a Vector Store in the OpenAI API"></head><body>
 </div><p></p><hr><a id="method-VectorStore-print"></a><div class="section">
 <h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
 <p>Print the VectorStore object</p><div class="section">
-<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
+<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
+<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Unused.</p></dd>
 
@@ -361,12 +390,12 @@ R6 class for managing a Vector Store in the OpenAI API"></head><body>
 </div><p></p><hr><a id="method-VectorStore-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
+<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">VectorStore</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
+<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
