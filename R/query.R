@@ -17,12 +17,13 @@ openai_beta_header <- function() {
 }
 
 #' @keywords internal
-oai_request <- function(ep, body, method, headers, encode) {
+oai_request <- function(ep, body, query, method, headers, encode) {
   ## Body can not a empty list
   body <- if (length(body)) body else NULL
   req <-
     request("https://api.openai.com/v1") |>
     req_url_path_append(ep) |>
+    req_url_query(!!!query) |>
     req_headers(
       Authorization = paste("Bearer", getOption("openaiapi.api_key")),
       !!!headers
@@ -68,7 +69,7 @@ oai_query <- function(ep,
                       .stream_class = NULL) {
   body <- compact(body)
   query <- compact(query)
-  req <- oai_request(ep, body, method, headers, encode)
+  req <- oai_request(ep, body, query, method, headers, encode)
 
   if (isTRUE(body$stream)) {
     ## STREAMING -------------------------------------------------
@@ -148,58 +149,59 @@ as_oai_promise <- function(p) {
 
 
 #' @keywords internal
-oai_query_list <- function(...) {
-  args <- list(...)
-  if (isFALSE(args$.classify_response)) {
-    return(oai_query(...))
+oai_query_list <- function(..., .classify_response = TRUE, .async = FALSE) {
+
+  args <-
+    list(..., .classify_response = .classify_response, .async = .async) |>
+    compact()
+
+  fetch_page <- function() {
+    do.call(oai_query, args)
   }
 
-  if (!is.null(args$query$limit) && args$query$limit > 100) {
-    requested_limit <- args$query$limit
-    args$query$limit <- 100
-  } else {
-    requested_limit <- 100
+  if (!.classify_response) {
+    return(fetch_page())
   }
 
-  initial_resp <- do.call(oai_query, args)
+  requested_limit <- args$query$limit %||% 100
+  args$query$limit <- min(100, requested_limit)
 
-  if (isTRUE(args$.async)) {
-    fetch_recursive_async <- function(accumulated_resp, n) {
-      if (n >= requested_limit || !attr(accumulated_resp, "has_more")) {
-        return(accumulated_resp)
-      }
-      args$query$after <- attr(accumulated_resp, "last_id")
-      args$query$limit <- min(100, requested_limit - n)
-      do.call(oai_query, args) |> then(function(next_resp) {
-        combined <- append(accumulated_resp, next_resp)
-        attr(combined, "last_id") <- attr(next_resp, "last_id")
-        attr(combined, "has_more") <- attr(next_resp, "has_more")
-        fetch_recursive_async(combined, length(combined))
-      })
+  combine_pages <- function(old, new) {
+    combined <- append(old, new)
+    attr(combined, "last_id") <- attr(new, "last_id")
+    attr(combined, "has_more") <- attr(new, "has_more")
+    combined
+  }
+
+  need_more <- function(page) {
+    n <- length(page)
+    has_more <- attr(page, "has_more")
+    n < requested_limit && has_more
+  }
+
+  page <- fetch_page()
+
+  if (!.async) {
+    while (need_more(page)) {
+      args$query$after <- attr(page, "last_id")
+      args$query$limit <- min(100, requested_limit - length(page))
+      next_page <- fetch_page()
+      page <- combine_pages(page, next_page)
     }
-
-    initial_resp |> then(function(resp) {
-      n <- length(resp)
-      fetch_recursive_async(resp, n)
-    })
+    return(page)
   } else {
-    # Inner recursive function
-    fetch_recursive <- function(accumulated_resp, n) {
-      if (n >= requested_limit || !attr(accumulated_resp, "has_more")) {
-        return(accumulated_resp)
+    paginate_async <- function(page) {
+      if (need_more(page)) {
+        args$query$after <<- attr(page, "last_id")
+        args$query$limit <<- min(100, requested_limit - length(page))
+        fetch_page()$then(function(next_page) {
+          combine_pages(page, next_page)
+        })$then(paginate_async)
+      } else {
+        page
       }
-
-      args$query$after <- attr(accumulated_resp, "last_id")
-      args$query$limit <- min(100, requested_limit - n)
-      next_resp <- do.call(oai_query, args)
-      combined <- append(accumulated_resp, next_resp)
-      attr(combined, "last_id") <- attr(next_resp, "last_id")
-      attr(combined, "has_more") <- attr(next_resp, "has_more")
-      fetch_recursive(combined, length(combined))
     }
-
-    n <- length(initial_resp)
-    fetch_recursive(initial_resp, n)
+    page$then(paginate_async)
   }
 }
 
