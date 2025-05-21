@@ -14,9 +14,11 @@ oai_create_model_response(
   include = NULL,
   instructions = NULL,
   max_output_tokens = NULL,
+  metadata = NULL,
   parallel_tool_calls = NULL,
   previous_response_id = NULL,
   reasoning = NULL,
+  service_tier = NULL,
   store = NULL,
   stream = NULL,
   temperature = NULL,
@@ -85,11 +87,15 @@ oai_list_input_items(
 
 \item{max_output_tokens}{Integer. An upper bound for the number of tokens that can be generated for a response, including visible output tokens and reasoning tokens.}
 
+\item{metadata}{List. Optional. A named list of at most 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format, and querying for objects via API or the dashboard.}
+
 \item{parallel_tool_calls}{Logical. Whether to allow the model to run tool calls in parallel.}
 
 \item{previous_response_id}{Character. The unique ID of the previous response to the model. Use this to create multi-turn conversations.}
 
 \item{reasoning}{List. Configuration options for reasoning models.}
+
+\item{service_tier}{Character. The latency tier to use for processing the request. This parameter is relevant for customers subscribed to the scale tier service.}
 
 \item{store}{Logical. Whether to store the generated model response for later retrieval via API.}
 

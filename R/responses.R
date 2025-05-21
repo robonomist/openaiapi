@@ -9,6 +9,7 @@
 #' @param parallel_tool_calls Logical. Whether to allow the model to run tool calls in parallel.
 #' @param previous_response_id Character. The unique ID of the previous response to the model. Use this to create multi-turn conversations.
 #' @param reasoning List. Configuration options for reasoning models.
+#' @param service_tier Character. The latency tier to use for processing the request. This parameter is relevant for customers subscribed to the scale tier service.
 #' @param store Logical. Whether to store the generated model response for later retrieval via API.
 #' @param stream Logical. If set to `TRUE`, the function will return a `ModelResponseStream` object.
 #' @param temperature Numeric. What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
@@ -28,9 +29,11 @@ oai_create_model_response <- function(input,
                                       include = NULL,
                                       instructions = NULL,
                                       max_output_tokens = NULL,
+                                      metadata = NULL,
                                       parallel_tool_calls = NULL,
                                       previous_response_id = NULL,
                                       reasoning = NULL,
+                                      service_tier = NULL,
                                       store = NULL,
                                       stream = NULL,
                                       temperature = NULL,
@@ -71,9 +74,11 @@ oai_create_model_response <- function(input,
     include = include,
     instructions = instructions,
     max_output_tokens = max_output_tokens,
+    metadata = metadata,
     parallel_tool_calls = parallel_tool_calls,
     previous_response_id = previous_response_id,
     reasoning = reasoning,
+    service_tier = service_tier,
     store = store,
     stream = stream,
     temperature = temperature,
@@ -104,7 +109,6 @@ oai_create_model_response <- function(input,
     obj
   }
 }
-
 
 #' @description * `oai_model_response()` - Create a ModelResponse or ModelResponseStream object without making an API call.
 #' @return * `oai_model_response()` - A `ModelResponse` or `ModelResponseStream` object.
@@ -220,7 +224,12 @@ ModelResponse <- R6Class(
   portable = FALSE,
   private = list(
     schema = list(
-      as_is = c("error", "id", "incomplete_details", "instructions", "model", "output", "parallel_tool_calls", "previous_response_id", "reasoning", "tools", "status", "temperature", "text", "tool_choice", "top_p", "truncation", "usage", "user"),
+      as_is = c("id", "error", "incomplete_details", "instructions",
+                "max_output_tokens", "metadata", "model", "output",
+                "parallel_tool_calls", "previous_response_id", "reasoning",
+                "service_tier",
+                "status", "temperature", "text", "tool_choice", "tools",
+                "top_p", "truncation", "usage", "user"),
       as_time = c("created_at")
     ),
     store_response = function(resp) {
@@ -393,16 +402,22 @@ ModelResponse <- R6Class(
     respond = function(input, stream = NULL, ...) {
       args <- list(input = input, ...)
       defaults <- list(
+        model = model,
         instructions = instructions,
-        tools = if (!is.null(tools)) I(tools),
         max_output_tokens = max_output_tokens,
+        metadata = metadata,
+        parallel_tool_calls = parallel_tool_calls,
         previous_response_id = id,
         reasoning = reasoning,
+        service_tier = service_tier,
+        stream = stream %||% .stream,
         temperature = temperature,
+        text = text,
+        tool_choice = tool_choice,
+        tools = if (!is.null(tools)) I(tools),
         top_p = top_p,
         truncation = truncation,
         user = user,
-        stream = stream %||% .stream,
         .async = .async,
         .classify_response = FALSE
       )
