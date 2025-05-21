@@ -94,9 +94,11 @@ oai_list_input_items() - List input items for a model response.
 <span>  include <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  instructions <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_output_tokens <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  parallel_tool_calls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  previous_response_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  reasoning <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  service_tier <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  store <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stream <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  temperature <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -179,6 +181,10 @@ oai_list_input_items() - List input items for a model response.
 <dd><p>Integer. An upper bound for the number of tokens that can be generated for a response, including visible output tokens and reasoning tokens.</p></dd>
 
 
+<dt id="arg-metadata">metadata<a class="anchor" aria-label="anchor" href="#arg-metadata"></a></dt>
+<dd><p>List. Optional. A named list of at most 16 key-value pairs that can be attached to an object. This can be useful for storing additional information about the object in a structured format, and querying for objects via API or the dashboard.</p></dd>
+
+
 <dt id="arg-parallel-tool-calls">parallel_tool_calls<a class="anchor" aria-label="anchor" href="#arg-parallel-tool-calls"></a></dt>
 <dd><p>Logical. Whether to allow the model to run tool calls in parallel.</p></dd>
 
@@ -189,6 +195,10 @@ oai_list_input_items() - List input items for a model response.
 
 <dt id="arg-reasoning">reasoning<a class="anchor" aria-label="anchor" href="#arg-reasoning"></a></dt>
 <dd><p>List. Configuration options for reasoning models.</p></dd>
+
+
+<dt id="arg-service-tier">service_tier<a class="anchor" aria-label="anchor" href="#arg-service-tier"></a></dt>
+<dd><p>Character. The latency tier to use for processing the request. This parameter is relevant for customers subscribed to the scale tier service.</p></dd>
 
 
 <dt id="arg-store">store<a class="anchor" aria-label="anchor" href="#arg-store"></a></dt>
