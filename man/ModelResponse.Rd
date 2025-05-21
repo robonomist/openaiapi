@@ -38,6 +38,8 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 
 \item{\code{reasoning}}{List or NULL. Configuration options for reasoning models.}
 
+\item{\code{service_tier}}{Character or NULL. The latency tier to use for processing the request.}
+
 \item{\code{status}}{Character. The status of the response generation.}
 
 \item{\code{temperature}}{Numeric or NULL. What sampling temperature to use, between 0 and 2.}

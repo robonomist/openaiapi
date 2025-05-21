@@ -314,6 +314,8 @@ ModelResponse <- R6Class(
     previous_response_id = NULL,
     #' @field reasoning List or NULL. Configuration options for reasoning models.
     reasoning = NULL,
+    #' @field service_tier Character or NULL. The latency tier to use for processing the request.
+    service_tier = NULL,
     #' @field status Character. The status of the response generation.
     status = NULL,
     #' @field temperature Numeric or NULL. What sampling temperature to use, between 0 and 2.
@@ -515,7 +517,8 @@ ModelResponseStream <- R6Class(
                   stream(on_event, on_output_text, on_output_text_delta, env)
                 },
                 onRejected = ~ {
-                  cli_abort("Failed while submitting tool outputs", parent = .x)
+                  cli_abort("Failed while submitting tool outputs: {.x$message}",
+                            parent = .x)
                 }
               )
             } else {
@@ -523,7 +526,7 @@ ModelResponseStream <- R6Class(
             }
           },
           onRejected = ~ {
-            cli_abort("Failed while reading the stream", parent = .x)
+            cli_abort("Failed while reading the stream: {.x$message}", parent = .x)
           }
         )
       } else {
