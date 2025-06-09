@@ -10,6 +10,7 @@ NULL
 #' @param path Character. The path to save the audio file.
 #' @param model Character. One of the available TTS models: tts-1 or tts-1-hd.
 #' @param voice Character. The voice to use when generating the audio. Supported voices are alloy, ash, coral, echo, fable, onyx, nova, sage and shimmer. Previews of the voices are available in the Text to speech guide.
+#' @param instruction Character. Control the voice of your generated audio with additional instructions. Does not work with `tts-1` or `tts-1-hd`.
 #' @param response_format Character. The format to audio in. Supported formats are mp3, opus, aac, flac, wav, and pcm.
 #' @param speed Numeric. The speed of the generated audio. Select a value from 0.25 to 4.0. 1.0 is the default.
 #' @return Returns the audio file content.
@@ -17,8 +18,9 @@ NULL
 #' @rdname audio
 oai_create_speech <- function(input,
                               path,
-                              model = c("tts-1", "tts-1-hd"),
-                              voice = c("alloy", "ash", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer"),
+                              model = c("tts-1", "tts-1-hd", "gpt-4o-mini-tts"),
+                              voice = c("alloy", "ash", "ballad", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer", "verse"),
+                              instruction = NULL,
                               response_format = c("mp3", "opus", "aac", "flac", "wav", "pcm"),
                               speed = NULL,
                               .async= FALSE) {

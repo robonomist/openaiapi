@@ -10,8 +10,10 @@
 oai_create_speech(
   input,
   path,
-  model = c("tts-1", "tts-1-hd"),
-  voice = c("alloy", "ash", "coral", "echo", "fable", "onyx", "nova", "sage", "shimmer"),
+  model = c("tts-1", "tts-1-hd", "gpt-4o-mini-tts"),
+  voice = c("alloy", "ash", "ballad", "coral", "echo", "fable", "onyx", "nova", "sage",
+    "shimmer", "verse"),
+  instruction = NULL,
   response_format = c("mp3", "opus", "aac", "flac", "wav", "pcm"),
   speed = NULL,
   .async = FALSE
@@ -49,6 +51,8 @@ oai_create_translation(
 \item{model}{Character. ID of the model to use. Only whisper-1 (which is powered by our open source Whisper V2 model) is currently available.}
 
 \item{voice}{Character. The voice to use when generating the audio. Supported voices are alloy, ash, coral, echo, fable, onyx, nova, sage and shimmer. Previews of the voices are available in the Text to speech guide.}
+
+\item{instruction}{Character. Control the voice of your generated audio with additional instructions. Does not work with \code{tts-1} or \code{tts-1-hd}.}
 
 \item{response_format}{Character. The format of the output, in one of these options: json, text, srt, verbose_json, or vtt.}
 
