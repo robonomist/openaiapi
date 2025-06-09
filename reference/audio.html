@@ -31,7 +31,7 @@ oai_create_translation(): Translates audio into English.
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,8 +73,10 @@ oai_create_translation(): Translates audio into English.
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">oai_create_speech</span><span class="op">(</span></span>
 <span>  <span class="va">input</span>,</span>
 <span>  <span class="va">path</span>,</span>
-<span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tts-1"</span>, <span class="st">"tts-1-hd"</span><span class="op">)</span>,</span>
-<span>  voice <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alloy"</span>, <span class="st">"ash"</span>, <span class="st">"coral"</span>, <span class="st">"echo"</span>, <span class="st">"fable"</span>, <span class="st">"onyx"</span>, <span class="st">"nova"</span>, <span class="st">"sage"</span>, <span class="st">"shimmer"</span><span class="op">)</span>,</span>
+<span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tts-1"</span>, <span class="st">"tts-1-hd"</span>, <span class="st">"gpt-4o-mini-tts"</span><span class="op">)</span>,</span>
+<span>  voice <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"alloy"</span>, <span class="st">"ash"</span>, <span class="st">"ballad"</span>, <span class="st">"coral"</span>, <span class="st">"echo"</span>, <span class="st">"fable"</span>, <span class="st">"onyx"</span>, <span class="st">"nova"</span>, <span class="st">"sage"</span>,</span>
+<span>    <span class="st">"shimmer"</span>, <span class="st">"verse"</span><span class="op">)</span>,</span>
+<span>  instruction <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  response_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mp3"</span>, <span class="st">"opus"</span>, <span class="st">"aac"</span>, <span class="st">"flac"</span>, <span class="st">"wav"</span>, <span class="st">"pcm"</span><span class="op">)</span>,</span>
 <span>  speed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -123,6 +125,10 @@ oai_create_translation(): Translates audio into English.
 
 <dt id="arg-voice">voice<a class="anchor" aria-label="anchor" href="#arg-voice"></a></dt>
 <dd><p>Character. The voice to use when generating the audio. Supported voices are alloy, ash, coral, echo, fable, onyx, nova, sage and shimmer. Previews of the voices are available in the Text to speech guide.</p></dd>
+
+
+<dt id="arg-instruction">instruction<a class="anchor" aria-label="anchor" href="#arg-instruction"></a></dt>
+<dd><p>Character. Control the voice of your generated audio with additional instructions. Does not work with <code>tts-1</code> or <code>tts-1-hd</code>.</p></dd>
 
 
 <dt id="arg-response-format">response_format<a class="anchor" aria-label="anchor" href="#arg-response-format"></a></dt>
@@ -181,7 +187,7 @@ oai_create_translation(): Translates audio into English.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
