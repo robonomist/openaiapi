@@ -19,7 +19,7 @@ openai_beta_header <- function() {
 #' @keywords internal
 oai_request <- function(ep, body, query, method, headers, encode) {
   ## Body can not a empty list
-  body <- if (length(body)) body else NULL
+  query <- compact(query)
   req <-
     request("https://api.openai.com/v1") |>
     req_url_path_append(ep) |>
@@ -31,6 +31,8 @@ oai_request <- function(ep, body, query, method, headers, encode) {
     req_method(method) |>
     req_error(body = oai_error_body)
   if (!is.null(body) && encode == "json") {
+    body <- compact(body)
+    body <- if (length(body)) body else NULL
     req <- req_body_json(req, body, force = TRUE, null = "list")
   } else if (encode == "multipart") {
     req <- req_body_multipart(req, !!!body)
@@ -67,8 +69,6 @@ oai_query <- function(ep,
                       .classify_response = TRUE,
                       .async = FALSE,
                       .stream_class = NULL) {
-  body <- compact(body)
-  query <- compact(query)
   req <- oai_request(ep, body, query, method, headers, encode)
 
   if (isTRUE(body$stream)) {
