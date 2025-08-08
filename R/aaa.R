@@ -14,6 +14,7 @@ Utils <- R6Class(
           as_oai_promise()
       } else {
         self[[".async"]] <- resp[[".async"]] %||% self[[".async"]]
+        ## Store the response in the object according to the schema
         resp <- compact(resp)
         for (name in schema$as_is) {
           self[[name]] <- resp[[name]]

@@ -32,7 +32,7 @@ NULL
 #' @export
 #' @rdname chat_completion_api
 oai_create_chat_completion <- function(messages,
-                                       model = "gpt-4o",
+                                       model = getOption("openaiapi.model"),
                                        frequency_penalty = NULL,
                                        logit_bias = NULL,
                                        logprobs = NULL,

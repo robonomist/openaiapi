@@ -12,17 +12,21 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{id}}{Character. Unique identifier for this Response.}
+\item{\code{background}}{Logical. Whether to run the model response in the background.}
 
-\item{\code{created_at}}{Numeric. Unix timestamp (in seconds) of when this Response was created.}
+\item{\code{id}}{Character. Unique identifier for this Response.}
 
 \item{\code{error}}{List or NULL. An error object returned when the model fails to generate a Response.}
 
 \item{\code{incomplete_details}}{List or NULL. Details about why the response is incomplete.}
 
+\item{\code{created_at}}{Numeric. Unix timestamp (in seconds) of when this Response was created.}
+
 \item{\code{instructions}}{Character or NULL. Inserts a system (or developer) message as the first item in the model's context.}
 
 \item{\code{max_output_tokens}}{Integer or NULL. An upper bound for the number of tokens that can be generated for a response, including visible output tokens and reasoning tokens.}
+
+\item{\code{max_tool_calls}}{Integer or NULL. The maximum number of total calls to built-in tools that can be processed in a response.}
 
 \item{\code{metadata}}{List. Set of 16 key-value pairs that can be attached to an object.}
 
@@ -36,7 +40,13 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 
 \item{\code{previous_response_id}}{Character or NULL. The unique ID of the previous response to the model.}
 
+\item{\code{prompt}}{List or NULL. Reference to a prompt template and its variables.}
+
+\item{\code{prompt_cache_key}}{Character or NULL. Used by OpenAI to cache responses for similar requests to optimize your cache hit rates. Replaces the \code{user} field.}
+
 \item{\code{reasoning}}{List or NULL. Configuration options for reasoning models.}
+
+\item{\code{safety_identifier}}{Character or NULL. A stable identifier used to help detect users of your application that may be violating OpenAI's usage policies.}
 
 \item{\code{service_tier}}{Character or NULL. The latency tier to use for processing the request.}
 
@@ -50,6 +60,8 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 
 \item{\code{tools}}{List. An array of tools the model may call while generating a response.}
 
+\item{\code{top_logprobs}}{Integer or NULL. An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability.}
+
 \item{\code{top_p}}{Numeric or NULL. An alternative to sampling with temperature, called nucleus sampling.}
 
 \item{\code{truncation}}{Character or NULL. The truncation strategy to use for the model response.}
@@ -57,6 +69,8 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 \item{\code{usage}}{List. Represents token usage details including input tokens, output tokens, a breakdown of output tokens, and the total tokens used.}
 
 \item{\code{user}}{Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.}
+
+\item{\code{verbosity}}{Character or NULL. Constrains the verbosity of the model's response.}
 }
 \if{html}{\out{</div>}}
 }
