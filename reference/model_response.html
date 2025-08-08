@@ -5,7 +5,7 @@ oai_create_model_response() - Create a model response.
 
 
 
-oai_model_response() - Create a ModelResponse or ModelResponseStream object without making an API call.
+oai_model_response() - A helper function to construct a ModelResponse or a ModelResponseStream object in R without making an API call.
 
 
 
@@ -25,7 +25,7 @@ oai_create_model_response() - Create a model response.
 
 
 
-oai_model_response() - Create a ModelResponse or ModelResponseStream object without making an API call.
+oai_model_response() - A helper function to construct a ModelResponse or a ModelResponseStream object in R without making an API call.
 
 
 
@@ -80,7 +80,7 @@ oai_list_input_items() - List input items for a model response.
     <div class="ref-description section level2">
 
 <ul><li><p><code>oai_create_model_response()</code> - Create a model response.</p></li>
-</ul><ul><li><p><code>oai_model_response()</code> - Create a ModelResponse or ModelResponseStream object without making an API call.</p></li>
+</ul><ul><li><p><code>oai_model_response()</code> - A helper function to construct a ModelResponse or a ModelResponseStream object in R without making an API call.</p></li>
 </ul><ul><li><p><code>oai_get_model_response()</code> - Retrieve a model response.</p></li>
 </ul><ul><li><p><code>oai_delete_model_response()</code> - Delete a model response.</p></li>
 </ul><ul><li><p><code>oai_list_input_items()</code> - List input items for a model response.</p></li>
@@ -89,52 +89,69 @@ oai_list_input_items() - List input items for a model response.
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">oai_create_model_response</span><span class="op">(</span></span>
-<span>  <span class="va">input</span>,</span>
-<span>  model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
+<span>  input <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openaiapi.model"</span><span class="op">)</span>,</span>
+<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  include <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  instructions <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_output_tokens <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_tool_calls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  metadata <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  parallel_tool_calls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  previous_response_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prompt <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prompt_cache_key <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  reasoning <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  safety_identifier <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  service_tier <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  store <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stream <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stream_options <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  temperature <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tool_choice <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tools <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_logprobs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  truncation <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbosity <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  .perform_query <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_model_response</span><span class="op">(</span></span>
-<span>  model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
+<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  instructions <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_output_tokens <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_tool_calls <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openaiapi.model"</span><span class="op">)</span>,</span>
 <span>  parallel_tool_calls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  previous_response_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prompt <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prompt_cache_key <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  reasoning <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  store <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  safety_identifier <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  service_tier <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stream <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  temperature <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  text <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tool_choice <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tools <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  top_logprobs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  top_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  truncation <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbosity <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">oai_get_model_response</span><span class="op">(</span></span>
 <span>  <span class="va">response_id</span>,</span>
 <span>  include <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  include_obfuscation <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
@@ -169,6 +186,10 @@ oai_list_input_items() - List input items for a model response.
 <dd><p>Character. Model ID used to generate the response, like "gpt-4o" or "o1".</p></dd>
 
 
+<dt id="arg-background">background<a class="anchor" aria-label="anchor" href="#arg-background"></a></dt>
+<dd><p>Logical. Whether to run the model response in the background. Defaults to <code>FALSE</code>.</p></dd>
+
+
 <dt id="arg-include">include<a class="anchor" aria-label="anchor" href="#arg-include"></a></dt>
 <dd><p>List. Specify additional output data to include in the model response.</p></dd>
 
@@ -179,6 +200,10 @@ oai_list_input_items() - List input items for a model response.
 
 <dt id="arg-max-output-tokens">max_output_tokens<a class="anchor" aria-label="anchor" href="#arg-max-output-tokens"></a></dt>
 <dd><p>Integer. An upper bound for the number of tokens that can be generated for a response, including visible output tokens and reasoning tokens.</p></dd>
+
+
+<dt id="arg-max-tool-calls">max_tool_calls<a class="anchor" aria-label="anchor" href="#arg-max-tool-calls"></a></dt>
+<dd><p>Integer. The maximum number of total calls to built-in tools that can be processed in a response.</p></dd>
 
 
 <dt id="arg-metadata">metadata<a class="anchor" aria-label="anchor" href="#arg-metadata"></a></dt>
@@ -193,8 +218,20 @@ oai_list_input_items() - List input items for a model response.
 <dd><p>Character. The unique ID of the previous response to the model. Use this to create multi-turn conversations.</p></dd>
 
 
+<dt id="arg-prompt">prompt<a class="anchor" aria-label="anchor" href="#arg-prompt"></a></dt>
+<dd><p>List. Reference to a prompt template and its variables.</p></dd>
+
+
+<dt id="arg-prompt-cache-key">prompt_cache_key<a class="anchor" aria-label="anchor" href="#arg-prompt-cache-key"></a></dt>
+<dd><p>Character. Used by OpenAI to cache responses for similar requests to optimize your cache hit rates. Replaces the <code>user</code> field.</p></dd>
+
+
 <dt id="arg-reasoning">reasoning<a class="anchor" aria-label="anchor" href="#arg-reasoning"></a></dt>
 <dd><p>List. Configuration options for reasoning models.</p></dd>
+
+
+<dt id="arg-safety-identifier">safety_identifier<a class="anchor" aria-label="anchor" href="#arg-safety-identifier"></a></dt>
+<dd><p>Character. A stable identifier used to help detect users of your application that may be violating OpenAI's usage policies.</p></dd>
 
 
 <dt id="arg-service-tier">service_tier<a class="anchor" aria-label="anchor" href="#arg-service-tier"></a></dt>
@@ -207,6 +244,10 @@ oai_list_input_items() - List input items for a model response.
 
 <dt id="arg-stream">stream<a class="anchor" aria-label="anchor" href="#arg-stream"></a></dt>
 <dd><p>Logical. If set to <code>TRUE</code>, the function will return a <code>ModelResponseStream</code> object.</p></dd>
+
+
+<dt id="arg-stream-options">stream_options<a class="anchor" aria-label="anchor" href="#arg-stream-options"></a></dt>
+<dd><p>List. Options for streaming responses. Only set this when you set <code>stream = TRUE</code>. It can include <code>include_obfuscation</code> to enable stream obfuscation.</p></dd>
 
 
 <dt id="arg-temperature">temperature<a class="anchor" aria-label="anchor" href="#arg-temperature"></a></dt>
@@ -225,6 +266,10 @@ oai_list_input_items() - List input items for a model response.
 <dd><p>List. An array of tools the model may call while generating a response.</p></dd>
 
 
+<dt id="arg-top-logprobs">top_logprobs<a class="anchor" aria-label="anchor" href="#arg-top-logprobs"></a></dt>
+<dd><p>Integer. An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability.</p></dd>
+
+
 <dt id="arg-top-p">top_p<a class="anchor" aria-label="anchor" href="#arg-top-p"></a></dt>
 <dd><p>Numeric. An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass.</p></dd>
 
@@ -235,6 +280,10 @@ oai_list_input_items() - List input items for a model response.
 
 <dt id="arg-user">user<a class="anchor" aria-label="anchor" href="#arg-user"></a></dt>
 <dd><p>Character. A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.</p></dd>
+
+
+<dt id="arg-verbosity">verbosity<a class="anchor" aria-label="anchor" href="#arg-verbosity"></a></dt>
+<dd><p>Character. Constrains the verbosity of the model's response. Lower values will result in more concise responses, while higher values will result in more verbose responses. Currently supported values are "low", "medium", and "high".</p></dd>
 
 
 <dt id="arg--classify-response">.classify_response<a class="anchor" aria-label="anchor" href="#arg--classify-response"></a></dt>
@@ -251,6 +300,10 @@ oai_list_input_items() - List input items for a model response.
 
 <dt id="arg-response-id">response_id<a class="anchor" aria-label="anchor" href="#arg-response-id"></a></dt>
 <dd><p>Character. The ID of the response to retrieve input items for.</p></dd>
+
+
+<dt id="arg-include-obfuscation">include_obfuscation<a class="anchor" aria-label="anchor" href="#arg-include-obfuscation"></a></dt>
+<dd><p>Logical. Whether to include obfuscation in streaming responses.</p></dd>
 
 
 <dt id="arg-after">after<a class="anchor" aria-label="anchor" href="#arg-after"></a></dt>
