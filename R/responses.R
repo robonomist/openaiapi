@@ -572,17 +572,16 @@ ModelResponseStream <- R6Class(
                 onFulfilled = ~ {
                   stream(on_event, on_output_text, on_output_text_delta, env)
                 },
-                onRejected = ~ {
-                  cli_abort("Failed while submitting tool outputs: {.x$message}",
-                            parent = .x)
+                onRejected = function(e) {
+                  cli_abort("Failed while submitting tool outputs: {e$message}", parent = e)
                 }
               )
             } else {
               self
             }
           },
-          onRejected = ~ {
-            cli_abort("Failed while reading the stream: {.x$message}", parent = .x)
+          onRejected = function(e) {
+            cli_abort("Failed while reading the stream: {e$message}", parent = e)
           }
         )
       } else {

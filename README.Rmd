@@ -55,13 +55,13 @@ oai_create_chat_completion(
 
 ## Todo:
 
-- [ ] Implement Responses API
+- [*] Implement Responses API
+- [x] Implement streaming
 - [ ] Implement Administration API
 - [ ] Implement Images API
 - [ ] Implement Moderations API
 - [ ] Implement Realtime API
 - [ ] Add tests
-- [x] Implement streaming
 
 
 

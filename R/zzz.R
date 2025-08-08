@@ -11,7 +11,7 @@ set_defaults <- function() {
     openaiapi.assistants_version = "v2",
     openaiapi.run_timeout = 300,
     openaiapi.run_poll_interval = 1,
-    openaiapi.model = "gpt-5"
+    openaiapi.model = "gpt-4o"
   )
   to_set <- setdiff(names(openaiapi_defaults), names(op))
   if (length(to_set)) {

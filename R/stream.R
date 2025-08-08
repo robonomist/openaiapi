@@ -120,7 +120,7 @@ StreamReader <- R6Class(
       resp_stream_is_complete(con)
     },
     fd = function() {
-      multi_fdset(con$body)
+      con$body$get_fdset()
     },
     async = FALSE
   ),
