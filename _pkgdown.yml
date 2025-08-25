@@ -1,6 +1,8 @@
 url: https://robonomist.github.io/openaiapi/
 template:
   bootstrap: 5
+  params:
+    google_site_verification: "yED3KJVALPida-noCwbH2n65Y7G4TtaS43wtieI9K-I"
 reference:
 - title: Setup
   contents:
