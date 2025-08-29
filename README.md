@@ -1,5 +1,5 @@
 
-# openaiapi
+# openaiapi <a href="https://robonomist.github.io/openaiapi/"><img src="man/figures/logo.png" align="right" height="120" alt="openaiapi website" /></a>
 
 openaiapi is an R package that provides a comprehensive and faithful
 interface to the OpenAI API. It closely mirrors the API’s structure
@@ -58,10 +58,10 @@ oai_create_chat_completion(
 
 ## Todo:
 
-- [ ] Implement Responses API
+- [x] Implement Responses API
+- [x] Implement streaming
 - [ ] Implement Administration API
 - [ ] Implement Images API
 - [ ] Implement Moderations API
 - [ ] Implement Realtime API
 - [ ] Add tests
-- [x] Implement streaming
