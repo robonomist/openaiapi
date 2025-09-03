@@ -170,12 +170,15 @@ oai_model_response <- function(background = NULL,
 #' @description * `oai_get_model_response()` - Retrieve a model response.
 #' @param response_id Character. The ID of the response to retrieve.
 #' @param include_obfuscation Logical. Whether to include obfuscation in streaming responses.
+#' @param starting_after integer. The sequence number of the event after which to start the stream.
 #' @return * `oai_get_model_response()` - A `ModelResponse` object.
 #' @export
 #' @rdname model_response
 oai_get_model_response <- function(response_id,
                                    include = NULL,
                                    include_obfuscation = NULL,
+                                   starting_after = NULL,
+                                   stream = FALSE,
                                    .classify_response = TRUE,
                                    .async = FALSE) {
   if (missing(response_id)) {
@@ -183,14 +186,17 @@ oai_get_model_response <- function(response_id,
   }
   query <- list(
     include = include,
-    include_obfuscation = include_obfuscation
+    include_obfuscation = include_obfuscation,
+    starting_after = starting_after,
+    stream = stream
   )
   oai_query(
     ep = c("responses", response_id),
     method = "GET",
     query = query,
     .classify_response = .classify_response,
-    .async = .async
+    .async = .async,
+    .stream_class = "ModelResponse"
   )
 }
 
@@ -298,8 +304,7 @@ ModelResponse <- R6Class(
         }
       }
       self
-    },
-    .stream = NULL
+    }
   ),
   public = list(
     #' @description Initialize a `ModelResponse` object.
@@ -384,12 +389,16 @@ ModelResponse <- R6Class(
     #' @field verbosity Character or NULL. Constrains the verbosity of the model's response.
     verbosity = NULL,
     #' @description Get a fresh copy of the model response.
-    get = function() {
-      oai_get_model_response(
+    get = function(...) {
+      args <- list(...)
+      defaults <- list(
         response_id = id,
         .classify_response = FALSE,
-        .async = .async
-      ) |>
+        .async = .async,
+        stream = inherits(self, "ModelResponseStream")
+      )
+      args <- modifyList(defaults, args)
+      do.call(oai_get_model_response, args) |>
         store_response()
     },
     #' @description Store the model response.
@@ -398,8 +407,7 @@ ModelResponse <- R6Class(
         response_id = id,
         .classify_response = FALSE,
         .async = .async
-      ) |>
-        store_response()
+      )
     },
     #' @description List input items for the model response.
     #' @param ... Additional parameters to pass to the `oai_list_items()` function.
@@ -449,8 +457,7 @@ ModelResponse <- R6Class(
     },
     #' @description Create a new model response based on the previous response.
     #' @param input Character or List. Text, image, or file inputs to the model, used to generate a response.
-    #' @param stream Logical. Use to change the streaming mode of the response.
-    respond = function(input, stream = NULL, ...) {
+    respond = function(input, ...) {
       args <- list(input = input, ...)
       defaults <- list(
         background = background,
@@ -466,7 +473,7 @@ ModelResponse <- R6Class(
         reasoning = reasoning,
         safety_identifier = safety_identifier,
         service_tier = service_tier,
-        stream = stream %||% .stream,
+        stream = inherits(self, "ModelResponseStream"),
         temperature = temperature,
         text = text,
         tool_choice = tool_choice,
@@ -642,16 +649,17 @@ ModelResponseStream <- R6Class(
     }
   ),
   private = list(
-    .stream = TRUE,
     stream_reader = NULL,
     store_response = function(resp) {
       if (is.promise(resp)) {
         resp$then(store_response) |>
           as_oai_promise()
-      } else {
+      } else if (inherits(resp, "StreamReader")) {
         stream_reader <<- resp
         .async <<- stream_reader$async %||% .async
         self
+      } else {
+        super$store_response(resp)
       }
     },
     event_handler = function(on_event, on_output_text, on_output_text_delta) {

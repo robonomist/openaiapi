@@ -126,9 +126,16 @@ Initialize a \code{ModelResponse} object.
 \subsection{Method \code{get()}}{
 Get a fresh copy of the model response.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$get()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$get(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Additional parameters to pass to the model.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ModelResponse-delete"></a>}}
@@ -180,15 +187,13 @@ Do all tool calls in the model response and return the results.
 \subsection{Method \code{respond()}}{
 Create a new model response based on the previous response.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$respond(input, stream = NULL, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$respond(input, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{input}}{Character or List. Text, image, or file inputs to the model, used to generate a response.}
-
-\item{\code{stream}}{Logical. Use to change the streaming mode of the response.}
 
 \item{\code{...}}{Additional parameters to pass to the model.}
 }

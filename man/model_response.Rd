@@ -72,6 +72,8 @@ oai_get_model_response(
   response_id,
   include = NULL,
   include_obfuscation = NULL,
+  starting_after = NULL,
+  stream = FALSE,
   .classify_response = TRUE,
   .async = FALSE
 )
@@ -157,6 +159,8 @@ oai_list_input_items(
 \item{response_id}{Character. The ID of the response to retrieve input items for.}
 
 \item{include_obfuscation}{Logical. Whether to include obfuscation in streaming responses.}
+
+\item{starting_after}{integer. The sequence number of the event after which to start the stream.}
 
 \item{after}{Character. Optional. A cursor for use in pagination. \code{after} is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include \code{after = "obj_foo"} in order to fetch the next page of the list.}
 
