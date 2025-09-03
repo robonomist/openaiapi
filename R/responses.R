@@ -181,14 +181,14 @@ oai_get_model_response <- function(response_id,
   if (missing(response_id)) {
     stop("The 'response_id' parameter is required.")
   }
-  body <- list(
+  query <- list(
     include = include,
     include_obfuscation = include_obfuscation
   )
   oai_query(
     ep = c("responses", response_id),
     method = "GET",
-    body = body,
+    query = query,
     .classify_response = .classify_response,
     .async = .async
   )
@@ -227,7 +227,7 @@ oai_list_input_items <- function(response_id,
   if (missing(response_id)) {
     stop("The 'response_id' parameter is required.")
   }
-  body <- list(
+  query <- list(
     after = after,
     before = before,
     include = include,
@@ -237,7 +237,7 @@ oai_list_input_items <- function(response_id,
   oai_query_list(
     ep = c("responses", response_id, "input_items"),
     method = "GET",
-    body = body,
+    query = query,
     .classify_response = .classify_response,
     .async = .async
   )
