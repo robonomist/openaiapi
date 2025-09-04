@@ -223,6 +223,7 @@ classify_response <- function(x) {
     x$object,
     "list" = oai_list(x),
     "response" = ModelResponse$new(resp = x),
+    "conversation" = Conversation$new(resp = x),
     "chat.completion" = ChatCompletion$new(resp = x),
     "assistant" = Assistant$new(resp = x),
     "thread" = Thread$new(resp = x),

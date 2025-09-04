@@ -72,6 +72,7 @@ oai_create_model_response <- function(input = NULL,
   } else if (inherits(input, "oai_message")) {
     input <- list(input)
   }
+  # Validate tools
   if (!is.null(tools)) {
     if (inherits(tools, "oai_function_tool")) {
       tools <- list(tools)
@@ -85,6 +86,11 @@ oai_create_model_response <- function(input = NULL,
       tool
     })
   }
+
+  if (inherits(conversation, "Conversation")) {
+    conversation <- conversation$id
+  }
+
   # Create request body
   body <- list(
     background = background,
