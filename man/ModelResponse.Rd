@@ -14,6 +14,8 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 \describe{
 \item{\code{background}}{Logical. Whether to run the model response in the background.}
 
+\item{\code{conversation}}{Character or list. The conversation that this response belongs to.}
+
 \item{\code{id}}{Character. Unique identifier for this Response.}
 
 \item{\code{error}}{List or NULL. An error object returned when the model fails to generate a Response.}
@@ -95,13 +97,7 @@ The \code{ModelResponse} class represents a model response object in the OpenAI 
 \subsection{Method \code{new()}}{
 Initialize a \code{ModelResponse} object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$new(
-  response_id = NULL,
-  input = NULL,
-  ...,
-  resp = NULL,
-  .async = TRUE
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ModelResponse$new(response_id = NULL, input = NULL, ..., resp = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -114,8 +110,6 @@ Initialize a \code{ModelResponse} object.
 \item{\code{...}}{Additional parameters to pass to the model.}
 
 \item{\code{resp}}{List. The response object returned by the OpenAI API.}
-
-\item{\code{.async}}{Logical. Whether to retrieve the response asynchronously.}
 }
 \if{html}{\out{</div>}}
 }

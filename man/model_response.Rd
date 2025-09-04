@@ -12,6 +12,7 @@ oai_create_model_response(
   input = NULL,
   model = getOption("openaiapi.model"),
   background = NULL,
+  conversation = NULL,
   include = NULL,
   instructions = NULL,
   max_output_tokens = NULL,
@@ -101,6 +102,8 @@ oai_list_input_items(
 \item{model}{Character. Model ID used to generate the response, like "gpt-4o" or "o1".}
 
 \item{background}{Logical. Whether to run the model response in the background. Defaults to \code{FALSE}.}
+
+\item{conversation}{Character or list. The conversation that this response belongs to.}
 
 \item{include}{List. Specify additional output data to include in the model response.}
 

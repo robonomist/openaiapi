@@ -4,6 +4,7 @@
 #' @param input Character or List. Text, image, or file inputs to the model, used to generate a response.
 #' @param model Character. Model ID used to generate the response, like "gpt-4o" or "o1".
 #' @param background Logical. Whether to run the model response in the background. Defaults to `FALSE`.
+#' @param conversation Character or list. The conversation that this response belongs to.
 #' @param include List. Specify additional output data to include in the model response.
 #' @param instructions Character. Inserts a system (or developer) message as the first item in the model's context.
 #' @param max_output_tokens Integer. An upper bound for the number of tokens that can be generated for a response, including visible output tokens and reasoning tokens.
@@ -35,6 +36,7 @@
 oai_create_model_response <- function(input = NULL,
                                       model = getOption("openaiapi.model"),
                                       background = NULL,
+                                      conversation = NULL,
                                       include = NULL,
                                       instructions = NULL,
                                       max_output_tokens = NULL,
@@ -86,6 +88,7 @@ oai_create_model_response <- function(input = NULL,
   # Create request body
   body <- list(
     background = background,
+    conversation = conversation,
     include = include,
     input = input,
     instructions = instructions,
@@ -250,12 +253,12 @@ oai_list_input_items <- function(response_id,
 }
 
 #' ModelResponse R6 Class
+#'
 #' @description The `ModelResponse` class represents a model response object in the OpenAI API.
 #' @param response_id Character. Unique identifier for this Response.
 #' @param input Character or List. Text, image, or file inputs to the model, used to generate a response.
 #' @param ... Additional parameters to pass to the model.
 #' @param resp List. The response object returned by the OpenAI API.
-#' @param .async Logical. Whether to retrieve the response asynchronously.
 #' @param env Environment. The environment in which to evaluate the tool calls.
 #' @export
 ModelResponse <- R6Class(
@@ -264,7 +267,7 @@ ModelResponse <- R6Class(
   portable = FALSE,
   private = list(
     schema = list(
-      as_is = c("background", "error", "id", "incomplete_details",
+      as_is = c("background", "conversation", "error", "id", "incomplete_details",
                 "instructions", "max_output_tokens", "max_tool_calls",
                 "metadata", "model", "output", "parallel_tool_calls",
                 "previous_response_id", "prompt", "prompt_cache_key",
@@ -311,18 +314,18 @@ ModelResponse <- R6Class(
     initialize = function(response_id = NULL,
                           input = NULL,
                           ...,
-                          resp = NULL,
-                          .async = TRUE) {
+                          resp = NULL) {
       if (!is.null(resp)) {
         store_response(resp)
       } else if (!is.null(response_id)) {
         id <<- response_id
-        .async <<- .async
-        self$get()
+        self$get(...)
       } else if (!is.null(input)) {
-        args <- list(input = input, ...)
-        args$.classify_response <- FALSE
-        do.call(oai_create_model_response, args) |>
+        oai_create_model_response(
+          input = input,
+          ...,
+          .classify_response = FALSE
+        ) |>
           store_response()
       } else {
         stop("Either 'response_id' or 'input' must be provided.")
@@ -330,6 +333,8 @@ ModelResponse <- R6Class(
     },
     #' @field background Logical. Whether to run the model response in the background.
     background = NULL,
+    #' @field conversation Character or list. The conversation that this response belongs to.
+    conversation = NULL,
     #' @field id Character. Unique identifier for this Response.
     created_at = NULL,
     #' @field error List or NULL. An error object returned when the model fails to generate a Response.

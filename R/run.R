@@ -391,6 +391,7 @@ Run <- R6Class(
       oai_list_run_steps(
         thread_id = self$thread_id,
         run_id = self$id,
+        .async = .async,
         ...
       )
     },
