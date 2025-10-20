@@ -10,16 +10,19 @@ NULL
 #'
 #' @param vector_store_id Character. The ID of the vector store.
 #' @param file_id Character. The ID of the file to be added to the vector store.
+#' @param attributes Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.
 #' @param chunking_strategy List. Optional. Strategy for chunking data.
 #' @rdname vector_store_file_api
 #' @export
 oai_create_vector_store_file <- function(vector_store_id,
                                          file_id,
+                                         attributes = NULL,
                                          chunking_strategy = NULL,
                                          .classify_response = TRUE,
                                          .async = FALSE) {
   body <- list(
     file_id = file_id,
+    attributes = attributes,
     chunking_strategy = chunking_strategy
   )
   oai_query(
@@ -82,7 +85,6 @@ oai_retrieve_vector_store_file <- function(vector_store_id,
 
 #' @description * `oai_update_vector_store_file()`: Update attributes of a vector store file.
 #'
-#' @param attributes Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.
 #' @rdname vector_store_file_api
 #' @export
 oai_update_vector_store_file <- function(vector_store_id,
@@ -122,12 +124,13 @@ oai_delete_vector_store_file <- function(vector_store_id,
 #' VectorStoreFile R6 class
 #'
 #' @field id Character. The ID of the vector store file.
+#' @field attributes Named list. A list of attributes associated with the vector store file.
 #' @field created_at POSIXct. The time the vector store file was created.
+#' @field status Character. The status of the vector store file. One of "in_progress", "completed", "failed", "cancelled".
+#' @field chunking_strategy List. The strategy used to chunk the data.
 #' @field usage_bytes Integer. The number of bytes used by the vector store file.
 #' @field vector_store_id Character. The ID of the vector store that the file belongs to.
-#' @field status Character. The status of the vector store file. One of "in_progress", "completed", "failed", "cancelled".
 #' @field last_error Character. The last error that occurred while processing the file.
-#' @field chunking_strategy List. The strategy used to chunk the data.
 #' @param vector_store_file_id Character. The ID of the vector store file.
 #' @param vector_store_id Character. The ID of the vector store that the file belongs to.
 #' @param file_id Character. The ID of the file that the vector store file is associated with.
@@ -141,7 +144,8 @@ VectorStoreFile <- R6Class(
   inherit = Utils,
   private = list(
     schema = list(
-      as_is = c("id", "usage_bytes", "vector_store_id", "status", "last_error", "chunking_strategy"),
+      as_is = c("id", "attributes", "chunking_strategy",
+                "last_error", "status", "usage_bytes", "vector_store_id"),
       as_time = c("created_at")
     )
   ),
@@ -195,12 +199,13 @@ VectorStoreFile <- R6Class(
       }
     },
     id = NULL,
+    attributes = NULL,
+    chunking_strategy = NULL,
     created_at = NULL,
+    last_error = NULL,
+    status = NULL,
     usage_bytes = NULL,
     vector_store_id = NULL,
-    status = NULL,
-    last_error = NULL,
-    chunking_strategy = NULL,
     #' @description Retrieve the vector store file from the OpenAI API.
     retrieve = function() {
       oai_retrieve_vector_store_file(

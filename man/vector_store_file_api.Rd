@@ -12,6 +12,7 @@
 oai_create_vector_store_file(
   vector_store_id,
   file_id,
+  attributes = NULL,
   chunking_strategy = NULL,
   .classify_response = TRUE,
   .async = FALSE
@@ -50,6 +51,8 @@ oai_delete_vector_store_file(vector_store_id, file_id, .async = FALSE)
 
 \item{file_id}{Character. The ID of the file to be added to the vector store.}
 
+\item{attributes}{Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.}
+
 \item{chunking_strategy}{List. Optional. Strategy for chunking data.}
 
 \item{.classify_response}{Logical. If \code{TRUE} (default), the response is classified as an R6 object. If \code{FALSE}, the response is returned as a list.}
@@ -65,8 +68,6 @@ oai_delete_vector_store_file(vector_store_id, file_id, .async = FALSE)
 \item{before}{Character. Optional. A cursor for use in pagination. before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include \code{before = "obj_foo"} in order to fetch the previous page of the list.}
 
 \item{filter}{Character. Optional. Filter by file status. One of "in_progress", "completed", "failed", "cancelled".}
-
-\item{attributes}{Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.}
 }
 \value{
 VectorStoreFile R6 object.

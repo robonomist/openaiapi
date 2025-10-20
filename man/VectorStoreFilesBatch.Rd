@@ -16,6 +16,8 @@ VectorStoreFilesBatch R6 class
 \describe{
 \item{\code{id}}{Character. The ID of the file batch.}
 
+\item{\code{attributes}}{List. The attributes of the file batch.}
+
 \item{\code{created_at}}{POSIXct. The date and time the file batch was created.}
 
 \item{\code{vector_store_id}}{Character. The ID of the vector store where the file batch was created.}
