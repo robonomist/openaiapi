@@ -16,6 +16,13 @@ reference:
   - oai_list_input_items
   - ModelResponse
   - ModelResponseStream
+- title: Conversations
+  contents:
+  - oai_create_conversation
+  - oai_get_conversation
+  - oai_delete_conversation
+  - oai_list_conversation_items
+  - Conversation
 - title: Models
   contents:
   - oai_list_models
