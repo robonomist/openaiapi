@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.20</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,10 @@
     <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
     <p></p><div class="r6-fields"><dl><dt><code>background</code></dt>
 <dd><p>Logical. Whether to run the model response in the background.</p></dd>
+
+
+<dt><code>conversation</code></dt>
+<dd><p>Character or list. The conversation that this response belongs to.</p></dd>
 
 
 <dt><code>id</code></dt>
@@ -189,13 +193,7 @@
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Initialize a <code>ModelResponse</code> object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/ModelResponse.html">ModelResponse</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
-<span>  response_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  input <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">...</span>,</span>
-<span>  resp <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .async <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/ModelResponse.html">ModelResponse</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>response_id <span class="op">=</span> <span class="cn">NULL</span>, input <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span>, resp <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -214,10 +212,6 @@
 
 <dt><code>resp</code></dt>
 <dd><p>List. The response object returned by the OpenAI API.</p></dd>
-
-
-<dt><code>.async</code></dt>
-<dd><p>Logical. Whether to retrieve the response asynchronously.</p></dd>
 
 
 </dl><p></p></div>

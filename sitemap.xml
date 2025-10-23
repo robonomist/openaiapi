@@ -10,6 +10,7 @@
 <url><loc>https://robonomist.github.io/openaiapi/reference/Assistant.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/ChatCompletion.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/ChatCompletionStream.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/reference/Conversation.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/Embedding.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/File.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/FineTuningJob.html</loc></url>
@@ -27,6 +28,7 @@
 <url><loc>https://robonomist.github.io/openaiapi/reference/chat_completion_api.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/common_parameters.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/compact.html</loc></url>
+<url><loc>https://robonomist.github.io/openaiapi/reference/conversations.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/do_call_sandbox.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/embeddings_api.html</loc></url>
 <url><loc>https://robonomist.github.io/openaiapi/reference/files_api.html</loc></url>

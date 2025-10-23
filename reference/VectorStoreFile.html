@@ -9,7 +9,7 @@ VectorStoreFile R6 class"><meta property="og:image" content="https://robonomist.
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.20</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,8 +54,20 @@ VectorStoreFile R6 class"><meta property="og:image" content="https://robonomist.
 <dd><p>Character. The ID of the vector store file.</p></dd>
 
 
+<dt><code>attributes</code></dt>
+<dd><p>Named list. A list of attributes associated with the vector store file.</p></dd>
+
+
 <dt><code>created_at</code></dt>
 <dd><p>POSIXct. The time the vector store file was created.</p></dd>
+
+
+<dt><code>status</code></dt>
+<dd><p>Character. The status of the vector store file. One of "in_progress", "completed", "failed", "cancelled".</p></dd>
+
+
+<dt><code>chunking_strategy</code></dt>
+<dd><p>List. The strategy used to chunk the data.</p></dd>
 
 
 <dt><code>usage_bytes</code></dt>
@@ -66,16 +78,8 @@ VectorStoreFile R6 class"><meta property="og:image" content="https://robonomist.
 <dd><p>Character. The ID of the vector store that the file belongs to.</p></dd>
 
 
-<dt><code>status</code></dt>
-<dd><p>Character. The status of the vector store file. One of "in_progress", "completed", "failed", "cancelled".</p></dd>
-
-
 <dt><code>last_error</code></dt>
 <dd><p>Character. The last error that occurred while processing the file.</p></dd>
-
-
-<dt><code>chunking_strategy</code></dt>
-<dd><p>List. The strategy used to chunk the data.</p></dd>
 
 
 </dl><p></p></div>

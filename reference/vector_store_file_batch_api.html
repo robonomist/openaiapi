@@ -39,7 +39,7 @@ oai_list_vector_store_files_in_a_batch(): List all files in a file batch.
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.20</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,6 +81,7 @@ oai_list_vector_store_files_in_a_batch(): List all files in a file batch.
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">oai_create_vector_store_file_batch</span><span class="op">(</span></span>
 <span>  <span class="va">vector_store_id</span>,</span>
 <span>  <span class="va">file_ids</span>,</span>
+<span>  attributes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chunking_strategy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .classify_response <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .async <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -118,6 +119,10 @@ oai_list_vector_store_files_in_a_batch(): List all files in a file batch.
 
 <dt id="arg-file-ids">file_ids<a class="anchor" aria-label="anchor" href="#arg-file-ids"></a></dt>
 <dd><p>Character. A vector of file IDs to include in the batch.</p></dd>
+
+
+<dt id="arg-attributes">attributes<a class="anchor" aria-label="anchor" href="#arg-attributes"></a></dt>
+<dd><p>Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.</p></dd>
 
 
 <dt id="arg-chunking-strategy">chunking_strategy<a class="anchor" aria-label="anchor" href="#arg-chunking-strategy"></a></dt>

@@ -47,7 +47,7 @@ oai_list_input_items() - List input items for a model response.
 
     <a class="navbar-brand me-2" href="../index.html">openaiapi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.20</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,6 +91,7 @@ oai_list_input_items() - List input items for a model response.
 <span>  input <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"openaiapi.model"</span><span class="op">)</span>,</span>
 <span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  conversation <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  include <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  instructions <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_output_tokens <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -189,6 +190,10 @@ oai_list_input_items() - List input items for a model response.
 
 <dt id="arg-background">background<a class="anchor" aria-label="anchor" href="#arg-background"></a></dt>
 <dd><p>Logical. Whether to run the model response in the background. Defaults to <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-conversation">conversation<a class="anchor" aria-label="anchor" href="#arg-conversation"></a></dt>
+<dd><p>Character or list. The conversation that this response belongs to.</p></dd>
 
 
 <dt id="arg-include">include<a class="anchor" aria-label="anchor" href="#arg-include"></a></dt>
