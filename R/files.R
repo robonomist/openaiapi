@@ -28,9 +28,12 @@ oai_upload_file <- function(path,
                             .async = FALSE) {
   body <- list(
     file = form_file(path, name = name),
-    expires_after = expires_after,
     purpose = match.arg(purpose)
   )
+  if (!is.null(expires_after)) {
+    body$`expires_after[anchor]` <- expires_after$anchor
+    body$`expires_after[seconds]` <- as.character(expires_after$seconds)
+  }
   oai_query(
     ep = "files",
     method = "POST",
