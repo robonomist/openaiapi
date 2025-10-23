@@ -12,6 +12,7 @@
 oai_upload_file(
   path,
   purpose = c("assistants", "batch", "fine-tune", "vision", "user_data", "evals"),
+  expires_after = NULL,
   name = NULL,
   .classify_response = TRUE,
   .async = FALSE
@@ -39,6 +40,8 @@ oai_retrieve_file_content(file_id, path, .async = FALSE)
 \item \code{oai_upload_file()}: The purpose of the file,
 \item \code{oai_list_files()}: Optional. The purpose of the files to list.
 }}
+
+\item{expires_after}{List. The expiration policy for the file.}
 
 \item{name}{Character. Optional. The name of the file. If not provided, the file name will be used.}
 

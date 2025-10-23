@@ -6,6 +6,7 @@
 #' @param purpose Character.
 #' * `oai_upload_file()`: The purpose of the file,
 #' * `oai_list_files()`: Optional. The purpose of the files to list.
+#' @param expires_after List. The expiration policy for the file.
 #' @param name Character. Optional. The name of the file. If not provided, the file name will be used.
 #' @param .classify_response Logical. Whether to classify the response as an R6 object.
 #' @return A File R6 object
@@ -21,11 +22,13 @@ NULL
 oai_upload_file <- function(path,
                             purpose = c("assistants", "batch", "fine-tune",
                                         "vision", "user_data", "evals"),
+                            expires_after = NULL,
                             name = NULL,
                             .classify_response = TRUE,
                             .async = FALSE) {
   body <- list(
     file = form_file(path, name = name),
+    expires_after = expires_after,
     purpose = match.arg(purpose)
   )
   oai_query(
@@ -122,7 +125,7 @@ File <- R6Class(
   private = list(
     schema = list(
       as_is = c("id", "bytes", "filename", "purpose"),
-      as_time = "created_at"
+      as_time = c("created_at", "expires_at")
     )
   ),
 
@@ -153,6 +156,8 @@ File <- R6Class(
     bytes = NULL,
     #' @field created_at The creation time of the file.
     created_at = NULL,
+    #' @field expires_at The expiration time of the file.
+    expires_at = NULL,
     #' @field filename The name of the file.
     filename = NULL,
     #' @field purpose The purpose of the file.

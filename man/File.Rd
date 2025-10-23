@@ -23,6 +23,8 @@ This class provides methods to interact with files in the OpenAI API.
 
 \item{\code{created_at}}{The creation time of the file.}
 
+\item{\code{expires_at}}{The expiration time of the file.}
+
 \item{\code{filename}}{The name of the file.}
 
 \item{\code{purpose}}{The purpose of the file.
