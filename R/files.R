@@ -4,7 +4,7 @@
 #'
 #' @param path Character. The path to the file to upload.
 #' @param purpose Character.
-#' * `oai_upload_file()`: The purpose of the file (e.g., "assistants", "vision", "batch", "fine-tune").
+#' * `oai_upload_file()`: The purpose of the file,
 #' * `oai_list_files()`: Optional. The purpose of the files to list.
 #' @param name Character. Optional. The name of the file. If not provided, the file name will be used.
 #' @param .classify_response Logical. Whether to classify the response as an R6 object.
@@ -19,7 +19,8 @@ NULL
 #' @export
 #' @rdname files_api
 oai_upload_file <- function(path,
-                            purpose = c("assistants", "vision", "batch", "fine-tune"),
+                            purpose = c("assistants", "batch", "fine-tune",
+                                        "vision", "user_data", "evals"),
                             name = NULL,
                             .classify_response = TRUE,
                             .async = FALSE) {
@@ -39,11 +40,9 @@ oai_upload_file <- function(path,
 }
 
 #' @description * `oai_list_files()` List all files uploaded to OpenAI.
-#' @param purpose Character. Optional. Only list files with the specified purpose.
 #' @param limit Integer. Optional. The maximum number of files to list. Defaults to 10,000.
 #' @param order Character. Optional. The order to list files. Can be "asc" or "desc".
 #' @param after Character. Optional. The ID of the file to start the list from.
-#' @return File R6 object
 #' @export
 #' @rdname files_api
 oai_list_files <- function(purpose = NULL,
@@ -67,7 +66,6 @@ oai_list_files <- function(purpose = NULL,
 #' @description * `oai_retrieve_file()` Retrieve a specific file from OpenAI.
 #'
 #' @param file_id Character. The ID of the file to delete.
-#' @return  File R6 object
 #' @export
 #' @rdname files_api
 oai_retrieve_file <- function(file_id,

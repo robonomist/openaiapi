@@ -11,7 +11,7 @@
 \usage{
 oai_upload_file(
   path,
-  purpose = c("assistants", "vision", "batch", "fine-tune"),
+  purpose = c("assistants", "batch", "fine-tune", "vision", "user_data", "evals"),
   name = NULL,
   .classify_response = TRUE,
   .async = FALSE
@@ -34,7 +34,11 @@ oai_retrieve_file_content(file_id, path, .async = FALSE)
 \arguments{
 \item{path}{Character. The path to the file to upload.}
 
-\item{purpose}{Character. Optional. Only list files with the specified purpose.}
+\item{purpose}{Character.
+\itemize{
+\item \code{oai_upload_file()}: The purpose of the file,
+\item \code{oai_list_files()}: Optional. The purpose of the files to list.
+}}
 
 \item{name}{Character. Optional. The name of the file. If not provided, the file name will be used.}
 
@@ -52,10 +56,6 @@ oai_retrieve_file_content(file_id, path, .async = FALSE)
 }
 \value{
 A File R6 object
-
-File R6 object
-
-File R6 object
 
 Deletion status
 
