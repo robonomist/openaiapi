@@ -178,7 +178,8 @@ VectorStore <- R6Class(
   inherit = Utils,
   private = list(
     schema = list(
-      as_is = c("id", "name", "usage_bytes", "file_counts", "status", "metadata"),
+      as_is = c("expires_after", "file_counts", "id", "metadata", "name",
+                "status", "usage_bytes"),
       as_time = c("created_at", "expires_at", "last_active_at")
     )
   ),
