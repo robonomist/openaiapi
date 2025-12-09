@@ -1,0 +1,121 @@
+# Example with shiny
+
+## Example with `shinychat`
+
+``` r
+library(shiny)
+library(bslib)
+library(shinychat)
+library(openaiapi)
+
+ui <- page_fluid(
+  shinychat::chat_ui("chat")
+)
+server <- function(input, output, session) {
+  chat <- oai_create_model_response(
+    instructions = "You're a trickster who answers in riddles.",
+    stream = TRUE,
+    .async = TRUE,
+    .perform_query = FALSE
+  )
+  observeEvent(input$chat_user_input, {
+    chat$
+      respond(input = input$chat_user_input)$
+      async_generator()$
+      then(function(stream) {
+        shinychat::chat_append("chat", stream)
+      })
+  })
+}
+
+shinyApp(ui, server)
+```
+
+## Low level example
+
+This is an example of a Shiny app that uses `openaiapi` to stream a
+completion asynchonously. The completion is then rendered as markdown.
+
+To the stream is non-blocking, the app displays a timer that updates
+every 100 milliseconds while the completion is being generated.
+
+``` r
+library(openaiapi)
+library(shiny)
+library(bslib)
+
+my_prompt <- "This is a test. Can you produce a long text that takes at least 10 seconds to generate and uses markdown notation?"
+
+ui <- fixedPage(
+  input_task_button("prompt", "Prompt"),
+  uiOutput("timer"),
+  uiOutput("answer")
+)
+
+server <- function(input, output, session) {
+
+  content <- reactiveVal()
+  start_time <- NULL
+
+  task <- ExtendedTask$new(function(prompt) {
+    oai_create_chat_completion(
+      prompt,
+      stream = TRUE,
+      .async = TRUE
+    )$stream_async(
+      callback = function(choices) {
+        content(choices[[1]]$message$content)
+      }
+    )
+  }) |>
+    bind_task_button("prompt")
+
+  observeEvent(input$prompt, {
+    start_time <<- Sys.time()
+    task$invoke(my_prompt)
+  })
+
+  output$timer <- renderUI({
+      if (task$status() == "running") {
+        invalidateLater(100)
+      } else if (task$status() %in% c("initial", "error")) {
+        req(FALSE)
+      }
+      time <-
+        as.numeric(difftime(Sys.time(), start_time, units = "secs")) |>
+        format(digits = 1, nsmall = 2)
+      p(paste("Time elapsed:", time,"seconds"))
+  })
+
+  output$answer <- renderUI({
+    tryCatch(
+      markdown(content()),
+      error = function(e) {
+        req(FALSE, cancelOutput = TRUE)
+      }
+    )
+  })
+}
+shinyApp(ui, server)
+```
+
+If using `bslib`, the default busy indicator when recalculating the
+output is a opacity fade, which does not work well with text streaming.
+You can turn it off with `busyIndicatorOptions(fade_opacity = 1)`.
+
+``` r
+ui <- page_fixed(
+  busyIndicatorOptions(fade_opacity = 1),
+  input_task_button("prompt", "Prompt"),
+  uiOutput("timer"),
+  uiOutput("answer")
+)
+shinyApp(ui, server)
+```
+
+### TODO:
+
+Currently there seems to be no way to open the stream concurrently with
+`httr2::req_perform_connection(req, blocking = FALSE)`. Therefore, at
+the beginning of the stream, there is a 0.5-1 second delay during which
+R is blocked.

@@ -1,0 +1,277 @@
+# openaiapi
+
+openaiapi is an R package that provides a comprehensive and faithful
+interface to the OpenAI API. It closely mirrors the API’s structure
+while offering R6 classes for convenient handling of API objects.
+
+## Installation
+
+You can install the development version of openaiapi from GitHub with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("robonomist/openaiapi")
+```
+
+## Usage
+
+To use the OpenAI API, you need to have an API key. You can get one by
+signing up at [OpenAI](https://platform.openai.com/).
+
+``` r
+library(openaiapi)
+oai_set_api_key("your-api-key")
+```
+
+Alternatively, you can set the `OPENAI_API_KEY` environment variable,
+which is read at package load time.
+
+### Chat completions
+
+The chat completions API allows you to generate chat completions. You
+can use the `oai_create_chat_completion` function to generate
+completions:
+
+``` r
+r <- oai_create_chat_completion(
+  "Hello, how are you?",
+  model = "gpt-4o"
+)
+r # A ChatCompletion R6 object
+r$content_text()
+
+oai_create_chat_completion(
+  messages = list(
+    oai_message("Hello, how are you?", role = "user"),
+    oai_message("I'm fine, thank you!", role = "assistant"),
+    oai_message("Can you tell me a joke?", role = "user")
+  ),
+  model = "gpt-4o"
+)$content_text()
+```
+
+## Vignettes
+
+- Use function tools with the Assistants API
+  [`vignette("assistants")`](https://robonomist.github.io/openaiapi/articles/assistants.md)
+- Stream asynchronously in Shiny
+  [`vignette("shiny")`](https://robonomist.github.io/openaiapi/articles/shiny.md)
+
+## Todo:
+
+Implement Responses API
+
+Implement streaming
+
+Implement Administration API
+
+Implement Images API
+
+Implement Moderations API
+
+Implement Realtime API
+
+Add tests
+
+# Package index
+
+## Setup
+
+- [`oai_set_api_key()`](https://robonomist.github.io/openaiapi/reference/oai_set_api_key.md)
+  : Set OpenAI API key
+- [`make_sandbox_env()`](https://robonomist.github.io/openaiapi/reference/make_sandbox_env.md)
+  : Create a sandbox environment for function tools
+
+## Responses
+
+- [`oai_create_model_response()`](https://robonomist.github.io/openaiapi/reference/model_response.md)
+  [`oai_model_response()`](https://robonomist.github.io/openaiapi/reference/model_response.md)
+  [`oai_get_model_response()`](https://robonomist.github.io/openaiapi/reference/model_response.md)
+  [`oai_delete_model_response()`](https://robonomist.github.io/openaiapi/reference/model_response.md)
+  [`oai_list_input_items()`](https://robonomist.github.io/openaiapi/reference/model_response.md)
+  : Responses API
+- [`ModelResponse`](https://robonomist.github.io/openaiapi/reference/ModelResponse.md)
+  : ModelResponse R6 Class
+- [`ModelResponseStream`](https://robonomist.github.io/openaiapi/reference/ModelResponseStream.md)
+  : ModelResponseStream R6 Class
+
+## Conversations
+
+- [`oai_create_conversation()`](https://robonomist.github.io/openaiapi/reference/conversations.md)
+  [`oai_get_conversation()`](https://robonomist.github.io/openaiapi/reference/conversations.md)
+  [`oai_update_conversation()`](https://robonomist.github.io/openaiapi/reference/conversations.md)
+  [`oai_delete_conversation()`](https://robonomist.github.io/openaiapi/reference/conversations.md)
+  [`oai_list_conversation_items()`](https://robonomist.github.io/openaiapi/reference/conversations.md)
+  [`oai_create_conversation_items()`](https://robonomist.github.io/openaiapi/reference/conversations.md)
+  [`oai_retrieve_conversation_item()`](https://robonomist.github.io/openaiapi/reference/conversations.md)
+  [`oai_delete_conversation_item()`](https://robonomist.github.io/openaiapi/reference/conversations.md)
+  : Conversations API
+- [`Conversation`](https://robonomist.github.io/openaiapi/reference/Conversation.md)
+  : Conversation R6 Class
+
+## Models
+
+- [`oai_list_models()`](https://robonomist.github.io/openaiapi/reference/models_api.md)
+  [`oai_retrieve_model()`](https://robonomist.github.io/openaiapi/reference/models_api.md)
+  [`oai_delete_model()`](https://robonomist.github.io/openaiapi/reference/models_api.md)
+  : Models API
+
+## Fine tuning
+
+- [`oai_create_fine_tuning_job()`](https://robonomist.github.io/openaiapi/reference/fine_tuning_api.md)
+  [`oai_list_fine_tuning_jobs()`](https://robonomist.github.io/openaiapi/reference/fine_tuning_api.md)
+  [`oai_list_fine_tuning_events()`](https://robonomist.github.io/openaiapi/reference/fine_tuning_api.md)
+  [`oai_list_fine_tuning_checkpoints()`](https://robonomist.github.io/openaiapi/reference/fine_tuning_api.md)
+  [`oai_get_fine_tuning_job()`](https://robonomist.github.io/openaiapi/reference/fine_tuning_api.md)
+  [`oai_cancel_fine_tuning()`](https://robonomist.github.io/openaiapi/reference/fine_tuning_api.md)
+  : Fine-tuning API
+- [`FineTuningJob`](https://robonomist.github.io/openaiapi/reference/FineTuningJob.md)
+  : FineTuningJob R6 class
+
+## Embeddings
+
+- [`oai_create_embeddings()`](https://robonomist.github.io/openaiapi/reference/embeddings_api.md)
+  : Embeddings API
+- [`Embedding`](https://robonomist.github.io/openaiapi/reference/Embedding.md)
+  : R6 class representing an Embedding in the OpenAI API
+
+## Chat completions
+
+- [`oai_create_chat_completion()`](https://robonomist.github.io/openaiapi/reference/chat_completion_api.md)
+  [`oai_get_chat_completion()`](https://robonomist.github.io/openaiapi/reference/chat_completion_api.md)
+  [`oai_get_chat_messages()`](https://robonomist.github.io/openaiapi/reference/chat_completion_api.md)
+  [`oai_list_chat_completions()`](https://robonomist.github.io/openaiapi/reference/chat_completion_api.md)
+  [`oai_update_chat_completion()`](https://robonomist.github.io/openaiapi/reference/chat_completion_api.md)
+  [`oai_delete_chat_completion()`](https://robonomist.github.io/openaiapi/reference/chat_completion_api.md)
+  : Chat completion API
+- [`ChatCompletion`](https://robonomist.github.io/openaiapi/reference/ChatCompletion.md)
+  : ChatCompletion R6 class
+- [`ChatCompletionStream`](https://robonomist.github.io/openaiapi/reference/ChatCompletionStream.md)
+  : ChatCompletionStream R6 class
+
+## Assistants
+
+Create and manage Assistants.
+
+- [`oai_create_assistant()`](https://robonomist.github.io/openaiapi/reference/assistant_api.md)
+  [`oai_modify_assistant()`](https://robonomist.github.io/openaiapi/reference/assistant_api.md)
+  [`oai_list_assistants()`](https://robonomist.github.io/openaiapi/reference/assistant_api.md)
+  [`oai_retrieve_assistant()`](https://robonomist.github.io/openaiapi/reference/assistant_api.md)
+  [`oai_delete_assistant()`](https://robonomist.github.io/openaiapi/reference/assistant_api.md)
+  : Assistant API
+- [`Assistant`](https://robonomist.github.io/openaiapi/reference/Assistant.md)
+  : Assistant R6 class
+
+### Threads
+
+- [`oai_create_thread()`](https://robonomist.github.io/openaiapi/reference/thread_api.md)
+  [`oai_modify_thread()`](https://robonomist.github.io/openaiapi/reference/thread_api.md)
+  [`oai_retrieve_thread()`](https://robonomist.github.io/openaiapi/reference/thread_api.md)
+  [`oai_delete_thread()`](https://robonomist.github.io/openaiapi/reference/thread_api.md)
+  : Threads API
+- [`Thread`](https://robonomist.github.io/openaiapi/reference/Thread.md)
+  : Thread R6 class
+
+### Messages
+
+- [`oai_create_message()`](https://robonomist.github.io/openaiapi/reference/message_api.md)
+  [`oai_attachment()`](https://robonomist.github.io/openaiapi/reference/message_api.md)
+  [`oai_list_messages()`](https://robonomist.github.io/openaiapi/reference/message_api.md)
+  [`oai_retrieve_message()`](https://robonomist.github.io/openaiapi/reference/message_api.md)
+  [`oai_modify_message()`](https://robonomist.github.io/openaiapi/reference/message_api.md)
+  [`oai_delete_message()`](https://robonomist.github.io/openaiapi/reference/message_api.md)
+  :
+
+  A helper function for the `attachment` argument in
+  [`oai_create_message()`](https://robonomist.github.io/openaiapi/reference/message_api.md)
+  and `Message` objects.
+
+- [`Message`](https://robonomist.github.io/openaiapi/reference/Message.md)
+  : Message R6 class
+
+### Runs
+
+- [`oai_create_run()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_create_thread_and_run()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_list_runs()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_list_run_steps()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_retrieve_run()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_modify_run()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_cancel_run()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_submit_tool_outputs()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_tool_output()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  [`oai_retrieve_run_step()`](https://robonomist.github.io/openaiapi/reference/run_api.md)
+  : Run API
+- [`Run`](https://robonomist.github.io/openaiapi/reference/Run.md)
+  [`RunStream`](https://robonomist.github.io/openaiapi/reference/Run.md)
+  : Run R6 class
+
+### Vector store
+
+- [`oai_create_vector_store()`](https://robonomist.github.io/openaiapi/reference/vector_store_api.md)
+  [`oai_list_vector_stores()`](https://robonomist.github.io/openaiapi/reference/vector_store_api.md)
+  [`oai_retrieve_vector_store()`](https://robonomist.github.io/openaiapi/reference/vector_store_api.md)
+  [`oai_modify_vector_store()`](https://robonomist.github.io/openaiapi/reference/vector_store_api.md)
+  [`oai_delete_vector_store()`](https://robonomist.github.io/openaiapi/reference/vector_store_api.md)
+  [`oai_search_vector_store()`](https://robonomist.github.io/openaiapi/reference/vector_store_api.md)
+  : Vector Store API
+- [`oai_create_vector_store_file()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_api.md)
+  [`oai_list_vector_store_files()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_api.md)
+  [`oai_retrieve_vector_store_file()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_api.md)
+  [`oai_update_vector_store_file()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_api.md)
+  [`oai_delete_vector_store_file()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_api.md)
+  : Vector store files API
+- [`oai_create_vector_store_file_batch()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_batch_api.md)
+  [`oai_retrieve_vector_store_file_batch()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_batch_api.md)
+  [`oai_cancel_vector_store_file_batch()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_batch_api.md)
+  [`oai_list_vector_store_files_in_a_batch()`](https://robonomist.github.io/openaiapi/reference/vector_store_file_batch_api.md)
+  : Vector store file batch API
+- [`VectorStore`](https://robonomist.github.io/openaiapi/reference/VectorStore.md)
+  : R6 class for managing a Vector Store in the OpenAI API
+- [`VectorStoreFile`](https://robonomist.github.io/openaiapi/reference/VectorStoreFile.md)
+  : VectorStoreFile R6 class
+- [`VectorStoreFilesBatch`](https://robonomist.github.io/openaiapi/reference/VectorStoreFilesBatch.md)
+  : VectorStoreFilesBatch R6 class
+
+## Audio
+
+- [`oai_create_speech()`](https://robonomist.github.io/openaiapi/reference/audio.md)
+  [`oai_create_transcription()`](https://robonomist.github.io/openaiapi/reference/audio.md)
+  [`oai_create_translation()`](https://robonomist.github.io/openaiapi/reference/audio.md)
+  : Audio API
+- [`Transcription`](https://robonomist.github.io/openaiapi/reference/audio_transcription.md)
+  [`VerboseTranscription`](https://robonomist.github.io/openaiapi/reference/audio_transcription.md)
+  : Transcription object Represents a transcription response returned by
+  model, based on the provided input.
+
+## Utils
+
+### Files
+
+- [`oai_upload_file()`](https://robonomist.github.io/openaiapi/reference/files_api.md)
+  [`oai_list_files()`](https://robonomist.github.io/openaiapi/reference/files_api.md)
+  [`oai_retrieve_file()`](https://robonomist.github.io/openaiapi/reference/files_api.md)
+  [`oai_delete_file()`](https://robonomist.github.io/openaiapi/reference/files_api.md)
+  [`oai_retrieve_file_content()`](https://robonomist.github.io/openaiapi/reference/files_api.md)
+  : Files API
+- [`File`](https://robonomist.github.io/openaiapi/reference/File.md) :
+  OpenAI File Interface
+
+### Helpers
+
+- [`oai_message()`](https://robonomist.github.io/openaiapi/reference/utils.md)
+  [`oai_thread()`](https://robonomist.github.io/openaiapi/reference/utils.md)
+  [`oai_tool_resource()`](https://robonomist.github.io/openaiapi/reference/utils.md)
+  : A helper function for message arguments
+- [`oai_function_tool()`](https://robonomist.github.io/openaiapi/reference/oai_function_tool.md)
+  [`oai_function_tool_parameter()`](https://robonomist.github.io/openaiapi/reference/oai_function_tool.md)
+  : Define a function tool
+
+# Articles
+
+### All vignettes
+
+- [Using the Assistants
+  API](https://robonomist.github.io/openaiapi/articles/assistants.md):
+- [Example with
+  shiny](https://robonomist.github.io/openaiapi/articles/shiny.md):

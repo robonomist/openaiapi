@@ -1,0 +1,74 @@
+# openaiapi
+
+openaiapi is an R package that provides a comprehensive and faithful
+interface to the OpenAI API. It closely mirrors the API’s structure
+while offering R6 classes for convenient handling of API objects.
+
+## Installation
+
+You can install the development version of openaiapi from GitHub with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("robonomist/openaiapi")
+```
+
+## Usage
+
+To use the OpenAI API, you need to have an API key. You can get one by
+signing up at [OpenAI](https://platform.openai.com/).
+
+``` r
+library(openaiapi)
+oai_set_api_key("your-api-key")
+```
+
+Alternatively, you can set the `OPENAI_API_KEY` environment variable,
+which is read at package load time.
+
+### Chat completions
+
+The chat completions API allows you to generate chat completions. You
+can use the `oai_create_chat_completion` function to generate
+completions:
+
+``` r
+r <- oai_create_chat_completion(
+  "Hello, how are you?",
+  model = "gpt-4o"
+)
+r # A ChatCompletion R6 object
+r$content_text()
+
+oai_create_chat_completion(
+  messages = list(
+    oai_message("Hello, how are you?", role = "user"),
+    oai_message("I'm fine, thank you!", role = "assistant"),
+    oai_message("Can you tell me a joke?", role = "user")
+  ),
+  model = "gpt-4o"
+)$content_text()
+```
+
+## Vignettes
+
+- Use function tools with the Assistants API
+  [`vignette("assistants")`](https://robonomist.github.io/openaiapi/articles/assistants.md)
+- Stream asynchronously in Shiny
+  [`vignette("shiny")`](https://robonomist.github.io/openaiapi/articles/shiny.md)
+
+## Todo:
+
+Implement Responses API
+
+Implement streaming
+
+Implement Administration API
+
+Implement Images API
+
+Implement Moderations API
+
+Implement Realtime API
+
+Add tests
