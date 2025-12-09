@@ -679,7 +679,6 @@ ModelResponseStream <- R6Class(
           "response.created" = ,
           "response.in_progress" = ,
           "response.completed" = ,
-          "response.failed" = ,
           "response.incomplete" = {
             super$store_response(event$data$response)
           },
@@ -773,9 +772,14 @@ ModelResponseStream <- R6Class(
             event$data$status <- "completed"
             output[[output_index]] <<- event$data
           },
+          "response.failed" = {
+            cli_abort(
+              c("x" = event$data$response$error$message)
+            )
+          },
           "error" = {
             cli_abort(
-              c("x" = "Error {event$data$code}: {event$data$message}"),
+              c("x" = "Error {event$data$error$code}: {event$data$error$message}"),
               params = event$data$params
             )
           }
