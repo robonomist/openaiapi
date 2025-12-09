@@ -11,6 +11,7 @@
 oai_create_vector_store_file_batch(
   vector_store_id,
   file_ids,
+  attributes = NULL,
   chunking_strategy = NULL,
   .classify_response = TRUE,
   .async = FALSE
@@ -41,6 +42,8 @@ oai_list_vector_store_files_in_a_batch(
 \item{vector_store_id}{Character. The ID of the vector store where the file batch will be created.}
 
 \item{file_ids}{Character. A vector of file IDs to include in the batch.}
+
+\item{attributes}{Named list. A list of attributes to update, with a maximum of 16 key-value pairs. Keys are strings with a maximum length of 64 characters. Values are strings with a maximum length of 512 characters, booleans, or numbers.}
 
 \item{chunking_strategy}{List. Optional. Strategy for chunking data.}
 

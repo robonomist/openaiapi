@@ -16,17 +16,19 @@ VectorStoreFile R6 class
 \describe{
 \item{\code{id}}{Character. The ID of the vector store file.}
 
+\item{\code{attributes}}{Named list. A list of attributes associated with the vector store file.}
+
 \item{\code{created_at}}{POSIXct. The time the vector store file was created.}
+
+\item{\code{status}}{Character. The status of the vector store file. One of "in_progress", "completed", "failed", "cancelled".}
+
+\item{\code{chunking_strategy}}{List. The strategy used to chunk the data.}
 
 \item{\code{usage_bytes}}{Integer. The number of bytes used by the vector store file.}
 
 \item{\code{vector_store_id}}{Character. The ID of the vector store that the file belongs to.}
 
-\item{\code{status}}{Character. The status of the vector store file. One of "in_progress", "completed", "failed", "cancelled".}
-
 \item{\code{last_error}}{Character. The last error that occurred while processing the file.}
-
-\item{\code{chunking_strategy}}{List. The strategy used to chunk the data.}
 }
 \if{html}{\out{</div>}}
 }

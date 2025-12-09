@@ -2,6 +2,7 @@
 #'
 #' Vector store file batches represent operations to add multiple files to a vector store.
 #' @inheritParams oai_create_vector_store
+#' @inheritParams oai_create_vector_store_file
 #' @return A VectorStoreFilesBatch R6 object.
 #' @name vector_store_file_batch_api
 NULL
@@ -14,11 +15,13 @@ NULL
 #' @export
 oai_create_vector_store_file_batch <- function(vector_store_id,
                                                file_ids,
+                                               attributes = NULL,
                                                chunking_strategy = NULL,
                                                .classify_response = TRUE,
                                                .async = FALSE) {
   body <- list(
     file_ids = as.list(file_ids),
+    attributes = attributes,
     chunking_strategy = chunking_strategy
   )
   oai_query(
@@ -100,6 +103,7 @@ oai_list_vector_store_files_in_a_batch <- function(vector_store_id,
 #' VectorStoreFilesBatch R6 class
 #'
 #' @field id Character. The ID of the file batch.
+#' @field attributes List. The attributes of the file batch.
 #' @field created_at POSIXct. The date and time the file batch was created.
 #' @field vector_store_id Character. The ID of the vector store where the file batch was created.
 #' @field status Character. The status of the file batch.
@@ -118,7 +122,7 @@ VectorStoreFilesBatch <- R6Class(
   inherit = Utils,
   private = list(
     schema = list(
-      as_is = c("id", "vector_store_id", "status", "file_counts"),
+      as_is = c("id", "attributes", "vector_store_id", "status", "file_counts"),
       as_time = c("created_at")
     )
   ),
@@ -160,6 +164,7 @@ VectorStoreFilesBatch <- R6Class(
       }
     },
     id = NULL,
+    attributes = NULL,
     created_at = NULL,
     vector_store_id = NULL,
     status = NULL,
